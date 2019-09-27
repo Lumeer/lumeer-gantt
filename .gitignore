@@ -34,5 +34,5 @@ gh-pages
 .idea/
 .rpt2_cache/
 dist
-!dist/frappe-gantt.css
-!dist/frappe-gantt.min.js
+!dist/lumeer-gantt.css
+!dist/lumeer-gantt.min.js

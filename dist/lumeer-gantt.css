@@ -1,0 +1,173 @@
+.gantt-container {
+  position: relative;
+  overflow: auto;
+  font-size: 13px;
+}
+
+.gantt .grid-background {
+  fill: none;
+}
+.gantt .grid-header {
+  fill: #ffffff;
+  stroke: #dee2e6;
+  stroke-width: 1.4;
+}
+.gantt .grid-row {
+  fill: #ffffff;
+}
+.gantt .grid-row:nth-child(even) {
+  fill: #f8f9fa;
+}
+.gantt .tick {
+  stroke: #ecf0f1;
+  width: 0.1px;
+}
+.gantt .tick.thick {
+  stroke: #ababab;
+  width: 0.2px;
+}
+.gantt .today-highlight {
+  fill: #fcf7cd;
+  opacity: 0.5;
+}
+.gantt .bar {
+  fill: #253746;
+  stroke-width: 0;
+  transition: stroke-width 0.3s ease;
+  user-select: none;
+}
+.gantt .arrow {
+  cursor: pointer;
+  fill: none;
+  stroke: #666;
+  stroke-width: 1.5px;
+}
+.gantt .arrow.active {
+  stroke: #00b388;
+}
+.gantt .arrow-clickable {
+  cursor: pointer;
+  fill: none;
+  stroke: transparent;
+  stroke-width: 10px;
+}
+.gantt .bar-progress {
+  fill: #a3a3ff;
+}
+.gantt .bar-label {
+  fill: #fff;
+  dominant-baseline: central;
+  text-anchor: middle;
+  font-size: 13px;
+  font-weight: lighter;
+}
+.gantt .bar-label.big {
+  fill: #7b8a8b !important;
+  text-anchor: start;
+}
+.gantt .bar-handle {
+  fill: #ecf0f1;
+  cursor: ew-resize;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease;
+}
+.gantt .bar-handle.progress {
+  fill: #95a5a6;
+}
+.gantt .progress-marker {
+  fill: #95a5a6;
+}
+.gantt .endpoint {
+  fill: #ecf0f1;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+.gantt .endpoint.active {
+  fill: #00b388;
+  opacity: 1;
+}
+.gantt .endpoint.end.clickable:hover {
+  cursor: copy;
+  stroke: #00b388;
+  stroke-width: 1px;
+  opacity: 1;
+}
+.gantt .endpoint.visible {
+  opacity: 1;
+}
+.gantt .icon-delete {
+  pointer-events: bounding-box;
+  cursor: pointer;
+}
+.gantt .icon-delete path {
+  fill: #e74c3c;
+}
+.gantt .bar-wrapper {
+  cursor: pointer;
+  outline: none;
+  pointer-events: bounding-box;
+}
+.gantt .bar-wrapper .bar-group-wrapper {
+  outline: none;
+}
+.gantt .bar-wrapper:hover:not(.disabled) .bar {
+  fill: #1c2a35;
+}
+.gantt .bar-wrapper:hover:not(.disabled) .bar-progress {
+  fill: #009a75;
+}
+.gantt .bar-wrapper:hover:not(.disabled) .bar-handle {
+  visibility: visible;
+  opacity: 1;
+}
+.gantt .bar-wrapper:hover:not(.disabled) .endpoint.clickable {
+  opacity: 1;
+}
+.gantt .lower-text, .gantt .upper-text {
+  font-size: 13px;
+  text-anchor: middle;
+}
+.gantt .upper-text {
+  fill: #7b8a8b;
+}
+.gantt .lower-text {
+  fill: #333;
+}
+.gantt .hide {
+  display: none;
+}
+
+.gantt-swimlanes-container {
+  position: relative;
+  overflow: auto;
+  font-size: 13px;
+  float: left;
+}
+.gantt-swimlanes-container .gantt-swimlanes .swimlanes-header, .gantt-swimlanes-container .gantt-swimlanes .swimlanes-background {
+  fill: #ffffff;
+  stroke: #dee2e6;
+  stroke-width: 1.4;
+}
+.gantt-swimlanes-container .gantt-swimlanes .swimlane .swimlane-rect:not(.empty) {
+  stroke: #dee2e6;
+  stroke-width: 1.4;
+  fill: #ffffff;
+}
+.gantt-swimlanes-container .gantt-swimlanes .swimlane .swimlane-rect.empty {
+  stroke: none;
+  stroke-width: 0;
+  fill: transparent;
+}
+.gantt-swimlanes-container .gantt-swimlanes .swimlane-header-rect {
+  stroke: #dee2e6;
+  stroke-width: 1.4;
+  fill: #ffffff;
+}
+.gantt-swimlanes-container .gantt-swimlanes .swimlane-header-rect.empty {
+  stroke: none;
+}
+.gantt-swimlanes-container .gantt-swimlanes .swimlane-resize-handle {
+  cursor: col-resize;
+  fill: transparent;
+}
