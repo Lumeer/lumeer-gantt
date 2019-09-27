@@ -1,0 +1,58 @@
+{
+  "name": "@lumeer/lumeer-gantt",
+  "version": "1.0.0",
+  "description": "A simple, modern, interactive gantt library for the web",
+  "main": "dist/index.js",
+  "module": "dist/index.es.js",
+  "browser": "dist/index.bundle.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "rollup -c && tsc",
+    "build:watch": "rollup -cw",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "prettier": "prettier es6 --write \"{src/*,tests/*,rollup.config}.js\""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Lumeer/lumeer-gantt.git"
+  },
+  "keywords": [
+    "gantt",
+    "svg",
+    "simple gantt",
+    "project timeline",
+    "interactive gantt",
+    "project management"
+  ],
+  "author": "Lumeer",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Lumeer/lumeer-gantt.git/issues"
+  },
+  "homepage": "https://github.com/Lumeer/lumeer-gantt.git",
+  "dependencies": {
+    "moment": "^2.24.0"
+  },
+  "devDependencies": {
+    "deepmerge": "^4.0.0",
+    "jest": "^24.9.0",
+    "prettier": "~1.18.2",
+    "rollup": "^1.20.2",
+    "rollup-plugin-sass": "^1.2.2",
+    "rollup-plugin-postcss": "^2.0.3",
+    "rollup-plugin-terser": "^5.1.1",
+    "rollup-plugin-commonjs": "^10.1.0",
+    "rollup-plugin-typescript2": "^0.23.0",
+    "rollup-plugin-node-resolve": "^5.2.0",
+    "rollup-watch": "^4.3.1",
+    "postcss-simple-vars": "^5.0.2",
+    "typescript": "^3.5.3"
+  },
+  "eslintIgnore": [
+    "dist"
+  ],
+  "directories": {
+    "test": "tests"
+  }
+}

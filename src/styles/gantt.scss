@@ -1,0 +1,255 @@
+$white: #fff !default;
+$gray-100: #f8f9fa !default;
+$gray-200: #ecf0f1 !default;
+$gray-300: #dee2e6 !default;
+$gray-400: #ced4da !default;
+$gray-500: #b4bcc2 !default;
+$gray-600: #95a5a6 !default;
+$gray-700: #7b8a8b !default;
+$gray-800: #343a40 !default;
+$gray-900: #212529 !default;
+$black: #000 !default;
+
+$primary: #253746 !default;
+$secondary: $gray-600 !default;
+$success: #00b388 !default;
+$warning: #f39c12 !default;
+$danger: #e74c3c !default;
+$light: $gray-200 !default;
+$text-light: $gray-400 !default;
+$dark: $gray-700 !default;
+
+$border-color: $gray-300 !default;
+$tick-color: $gray-200 !default;
+$light-bg: $gray-100 !default;
+$light-yellow: #fcf7cd !default;
+$text-muted: #666 !default;
+$text-color: #333 !default;
+$blue: #a3a3ff !default;
+
+$font-size: 13px;
+
+.gantt-container {
+  position: relative;
+  overflow: auto;
+  font-size: $font-size;
+}
+
+.gantt {
+  .grid-background {
+    fill: none;
+  }
+
+  .grid-header {
+    fill: #ffffff;
+    stroke: $border-color;
+    stroke-width: 1.4;
+  }
+
+  .grid-row {
+    fill: #ffffff;
+  }
+
+  .grid-row:nth-child(even) {
+    fill: $light-bg;
+  }
+
+  .tick {
+    stroke: $tick-color;
+    width: 0.1px;
+
+    &.thick {
+      stroke: #ababab;
+      width: 0.2px;
+    }
+  }
+
+  .today-highlight {
+    fill: $light-yellow;
+    opacity: 0.5;
+  }
+
+  .bar {
+    fill: $primary;
+    stroke-width: 0;
+    transition: stroke-width .3s ease;
+    user-select: none;
+  }
+
+  .arrow {
+    cursor: pointer;
+    fill: none;
+    stroke: $text-muted;
+    stroke-width: 1.5px;
+
+    &.active {
+      stroke: $success;
+    }
+  }
+
+  .arrow-clickable {
+    cursor: pointer;
+    fill: none;
+    stroke: transparent;
+    stroke-width: 10px;
+  }
+
+  .bar-progress {
+    fill: $blue;
+  }
+
+  .bar-label {
+    fill: #fff;
+    dominant-baseline: central;
+    text-anchor: middle;
+    font-size: $font-size;
+    font-weight: lighter;
+
+    &.big {
+      fill: $gray-700 !important;
+      text-anchor: start;
+    }
+  }
+
+  .bar-handle {
+    fill: $light;
+    cursor: ew-resize;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity .3s ease;
+
+    &.progress {
+      fill: $gray-600;
+    }
+  }
+
+  .progress-marker {
+    fill: $gray-600;
+  }
+
+  .endpoint {
+    fill: $light;
+    opacity: 0;
+    transition: opacity .3s ease;
+
+    &.active {
+      fill: $success;
+      opacity: 1;
+    }
+
+    &.end.clickable:hover {
+      cursor: copy;
+      stroke: $success;
+      stroke-width: 1px;
+      opacity: 1;
+    }
+
+    &.visible {
+      opacity: 1;
+    }
+  }
+
+  .icon-delete {
+    pointer-events: bounding-box;
+    cursor: pointer;
+
+    path {
+      fill: $danger;
+    }
+  }
+
+  .bar-wrapper {
+    cursor: pointer;
+    outline: none;
+    pointer-events: bounding-box;
+
+    .bar-group-wrapper {
+      outline: none;
+    }
+
+    &:hover:not(.disabled) {
+      .bar {
+        fill: darken($primary, 5);
+      }
+
+      .bar-progress {
+        fill: darken($success, 5);
+      }
+
+      .bar-handle {
+        visibility: visible;
+        opacity: 1;
+      }
+
+      .endpoint.clickable {
+        opacity: 1;
+      }
+    }
+  }
+
+  .lower-text, .upper-text {
+    font-size: $font-size;
+    text-anchor: middle;
+  }
+
+  .upper-text {
+    fill: $gray-700;
+  }
+
+  .lower-text {
+    fill: $text-color;
+  }
+
+  .hide {
+    display: none;
+  }
+}
+
+.gantt-swimlanes-container {
+  position: relative;
+  overflow: auto;
+  font-size: $font-size;
+  float: left;
+
+  .gantt-swimlanes {
+
+    .swimlanes-header, .swimlanes-background {
+      fill: #ffffff;
+      stroke: $border-color;
+      stroke-width: 1.4;
+    }
+
+    .swimlane {
+
+      .swimlane-rect:not(.empty) {
+        stroke: $border-color;
+        stroke-width: 1.4;
+        fill: #ffffff;
+      }
+
+      .swimlane-rect.empty {
+        stroke: none;
+        stroke-width: 0;
+        fill: transparent;
+      }
+
+    }
+
+    .swimlane-header-rect {
+      stroke: $border-color;
+      stroke-width: 1.4;
+      fill: #ffffff;
+
+      &.empty {
+        stroke: none;
+      }
+    }
+
+    .swimlane-resize-handle {
+      cursor: col-resize;
+      fill: transparent;
+    }
+
+  }
+}
+

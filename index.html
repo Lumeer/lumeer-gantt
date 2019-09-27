@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Simple Gantt</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            background: #ccc;
+        }
+    </style>
+    <link rel="stylesheet" href="dist/frappe-gantt.css"/>
+    <script src="dist/frappe-gantt.js"></script>
+</head>
+
+<body>
+<div class="container">
+    <h2>Interactive Gantt Chart entirely made in SVG!</h2>
+    <div class="gantt-target"></div>
+</div>
+<button type="button" onclick='ganttChart.changeViewMode("Quarter Day")'>Quarter Day</button>
+<button type="button" onclick='ganttChart.changeViewMode("Half Day")'>Half Day</button>
+<button type="button" onclick='ganttChart.changeViewMode("Day")'>Day</button>
+<button type="button" onclick='ganttChart.changeViewMode("Week")'>Week</button>
+<button type="button" onclick='ganttChart.changeViewMode("Month")'>Month</button>
+<button type="button" onclick='ganttChart.changeViewMode("Year")'>Year</button>
+<button type="button" onclick='ganttChart.changeTasks([])'>Empty Tasks</button>
+<button type="button" onclick='ganttChart.changeTasks(tasks)'>Fill with Tasks</button>
+<button type="button" onclick='ganttChart.changeOptions(options2)'>Change options</button>
+<button type="button" onclick='ganttChart.scrollToToday()'>Scroll to Today</button>
+<script>
+    const tasks = [
+        {
+            id: "T0",
+            name: 'T000000',
+            start: '2019-10-01',
+            end: '2019-10-05',
+            progress: 3,
+            allowedDependencies: ['T9', 'T1', 'T3'],
+            swimlanes: ['Ahoj', 'A'],
+            barColor: 'rgb(34,120,255)',
+            progressColor: 'red',
+            textColor: 'white',
+            startDrag: true,
+            endDrag: true,
+            editable: true,
+        },
+        {
+            id: "T1",
+            name: 'T111111',
+            start: '2019-10-08',
+            end: '2019-10-10',
+            progress: 12,
+            allowedDependencies: ['T0'],
+            swimlanes: ['Ahoj', null],
+            barColor: 'rgb(34,120,255)',
+            progressColor: 'green',
+            startDrag: true,
+            endDrag: true,
+            editable: true,
+        },
+        {
+            id: "T1",
+            name: 'T111111',
+            start: '2019-10-08',
+            end: '2019-10-10',
+            progress: 40,
+            swimlanes: ['Ahoj', 'B'],
+            barColor: 'rgb(34,120,255)',
+            progressColor: 'orange',
+            startDrag: true,
+            endDrag: true,
+            editable: true,
+        },
+        {
+            id: "T9",
+            name: 'T9999',
+            start: '2019-10-21',
+            end: '2019-10-25',
+            progress: 99,
+            swimlanes: ['Ahoj', 'B'],
+            barColor: 'rgb(34,120,255)',
+            progressColor: 'yellow',
+            startDrag: true,
+            endDrag: true,
+            editable: true,
+        },
+        {
+            id: "T3",
+            name: 'T3333333',
+            start: '2019-11-01',
+            end: '2019-12-08',
+            progress: 1,
+            swimlanes: ['B', 'C'],
+            barColor: 'rgb(34,120,255)',
+            progressColor: 'cyan',
+            startDrag: true,
+            endDrag: true,
+            editable: true,
+        },
+        {
+            id: "T4",
+            name: 'T4444444',
+            start: '2020-02-05',
+            end: '2020-02-06',
+            swimlanes: [null, null],
+            barColor: 'rgb(34,120,255)',
+            startDrag: true,
+            endDrag: true,
+            editable: true,
+        },
+    ];
+    const ganttChart = new Gantt(".gantt-target", tasks, {
+        columnWidth: 50,
+        swimlaneInfo: [{
+            width: 300,
+            title: 'First Attr',
+            color: 'red',
+            background: '#A2BAFF',
+        }, {
+            title: 'Second Attr',
+            background: '#ffff87',
+        }],
+        language: 'sk',
+        viewMode: 'Day',
+        lockResize: true,
+    });
+
+    ganttChart.onTaskDependencyAdded = (fromTask, toTask) => console.log('onTaskDependencyAdded', fromTask, toTask);
+    ganttChart.onTaskDependencyRemoved = (fromTask, toTask) => console.log('onTaskDependencyRemoved', fromTask, toTask);
+    ganttChart.onSwimlaneResized = (index, width) => console.log('onSwimlaneResized', index, width);
+    ganttChart.onTaskProgressChanged = (task) => console.log('onTaskProgressChanged', task);
+    ganttChart.onTaskDatesChanged = (task) => console.log('onTaskDatesChanged', task);
+    ganttChart.onTaskSwimlanesChanged = (task) => console.log('onTaskSwimlanesChanged', task);
+    ganttChart.onTaskCreated = (task) => console.log('onTaskCreated', task);
+    ganttChart.onTaskDetail = (task) => console.log('onTaskDetail', task);
+
+    const options2 = {
+        barHeight: 50,
+        columnWidth: 50,
+        swimlaneInfo: [{
+            width: 100,
+            title: 'First Attr',
+            color: 'red',
+            background: '#f3ff7c',
+        }, {
+            title: 'Second Attr',
+            background: '#b823ff',
+        }],
+        language: 'en',
+        viewMode: 'Day',
+        lockResize: false,
+    };
+
+    console.log(ganttChart);
+</script>
+</body>
+
+</html>
