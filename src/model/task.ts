@@ -33,6 +33,8 @@ export interface Task {
     startDrag: boolean;
     endDrag: boolean;
     editable: boolean;
+
+    metadata?: any;
 }
 
 export const taskProperties = ['id', 'name', 'start', 'end', 'progress', 'swimlanes',
