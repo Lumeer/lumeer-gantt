@@ -514,7 +514,8 @@ export function cleanGanttTask(task: GanttTask): Task {
         textColor: task.textColor,
         barColor: task.barColor,
         progressColor: task.progressColor,
-        dependencies, allowedDependencies
+        dependencies, allowedDependencies,
+        metadata: task.metadata
     };
 }
 
