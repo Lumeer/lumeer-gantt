@@ -14,7 +14,7 @@ const dev = {
         {
             name: 'Gantt',
             file: 'dist/lumeer-gantt.js',
-            format: 'iife'
+            format: 'umd'
         },
     ],
     plugins: [
@@ -37,7 +37,7 @@ const prod = merge(dev, {
     output: {
         name: 'Gantt',
         file: 'dist/lumeer-gantt.min.js',
-        format: 'iife'
+        format: 'umd'
     },
     plugins: [
         terser()
