@@ -29,7 +29,7 @@ import {
     createMarkerPath,
     createSVG,
     getEndX,
-    getHeight, getMarkerSize,
+    getHeight, getMarkerSize, getWidth, getX,
     getY, hideElements, setAttribute,
     setAttributes, showElements
 } from '../../../utils/svg.utils';
@@ -62,6 +62,7 @@ export class BarSvg {
 
     private handleRightElement: SVGElement;
     private handleLeftElement: SVGElement;
+    private handleOverflowElement: SVGElement;
 
     private handleProgressElement: SVGElement;
     private handleProgressTextElement: SVGElement;
@@ -88,6 +89,7 @@ export class BarSvg {
     private parentSvgDrag: BarsSvg;
 
     private draggingVertically = false;
+    private sideHandlesOverflowing = false;
 
     constructor(public task: GanttTask,
                 private yPosition: number,
@@ -527,6 +529,10 @@ export class BarSvg {
             showElements(this.handleProgressTextElement, this.handleProgressMarkerElement);
         }
 
+        if (element === this.handleLeftElement || element === this.handleRightElement) {
+            this.sideHandlesOverflowing = getX(this.handleRightElement) <= getX(this.handleLeftElement) + getWidth(this.handleLeftElement);
+        }
+
         this.x1Drag = this.x1;
         this.x2Drag = this.x2;
         this.progressDrag = this.progress;
@@ -539,16 +545,39 @@ export class BarSvg {
 
 
     public handleDrag(element: any, dx: number, dy: number, x: number, y: number) {
-        if (element === this.handleLeftElement) {
-            this.resizeLeft(dx, x);
-        } else if (element === this.handleRightElement) {
-            this.resizeRight(dx, x);
+        if (element === this.handleLeftElement || element === this.handleRightElement) {
+            if (this.sideHandlesOverflowing) {
+                this.assignHandleOverflowElement(dx);
+                if (this.handleOverflowElement === this.handleRightElement) {
+                    this.resizeRight(dx, x);
+                } else if (this.handleOverflowElement === this.handleLeftElement) {
+                    this.resizeLeft(dx, x);
+                }
+
+            } else {
+                if (element === this.handleLeftElement) {
+                    this.resizeLeft(dx, x);
+                } else if (element === this.handleRightElement) {
+                    this.resizeRight(dx, x);
+                }
+            }
+
         } else if (element === this.handleProgressElement) {
             this.resizeProgress(dx, x);
         } else if (this.task.editable) {
             const barElement = closestElement(`.${barWrapperClass}`, element);
             if (barElement === this.barWrapperElement) {
                 this.dragWrapper(dx, dy, x, y);
+            }
+        }
+    }
+
+    private assignHandleOverflowElement(dx: number) {
+        if (!this.handleOverflowElement) {
+            if (dx > 0) {
+                this.handleOverflowElement = this.handleRightElement;
+            } else if (dx < 0) {
+                this.handleOverflowElement = this.handleLeftElement;
             }
         }
     }
@@ -732,6 +761,8 @@ export class BarSvg {
         this.yDrag = null;
         this.parentSvgDrag = null;
         this.draggingVertically = false;
+        this.handleOverflowElement = null;
+        this.sideHandlesOverflowing = false;
         hideElements(this.handleProgressTextElement, this.handleProgressMarkerElement);
         this.updateTaskData();
     }
