@@ -1,6 +1,6 @@
 {
   "name": "@lumeer/lumeer-gantt",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "A simple, modern, interactive gantt library for the web",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -52,5 +52,8 @@
   ],
   "directories": {
     "test": "tests"
-  }
+  },
+  "files": [
+    "dist"
+  ]
 }
