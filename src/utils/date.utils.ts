@@ -18,6 +18,7 @@
  */
 
 import moment from 'moment';
+import enLocale from 'moment/locale/en-gb';
 import skLocale from 'moment/locale/sk';
 import csLocale from 'moment/locale/cs';
 import deLocale from 'moment/locale/de';
@@ -37,19 +38,22 @@ export enum DateScale {
 export function setupLanguage(language: string) {
     switch (language) {
         case 'sk':
-            moment.updateLocale(language, skLocale);
+            moment.locale(language, skLocale);
             break;
         case 'cs':
-            moment.updateLocale(language, csLocale);
+            moment.locale(language, csLocale);
             break;
         case 'de':
-            moment.updateLocale(language, deLocale);
+            moment.locale(language, deLocale);
             break;
         case 'es':
-            moment.updateLocale(language, esLocale);
+            moment.locale(language, esLocale);
             break;
         case 'fr':
-            moment.updateLocale(language, frLocale);
+            moment.locale(language, frLocale);
+            break;
+        default:
+            moment.locale('en', enLocale);
             break;
     }
 }

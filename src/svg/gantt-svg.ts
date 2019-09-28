@@ -126,7 +126,8 @@ export class GanttSvg {
 
     private setupOptions(options: GanttOptions) {
         this.options = createGanttOptions(options);
-        setupLanguage(options.language);
+        console.log(this.options);
+        setupLanguage(this.options.language);
     }
 
     private setupSwimLanes(tasks: Task[], options: GanttOptions) {
