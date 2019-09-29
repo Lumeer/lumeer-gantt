@@ -39,7 +39,8 @@ export interface Task {
 }
 
 export const taskProperties = ['id', 'name', 'start', 'end', 'progress', 'swimlanes',
-    'dependencies', 'allowedDependencies', 'barColor', 'progressColor', 'textColor', 'startDrag', 'endDrag', 'editable'];
+    'dependencies', 'allowedDependencies', 'barColor', 'progressColor', 'textColor',
+    'startDrag', 'endDrag', 'progressDrag', 'editable'];
 
 export interface GanttTask extends Task {
     taskId: string;
