@@ -392,7 +392,7 @@ export class BarSvg {
     }
 
     private isProgressDraggable(): boolean {
-        return this.task.editable && this.gantt.options.resizeProgress && isNotNullOrUndefined(this.progress);
+        return this.task.editable && this.task.progressDrag && this.gantt.options.resizeProgress && isNotNullOrUndefined(this.progress);
     }
 
     private renderProgressResizeHandle() {

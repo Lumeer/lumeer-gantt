@@ -584,7 +584,8 @@ export class GanttSvg {
             swimlanes: [],
             progress: null,
             endDrag: false,
-            startDrag: false
+            startDrag: false,
+            progressDrag: false,
         }
     }
 
