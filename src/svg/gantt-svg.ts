@@ -126,7 +126,6 @@ export class GanttSvg {
 
     private setupOptions(options: GanttOptions) {
         this.options = createGanttOptions(options);
-        console.log(this.options);
         setupLanguage(this.options.language);
     }
 
@@ -585,7 +584,8 @@ export class GanttSvg {
             swimlanes: [],
             progress: null,
             endDrag: false,
-            startDrag: false
+            startDrag: false,
+            progressDrag: false,
         }
     }
 
