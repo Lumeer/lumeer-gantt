@@ -126,7 +126,6 @@ export class GanttSvg {
 
     private setupOptions(options: GanttOptions) {
         this.options = createGanttOptions(options);
-        console.log(this.options);
         setupLanguage(this.options.language);
     }
 
