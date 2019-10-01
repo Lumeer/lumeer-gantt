@@ -157,6 +157,7 @@ export class GanttSvg {
     public changeTasks(tasks: Task[], options?: GanttOptions) {
         const mergedOptions = options && createGanttOptions(options) || this.options;
         if (tasksChanged(this.tasks, tasks)) {
+            console.log('tasks changed', this.tasks, tasks);
             this.refreshGantt(tasks, mergedOptions, true);
         } else {
             this.refreshGantt(this.tasks, mergedOptions);
@@ -165,6 +166,9 @@ export class GanttSvg {
 
     private refreshGantt(tasks: Task[], options: GanttOptions, force?: boolean) {
         if (force || !deepObjectsEquals(this.options, options)) {
+            if(!force){
+                console.log('options changed', this.options, options);
+            }
             this.options = options;
             setupLanguage(options.language);
             this.snapshotDate();

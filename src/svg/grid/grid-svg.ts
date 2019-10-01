@@ -113,7 +113,7 @@ export class GridSvg {
         let tickX = 0;
         let tickY = this.gantt.settings.headerHeight;
 
-        const height = getSettingsTableHeight(this.gantt.settings);
+        const height = getTableHeight(0, this.gantt.settings.rowHeights);
         for (let date of this.gantt.settings.dates) {
             if (tickX > 0) {
                 let tickClasses = tickClass;
@@ -143,7 +143,7 @@ export class GridSvg {
         const x = steps * getColumnWidth(this.gantt.options);
         const y = 0;
         const width = getColumnWidth(this.gantt.options) / stepHoursMultiplier(this.gantt.options.viewMode);
-        const height = getSettingsTableHeight(this.gantt.settings);
+        const height = getTableHeight(0, this.gantt.settings.rowHeights);
 
         this.gridHighlightElement = createSVG('rect', {
             x,
