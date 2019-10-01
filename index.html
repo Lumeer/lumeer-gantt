@@ -132,9 +132,7 @@
     ganttChart.onTaskDependencyAdded = (fromTask, toTask) => console.log('onTaskDependencyAdded', fromTask, toTask);
     ganttChart.onTaskDependencyRemoved = (fromTask, toTask) => console.log('onTaskDependencyRemoved', fromTask, toTask);
     ganttChart.onSwimlaneResized = (index, width) => console.log('onSwimlaneResized', index, width);
-    ganttChart.onTaskProgressChanged = (task) => console.log('onTaskProgressChanged', task);
-    ganttChart.onTaskDatesChanged = (task) => console.log('onTaskDatesChanged', task);
-    ganttChart.onTaskSwimlanesChanged = (task) => console.log('onTaskSwimlanesChanged', task);
+    ganttChart.onTaskChanged = (task) => console.log('onTaskChanged', task);
     ganttChart.onTaskCreated = (task) => console.log('onTaskCreated', task);
     ganttChart.onTaskDetail = (task) => console.log('onTaskDetail', task);
 
