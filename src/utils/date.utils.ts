@@ -38,22 +38,22 @@ export enum DateScale {
 export function setupLanguage(language: string) {
     switch (language) {
         case 'sk':
-            moment.locale(language, skLocale);
+            moment.updateLocale(language, skLocale);
             break;
         case 'cs':
-            moment.locale(language, csLocale);
+            moment.updateLocale(language, csLocale);
             break;
         case 'de':
-            moment.locale(language, deLocale);
+            moment.updateLocale(language, deLocale);
             break;
         case 'es':
-            moment.locale(language, esLocale);
+            moment.updateLocale(language, esLocale);
             break;
         case 'fr':
-            moment.locale(language, frLocale);
+            moment.updateLocale(language, frLocale);
             break;
         default:
-            moment.locale('en', enLocale);
+            moment.updateLocale('en', enLocale);
             break;
     }
 }

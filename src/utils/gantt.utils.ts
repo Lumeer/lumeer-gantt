@@ -24,7 +24,7 @@ import {GanttLine, GanttSettings, GanttSwimlane, GanttWrapper} from '../model/ga
 import {
     arrayContainsSameItems,
     completeArrayWithNulls,
-    isArray,
+    isArray, isNullOrUndefined,
     mergeFlatObjects,
     uniqueValues
 } from './common.utils';
@@ -482,7 +482,7 @@ function taskChanged(gt1: GanttTask, t2: Task): boolean {
         const isDateProperty = ['start', 'end'].includes(property);
         const t1Value = isDateProperty ? parseDate(t1[property]) : t1[property];
         const t2Value = isDateProperty ? parseDate(t2[property]) : t2[property];
-        if (!t1Value && !t2Value) {
+        if (isNullOrUndefined(t1Value) && isNullOrUndefined(t2Value)) {
             return false;
         }
 
@@ -491,10 +491,10 @@ function taskChanged(gt1: GanttTask, t2: Task): boolean {
         }
 
         if (isArray(t1Value) || isArray(t2Value)) {
-            return !arrayContainsSameItems(t1Value, t2Value);
+            return !arrayContainsSameItems((t1Value || []).map(v => v || ''), (t2Value || []).map(v => v || ''));
         }
 
-        return t1Value !== t2Value;
+        return (t1Value || '') !== (t2Value || '');
     })
 }
 
