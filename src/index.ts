@@ -28,9 +28,7 @@ export default class Gantt {
     private ganttSvg: GanttSvg;
 
     public onSwimlaneResized?: (index: number, width: number) => void;
-    public onTaskDatesChanged?: (task: Task) => void;
-    public onTaskProgressChanged?: (task: Task) => void;
-    public onTaskSwimlanesChanged?: (task: Task) => void;
+    public onTaskChanged?: (task: Task) => void;
     public onTaskDependencyAdded?: (fromTask: Task, toTask: Task) => void;
     public onTaskDependencyRemoved?: (fromTask: Task, toTask: Task) => void;
     public onTaskCreated?: (task: Task) => void;

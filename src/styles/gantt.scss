@@ -33,6 +33,7 @@ $font-size: 13px;
   position: relative;
   overflow: auto;
   font-size: $font-size;
+  padding-bottom: 15px;
 }
 
 .gantt {
@@ -70,7 +71,7 @@ $font-size: 13px;
   }
 
   .bar {
-    fill: $primary;
+    fill: $gray-700;
     stroke-width: 0;
     transition: stroke-width .3s ease;
     user-select: none;
@@ -79,7 +80,7 @@ $font-size: 13px;
   .arrow {
     cursor: pointer;
     fill: none;
-    stroke: $text-muted;
+    stroke: $gray-600;
     stroke-width: 1.5px;
 
     &.active {
@@ -106,7 +107,7 @@ $font-size: 13px;
     font-weight: lighter;
 
     &.big {
-      fill: $gray-700 !important;
+      fill: $primary !important;
       text-anchor: start;
     }
   }
@@ -168,13 +169,6 @@ $font-size: 13px;
     }
 
     &:hover:not(.disabled) {
-      .bar {
-        fill: darken($primary, 5);
-      }
-
-      .bar-progress {
-        fill: darken($success, 5);
-      }
 
       .bar-handle {
         visibility: visible;
@@ -203,6 +197,10 @@ $font-size: 13px;
   .hide {
     display: none;
   }
+}
+
+.gantt, .gantt-swimlanes {
+  border: 1px solid #ced4da;
 }
 
 .gantt-swimlanes-container {

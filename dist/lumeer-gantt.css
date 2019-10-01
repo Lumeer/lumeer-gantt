@@ -2,6 +2,7 @@
   position: relative;
   overflow: auto;
   font-size: 13px;
+  padding-bottom: 15px;
 }
 
 .gantt .grid-background {
@@ -31,7 +32,7 @@
   opacity: 0.5;
 }
 .gantt .bar {
-  fill: #253746;
+  fill: #7b8a8b;
   stroke-width: 0;
   transition: stroke-width 0.3s ease;
   user-select: none;
@@ -39,7 +40,7 @@
 .gantt .arrow {
   cursor: pointer;
   fill: none;
-  stroke: #666;
+  stroke: #95a5a6;
   stroke-width: 1.5px;
 }
 .gantt .arrow.active {
@@ -62,7 +63,7 @@
   font-weight: lighter;
 }
 .gantt .bar-label.big {
-  fill: #7b8a8b !important;
+  fill: #253746 !important;
   text-anchor: start;
 }
 .gantt .bar-handle {
@@ -111,12 +112,6 @@
 .gantt .bar-wrapper .bar-group-wrapper {
   outline: none;
 }
-.gantt .bar-wrapper:hover:not(.disabled) .bar {
-  fill: #1c2a35;
-}
-.gantt .bar-wrapper:hover:not(.disabled) .bar-progress {
-  fill: #009a75;
-}
 .gantt .bar-wrapper:hover:not(.disabled) .bar-handle {
   visibility: visible;
   opacity: 1;
@@ -136,6 +131,10 @@
 }
 .gantt .hide {
   display: none;
+}
+
+.gantt, .gantt-swimlanes {
+  border: 1px solid #ced4da;
 }
 
 .gantt-swimlanes-container {

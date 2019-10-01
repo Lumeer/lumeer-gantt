@@ -58,9 +58,6 @@ export class GanttSvg {
     // wrapper for swimlanes
     private swimlanesContainer: HTMLDivElement;
 
-    // wrapper for pop-up
-    private popupContainer: HTMLDivElement;
-
     public gridSvg: GridSvg;
     public linesSvg: LinesSvg;
 
@@ -118,10 +115,6 @@ export class GanttSvg {
         parentElement.appendChild(this.swimlanesContainer);
         parentElement.appendChild(this.tasksContainer);
         this.tasksContainer.appendChild(this.svgContainer);
-
-        this.popupContainer = document.createElement('div');
-        this.popupContainer.classList.add('popup-wrapper');
-        this.tasksContainer.appendChild(this.popupContainer);
     }
 
     private setupOptions(options: GanttOptions) {
@@ -157,7 +150,6 @@ export class GanttSvg {
     public changeTasks(tasks: Task[], options?: GanttOptions) {
         const mergedOptions = options && createGanttOptions(options) || this.options;
         if (tasksChanged(this.tasks, tasks)) {
-            console.log('tasks changed', this.tasks, tasks);
             this.refreshGantt(tasks, mergedOptions, true);
         } else {
             this.refreshGantt(this.tasks, mergedOptions);
@@ -166,9 +158,6 @@ export class GanttSvg {
 
     private refreshGantt(tasks: Task[], options: GanttOptions, force?: boolean) {
         if (force || !deepObjectsEquals(this.options, options)) {
-            if(!force){
-                console.log('options changed', this.options, options);
-            }
             this.options = options;
             setupLanguage(options.language);
             this.snapshotDate();
@@ -572,7 +561,7 @@ export class GanttSvg {
         const startDate = computeDateByPosition(this.options, this.settings, x1);
         const endDate = computeDateByPosition(this.options, this.settings, x2);
         const start = formatDate(startDate, this.options.dateFormat);
-        const end = formatDate(startDate, this.options.dateFormat);
+        const end = formatDate(endDate, this.options.dateFormat);
 
         return {
             id: generateId(),
@@ -601,16 +590,8 @@ export class GanttSvg {
         this.master.onSwimlaneResized && this.master.onSwimlaneResized(index, width);
     }
 
-    public onTaskDatesChanged(task: Task) {
-        this.master.onTaskDatesChanged && this.master.onTaskDatesChanged(task);
-    }
-
-    public onTaskProgressChanged(task: Task) {
-        this.master.onTaskProgressChanged && this.master.onTaskProgressChanged(task);
-    }
-
-    public onTaskSwimlanesChanged(task: Task) {
-        this.master.onTaskSwimlanesChanged && this.master.onTaskSwimlanesChanged(task);
+    public onTaskChanged(task: Task) {
+        this.master.onTaskChanged && this.master.onTaskChanged(task);
     }
 
     public onTaskDependencyAdded(fromTask: Task, toTask: Task) {

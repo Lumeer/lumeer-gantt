@@ -147,7 +147,7 @@ export class LinesSvg {
         this.swimLanesSvg.onKeyUp(event);
     }
 
-    public onDoubleClick(element: any){
+    public onDoubleClick(element: any) {
         this.barsSvgs.forEach(bar => bar.onDoubleClick(element));
     }
 
@@ -253,14 +253,8 @@ export class LinesSvg {
                 continue;
             }
 
-            if (bar.parentChanged()) {
-                this.gantt.onTaskSwimlanesChanged(cleanGanttTask(bar.task));
-                emittedTaskIds.push(bar.task.taskId);
-            } else if (bar.progressChanged()) {
-                this.gantt.onTaskProgressChanged(cleanGanttTask(bar.task));
-                emittedTaskIds.push(bar.task.taskId);
-            } else if (bar.datesChanged()) {
-                this.gantt.onTaskDatesChanged(cleanGanttTask(bar.task));
+            if (bar.parentChanged() || bar.progressChanged() || bar.datesChanged()) {
+                this.gantt.onTaskChanged(cleanGanttTask(bar.task));
                 emittedTaskIds.push(bar.task.taskId);
             }
         }
