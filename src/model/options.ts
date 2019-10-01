@@ -32,10 +32,9 @@ export interface GanttOptions {
 
     lockResize?: boolean;
     createTasks?: boolean;
-    resizeSwimLanes?: boolean;
+    resizeSwimlanes?: boolean;
     resizeTaskLeft?: boolean;
     resizeTaskRight?: boolean;
-    resizeTaskSwimlanes?: boolean;
     resizeProgress?: boolean;
     dragTaskSwimlanes?: boolean;
 }
@@ -78,10 +77,9 @@ export const defaultOptions: GanttOptions = {
 
     lockResize: true,
     createTasks: true,
-    resizeSwimLanes: true,
+    resizeSwimlanes: true,
     resizeTaskLeft: true,
     resizeTaskRight: true,
-    resizeTaskSwimlanes: true,
     resizeProgress: true,
     dragTaskSwimlanes: true,
 };

@@ -130,7 +130,7 @@ export class SwimlaneColumnSvg {
     }
 
     public renderResizeHandle(startFromHeader: boolean, height: number, y: number) {
-        if (this.gantt.options.resizeSwimLanes) {
+        if (this.gantt.options.resizeSwimlanes) {
             this.handleElement = createSVG('rect', {
                 x: this.handleX, y, width: handleWidth, height,
                 class: swimlaneResizeHandleClass,

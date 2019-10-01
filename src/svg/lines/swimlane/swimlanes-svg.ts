@@ -217,6 +217,11 @@ export class SwimlanesSvg {
         if (this.swimlaneWidthsDrag) {
             const changedIndex = (this.swimlaneWidths || []).findIndex((width, index) => this.swimlaneWidthsDrag[index] !== width);
             if (changedIndex !== -1) {
+                const info = this.gantt.options.swimlaneInfo && this.gantt.options.swimlaneInfo[changedIndex];
+                if (info) {
+                    info.width = this.swimlaneWidths[changedIndex];
+                }
+
                 this.gantt.onSwimlaneResized(changedIndex, this.swimlaneWidths[changedIndex]);
             }
         }

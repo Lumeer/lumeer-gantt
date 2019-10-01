@@ -360,7 +360,7 @@ function createSwimlanes(tasks: GanttTask[], info: GanttSwimlaneInfo[]): Swimlan
                 parentSwimLane = arr.find(s => s.value === task.swimlanes[0] || '');
             }
 
-            const isLastSwimLane = !task.swimlanes.slice(1).some(sl => !!sl);
+            const isLastSwimLane = task.swimlanes.length === 1;
             if (!parentSwimLane) {
                 parentSwimLane = {
                     value: task.swimlanes[0] || '',
@@ -368,6 +368,8 @@ function createSwimlanes(tasks: GanttTask[], info: GanttSwimlaneInfo[]): Swimlan
                     tasks: isLastSwimLane ? [task] : []
                 };
                 arr.push(parentSwimLane);
+            } else if (isLastSwimLane) {
+                parentSwimLane.tasks.push(task);
             }
 
             task.swimlanes.slice(1).forEach((swimLane, index) => {
