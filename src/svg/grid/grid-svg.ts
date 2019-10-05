@@ -143,7 +143,7 @@ export class GridSvg {
         const x = steps * getColumnWidth(this.gantt.options);
         const y = 0;
         const width = getColumnWidth(this.gantt.options) / stepHoursMultiplier(this.gantt.options.viewMode);
-        const height = getTableHeight(0, this.gantt.settings.rowHeights);
+        const height = getTableHeight(this.gantt.settings.headerHeight, this.gantt.settings.rowHeights);
 
         this.gridHighlightElement = createSVG('rect', {
             x,

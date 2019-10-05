@@ -187,7 +187,7 @@ export function getMarkerSize(scale = 3): { width: number, height: number } {
 }
 
 export function createDeleteIconElement(x: number, y: number, parent: HTMLElement | SVGElement): SVGElement {
-    const svg = createSVG('svg', {viewBox: '0 0 448 512', width: 13, height: 13, class: 'icon-delete', x, y}, parent);
+    const svg = createSVG('svg', {viewBox: '0 0 448 512', width: 17, height: 17, class: 'icon-delete', x, y}, parent);
     createSVG('path', {d: createTrashPath()}, svg);
     return svg;
 }
