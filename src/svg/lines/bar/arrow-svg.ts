@@ -77,7 +77,7 @@ export class ArrowSvg {
         if (!this.gantt.preventEventListeners) {
             this.setActive();
             this.gantt.linesSvg.setArrowActive(this.fromBar, this.toBar, true);
-            this.deleteIconElement = createDeleteIconElement(event.offsetX + 10, event.offsetY, this.gantt.layers.handle);
+            this.deleteIconElement = createDeleteIconElement(event.offsetX + 10, event.offsetY + 5, this.gantt.layers.handle);
             this.deleteClickListener = () => this.deleteArrow();
             this.deleteIconElement.addEventListener('click', this.deleteClickListener);
         }

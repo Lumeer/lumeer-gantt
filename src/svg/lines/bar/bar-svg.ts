@@ -109,7 +109,7 @@ export class BarSvg {
     }
 
     public get barWidth(): number {
-        return this.x2 - this.x1;
+        return Math.max(this.x2 - this.x1, 1);
     }
 
     public get width(): number {
@@ -274,7 +274,7 @@ export class BarSvg {
                 style: this.task.barColor ? 'fill:' + this.task.barColor : '',
             }, this.barGroupElement);
 
-            animateSVG(this.barElement, 'width', 0, this.barWidth);
+            animateSVG(this.barElement, 'width', 0, width);
         }
 
     }
@@ -719,29 +719,7 @@ export class BarSvg {
     }
 
     private checkArrowsEndpoints() {
-        let containsArrowFromStart = false;
-        let containsArrowFromEnd = false;
-
-        for (const arrow of this.fromArrowsSvgs) {
-            containsArrowFromStart = containsArrowFromStart || arrow.drawsFromStart;
-            containsArrowFromEnd = containsArrowFromEnd || arrow.drawsFromEnd;
-        }
-
-        if (this.endpointStartElement) {
-            if (containsArrowFromStart) {
-                this.endpointStartElement.classList.add('visible');
-            } else {
-                this.endpointStartElement.classList.remove('visible');
-            }
-        }
-
         if (this.endpointEndElement) {
-            if (containsArrowFromEnd) {
-                this.endpointEndElement.classList.add('visible');
-            } else {
-                this.endpointEndElement.classList.remove('visible');
-            }
-
             this.checkEndpointEndClickListener();
         }
     }

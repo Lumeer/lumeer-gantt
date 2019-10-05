@@ -357,7 +357,7 @@ function createSwimlanes(tasks: GanttTask[], info: GanttSwimlaneInfo[]): Swimlan
             let currentMaxLevel = 1;
             let parentSwimLane: Swimlane;
             if (!info[0] || !info[0].static) {
-                parentSwimLane = arr.find(s => s.value === task.swimlanes[0] || '');
+                parentSwimLane = arr.find(s => s.value === (task.swimlanes[0] || ''));
             }
 
             const isLastSwimLane = task.swimlanes.length === 1;
@@ -375,7 +375,7 @@ function createSwimlanes(tasks: GanttTask[], info: GanttSwimlaneInfo[]): Swimlan
             task.swimlanes.slice(1).forEach((swimLane, index) => {
                 let childSwimLane: Swimlane;
                 if (!info[index + 1] || !info[index + 1].static) {
-                    childSwimLane = parentSwimLane.children.find(s => s.value === swimLane || '');
+                    childSwimLane = parentSwimLane.children.find(s => s.value === (swimLane || ''));
                 }
 
                 const shouldAddTask = index === task.swimlanes.length - 2;
