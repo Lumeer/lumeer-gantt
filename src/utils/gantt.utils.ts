@@ -34,6 +34,7 @@ export function createGanttOptions(options: GanttOptions): GanttOptions {
     mergedOptions.headerHeight = Math.max(mergedOptions.headerHeight, 30);
     mergedOptions.columnWidth = Math.max(mergedOptions.columnWidth, 20);
     mergedOptions.barHeight = Math.max(mergedOptions.barHeight, 10);
+    mergedOptions.maxInitialSwimlaneWidth = Math.max(mergedOptions.maxInitialSwimlaneWidth, 30);
     return mergedOptions;
 }
 

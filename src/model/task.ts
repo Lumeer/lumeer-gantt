@@ -30,6 +30,9 @@ export interface Task {
     progressColor?: string;
     textColor?: string;
 
+    minProgress?: number;
+    maxProgress?: number;
+
     startDrag: boolean;
     endDrag: boolean;
     progressDrag: boolean;

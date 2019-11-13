@@ -33,7 +33,7 @@ import {
     getY, hideElements, setAttribute,
     setAttributes, showElements
 } from '../../../utils/svg.utils';
-import {arraySubtract, closestElement, isNotNullOrUndefined} from '../../../utils/common.utils';
+import {arraySubtract, closestElement, isNotNullOrUndefined, isNullOrUndefined} from '../../../utils/common.utils';
 import {BarsSvg} from './bars-svg';
 import {ArrowSvg} from './arrow-svg';
 import {GanttSvg} from '../../gantt-svg';
@@ -655,12 +655,44 @@ export class BarSvg {
 
         const newProgressWidth = x + this.barWidth * this.progressDrag / 100;
         const newProgress = Math.max(Math.round(newProgressWidth / this.barWidth * 100), 0);
-        if ((dx > 0 && newProgress > this.progress) || (dx < 0 && newProgress < this.progress)) {
-            const progressDiff = newProgress - this.progress;
-            this.progress = newProgress;
+        const newProgressByRange = this.checkProgressByRange(newProgress, dx);
+
+        if (isNullOrUndefined(newProgressByRange)) {
+            return;
+        }
+
+        if ((dx > 0 && newProgressByRange > this.progress) || (dx < 0 && newProgressByRange < this.progress)) {
+            const progressDiff = newProgressByRange - this.progress;
+            this.progress = newProgressByRange;
             this.updateProgressPosition();
             this.emitProgressDragging(progressDiff);
         }
+    }
+
+    private checkProgressByRange(progress: number, dx: number): number | null {
+        const minProgress = isNotNullOrUndefined(this.task.minProgress) ? this.task.minProgress : 0;
+        const maxProgress = isNotNullOrUndefined(this.task.maxProgress) ? this.task.maxProgress : Number.MAX_SAFE_INTEGER;
+
+        if (progress >= minProgress && progress <= maxProgress) {
+            return progress;
+        }
+
+        if (dx > 0) {
+            if (progress < minProgress) {
+                return progress;
+            } else if (progress > maxProgress) {
+                return maxProgress;
+            }
+
+        } else if (dx < 0) {
+            if (progress > maxProgress) {
+                return progress;
+            } else if (progress < minProgress) {
+                return minProgress;
+            }
+        }
+
+        return null;
     }
 
     private updateProgressPosition() {

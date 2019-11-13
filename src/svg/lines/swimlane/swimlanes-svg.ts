@@ -81,7 +81,7 @@ export class SwimlanesSvg {
                 arr[index] = header.width;
             } else {
                 helperTextSvg.innerHTML = title;
-                arr[index] = helperTextSvg.getBoundingClientRect().width + 2 * this.gantt.options.padding;
+                arr[index] = Math.min(helperTextSvg.getBoundingClientRect().width + 2 * this.gantt.options.padding, this.gantt.options.maxInitialSwimlaneWidth);
             }
             return arr;
         }, []);
