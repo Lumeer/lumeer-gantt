@@ -28,6 +28,7 @@ export interface GanttOptions {
     padding?: number,
     dateFormat?: string,
     language?: string
+    maxInitialSwimlaneWidth?: number;
     swimlaneInfo?: GanttSwimlaneInfo[];
 
     lockResize?: boolean;
@@ -74,6 +75,7 @@ export const defaultOptions: GanttOptions = {
     viewMode: GanttMode.Day,
     dateFormat: 'YYYY-MM-DD HH',
     language: 'en',
+    maxInitialSwimlaneWidth: 200,
 
     lockResize: true,
     createTasks: true,

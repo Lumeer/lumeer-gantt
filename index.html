@@ -2,22 +2,22 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <title>Simple Gantt</title>
-    <style>
-        body {
-            font-family: sans-serif;
-            background: #ccc;
-        }
-    </style>
-    <link rel="stylesheet" href="dist/lumeer-gantt.css"/>
-    <script src="dist/lumeer-gantt.js"></script>
+   <meta charset="UTF-8">
+   <title>Simple Gantt</title>
+   <style>
+      body {
+         font-family: sans-serif;
+         background: #ccc;
+      }
+   </style>
+   <link rel="stylesheet" href="dist/lumeer-gantt.css"/>
+   <script src="dist/lumeer-gantt.js"></script>
 </head>
 
 <body>
 <div class="container">
-    <h2>Interactive Gantt Chart entirely made in SVG!</h2>
-    <div class="gantt-target"></div>
+   <h2>Interactive Gantt Chart entirely made in SVG!</h2>
+   <div class="gantt-target"></div>
 </div>
 <button type="button" onclick='ganttChart.changeViewMode("Quarter Day")'>Quarter Day</button>
 <button type="button" onclick='ganttChart.changeViewMode("Half Day")'>Half Day</button>
@@ -33,9 +33,9 @@
     const tasks = [
         {
             id: "T0",
-            name: 'T000000',
+            name: '<b>Some html</b>',
             start: '2019-10-01',
-            end: '2019-10-01',
+            end: '2019-10-20',
             progress: 3,
             allowedDependencies: ['T9', 'T1', 'T3'],
             swimlanes: ['Ahoj', 'A'],
@@ -45,6 +45,9 @@
             startDrag: true,
             endDrag: true,
             editable: true,
+            minProgress: 20,
+            maxProgress: 80,
+            progressDrag: true,
             metadata: {a: 'lala', b: new Date()},
         },
         {
@@ -52,17 +55,19 @@
             name: 'T111111',
             start: '2019-10-08',
             end: '2019-10-10',
-            progress: 12,
+            progress: 120,
             allowedDependencies: ['T0'],
             swimlanes: ['Ahoj', null],
             barColor: 'rgb(34,120,255)',
             progressColor: 'green',
             startDrag: true,
+            maxProgress: 100,
             endDrag: true,
+            progressDrag: true,
             editable: true,
         },
         {
-            id: "T1",
+            id: "T444",
             name: 'T111111',
             start: '2019-10-08',
             end: '2019-10-10',
@@ -71,6 +76,8 @@
             barColor: 'rgb(34,120,255)',
             progressColor: 'orange',
             startDrag: true,
+            minProgress: 30,
+            progressDrag: true,
             endDrag: true,
             editable: true,
         },
@@ -104,8 +111,8 @@
         {
             id: "T4",
             name: 'T4444444',
-            start: '2020-02-05',
-            end: '2020-02-06',
+            start: '2019-02-05',
+            end: '2019-02-06',
             swimlanes: [null, null],
             barColor: 'rgb(34,120,255)',
             startDrag: true,
@@ -116,8 +123,7 @@
     const ganttChart = new Gantt(".gantt-target", tasks, {
         columnWidth: 50,
         swimlaneInfo: [{
-            width: 300,
-            title: 'First Attr',
+            title: 'First Attr First AttrFirst AttrFirst AttrFirst AttrFirst AttrFirst Attr First AttrFirst AttrFirst AttrFirst AttrFirst AttrFirst AttrFirst AttrFirst AttrFirst AttrFirst AttrFirst AttrFirst AttrFirst AttrFirst Attr First Attr First AttrFirst AttrFirst AttrFirst AttrFirst AttrFirst Attr First AttrFirst AttrFirst AttrFirst AttrFirst AttrFirst AttrFirst AttrFirst AttrFirst AttrFirst AttrFirst AttrFirst AttrFirst AttrFirst AttrFirst Attr First AttrFirst AttrFirst AttrFirst AttrFirst AttrFirst Attr First AttrFirst AttrFirst AttrFirst AttrFirst AttrFirst AttrFirst AttrFirst AttrFirst AttrFirst AttrFirst AttrFirst AttrFirst AttrFirst AttrFirst Attr First AttrFirst AttrFirst AttrFirst AttrFirst AttrFirst Attr First AttrFirst AttrFirst AttrFirst AttrFirst AttrFirst AttrFirst AttrFirst AttrFirst AttrFirst AttrFirst AttrFirst AttrFirst AttrFirst AttrFirst Attr First AttrFirst AttrFirst AttrFirst AttrFirst AttrFirst Attr First AttrFirst AttrFirst AttrFirst AttrFirst AttrFirst AttrFirst AttrFirst AttrFirst AttrFirst AttrFirst AttrFirst AttrFirst AttrFirst AttrFirst Attr First AttrFirst AttrFirst AttrFirst AttrFirst AttrFirst Attr First AttrFirst AttrFirst AttrFirst AttrFirst AttrFirst AttrFirst AttrFirst AttrFirst AttrFirst AttrFirst AttrFirst AttrFirst AttrFirst AttrFirst Attr First AttrFirst AttrFirst AttrFirst AttrFirst AttrFirst Attr First AttrFirst AttrFirst AttrFirst AttrFirst AttrFirst AttrFirst AttrFirst AttrFirst AttrFirst AttrFirst AttrFirst AttrFirst AttrFirst AttrFirst Attr First AttrFirst AttrFirst AttrFirst AttrFirst AttrFirst Attr First AttrFirst AttrFirst AttrFirst AttrFirst AttrFirst AttrFirst AttrFirst AttrFirst AttrFirst AttrFirst AttrFirst AttrFirst AttrFirst AttrFirst Attr First AttrFirst AttrFirst AttrFirst AttrFirst AttrFirst Attr First AttrFirst AttrFirst AttrFirst AttrFirst AttrFirst AttrFirst AttrFirst AttrFirst AttrFirst AttrFirst AttrFirst AttrFirst AttrFirst AttrFirst Attr First AttrFirst AttrFirst AttrFirst AttrFirst AttrFirst Attr First AttrFirst AttrFirst AttrFirst AttrFirst AttrFirst AttrFirst AttrFirst AttrFirst AttrFirst AttrFirst AttrFirst AttrFirst AttrFirst Attr',
             color: 'red',
             background: '#A2BAFF',
         }, {
@@ -127,6 +133,7 @@
         language: 'sk',
         viewMode: 'Day',
         lockResize: true,
+        maxInitialSwimlaneWidth: 100
     });
 
     ganttChart.onTaskDependencyAdded = (fromTask, toTask) => console.log('onTaskDependencyAdded', fromTask, toTask);
