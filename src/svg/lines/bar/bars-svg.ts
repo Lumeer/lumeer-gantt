@@ -273,7 +273,7 @@ export class BarsSvg {
         this.addBarSvg(barSvg, barY);
         this.gantt.linesSvg.barSvgsMap[task.id] = barSvg;
 
-        this.gantt.onTaskCreated(cleanGanttTask(task));
+        this.gantt.onTaskCreated(cleanGanttTask(task, task.id));
     }
 
     public addBarSvg(barSvg: BarSvg, barY: number) {

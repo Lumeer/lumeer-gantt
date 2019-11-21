@@ -54,4 +54,8 @@ export default class Gantt {
         this.ganttSvg.changeOptions(options);
     }
 
+    public removeTask(task: Task) {
+        this.ganttSvg.removeTask(task);
+    }
+
 }

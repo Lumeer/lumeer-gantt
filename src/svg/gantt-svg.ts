@@ -166,6 +166,11 @@ export class GanttSvg {
         }
     }
 
+    public removeTask(taskToRemove: Task) {
+        const tasks = this.tasks.filter(task => task.id !== taskToRemove.id);
+        this.refreshGantt(tasks, this.options, true);
+    }
+
     private snapshotDate() {
         const svgParent = this.svgContainer && this.svgContainer.parentElement;
         if (!svgParent) {
@@ -406,9 +411,16 @@ export class GanttSvg {
         }
     }
 
-    private onDragStart(element: any) {
-        this.linesSvg && this.linesSvg.handleDragStart(element);
-        this.gridSvg && this.gridSvg.handleDragStart(element);
+    private onDragStart(element: any, event?: any) {
+        if (event && event.target && this.options.createTasks && this.gridSvg.isTaskGridElement(event.target)) {
+            const barsSvg = this.linesSvg.findBarsSvgByY(event.offsetY);
+            if (barsSvg) {
+                this.createDragBar(barsSvg, event.offsetX, event.offsetY);
+            }
+        } else {
+            this.linesSvg && this.linesSvg.handleDragStart(element);
+            this.gridSvg && this.gridSvg.handleDragStart(element);
+        }
     }
 
     private onDrag(element: any, dx: number, dy: number, x: number, y: number) {
@@ -465,15 +477,15 @@ export class GanttSvg {
             offsetY = currentOffsetY = event.clientY;
             targetElement = event.target;
 
-            _this.onDragStart(targetElement);
+            _this.onDragStart(targetElement, event);
         }
 
         function drag(event: any) {
+            event.preventDefault();
+
             if (_this.preventEventListeners) {
                 return;
             }
-
-            event.preventDefault();
 
             const dx = event.clientX - currentOffsetX;
             const dy = event.clientY - currentOffsetY;
@@ -564,7 +576,7 @@ export class GanttSvg {
         const end = formatDate(endDate, this.options.dateFormat);
 
         return {
-            id: generateId(),
+            id: generateId("new"),
             taskId: null,
             name: '',
             startDate, endDate, start, end,

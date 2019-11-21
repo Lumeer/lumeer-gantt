@@ -499,8 +499,8 @@ function taskChanged(gt1: GanttTask, t2: Task): boolean {
     })
 }
 
-export function cleanGanttTask(task: GanttTask): Task {
-    const id = task.taskId;
+export function cleanGanttTask(task: GanttTask, overrideId?: any): Task {
+    const id = overrideId || task.taskId;
     const dependencies = uniqueValues((task.dependencies || []).map(dep => dep.split('_')[0]));
     const allowedDependencies = uniqueValues((task.allowedDependencies || []).map(dep => dep.split('_')[0]));
 
