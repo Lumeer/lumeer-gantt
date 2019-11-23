@@ -19,7 +19,7 @@
 
 import {BarSvg} from '../lines/bar/bar-svg';
 import {GanttSvg} from '../gantt-svg';
-import {createSVG, setAttribute} from '../../utils/svg.utils';
+import {createSVG, getOffset, setAttribute} from '../../utils/svg.utils';
 import {createArrowPath} from '../../utils/arrow.utils';
 import {arrowClass} from '../lines/bar/arrow-svg';
 
@@ -54,7 +54,8 @@ export class CreateArrowsSvg {
     private bindListeners() {
         const _this = this;
         this.listeners.drag = function dragFn(event) {
-            _this.onDrag(event.offsetX, event.offsetY);
+            const offset = getOffset(event);
+            _this.onDrag(offset.x, offset.y);
         };
 
         this.gantt.svgContainer.addEventListener('mousemove', this.listeners.drag);
