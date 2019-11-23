@@ -18,7 +18,7 @@
  */
 
 import {GanttSvg} from '../gantt-svg';
-import {createSVG, setAttributes} from '../../utils/svg.utils';
+import {createSVG, getOffset, setAttributes} from '../../utils/svg.utils';
 import {barGroupClass, barGroupWrapperClass, barWrapperClass} from '../lines/bar/bar-svg';
 import {computeNearestTickPosition} from '../../utils/gantt.utils';
 import {BarsSvg} from '../lines/bar/bars-svg';
@@ -81,7 +81,7 @@ export class CreateBarSvg {
     private bindListeners() {
         const _this = this;
         this.listeners.drag = function dragFn(event) {
-            _this.onDrag(event.offsetX);
+            _this.onDrag(getOffset(event).x);
         };
 
         this.gantt.svgContainer.addEventListener('mousemove', this.listeners.drag);

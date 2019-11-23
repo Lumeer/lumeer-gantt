@@ -18,7 +18,7 @@
  */
 
 import {BarSvg} from './bar-svg';
-import {createDeleteIconElement, createSVG, setAttribute} from '../../../utils/svg.utils';
+import {createDeleteIconElement, createSVG, getOffset, setAttribute} from '../../../utils/svg.utils';
 import {GanttSvg} from '../../gantt-svg';
 import {createArrowPath} from '../../../utils/arrow.utils';
 
@@ -77,7 +77,8 @@ export class ArrowSvg {
         if (!this.gantt.preventEventListeners) {
             this.setActive();
             this.gantt.linesSvg.setArrowActive(this.fromBar, this.toBar, true);
-            this.deleteIconElement = createDeleteIconElement(event.offsetX + 10, event.offsetY + 5, this.gantt.layers.handle);
+            const offset = getOffset(event);
+            this.deleteIconElement = createDeleteIconElement(offset.x + 10, offset.y + 5, this.gantt.layers.handle);
             this.deleteClickListener = () => this.deleteArrow();
             this.deleteIconElement.addEventListener('click', this.deleteClickListener);
         }

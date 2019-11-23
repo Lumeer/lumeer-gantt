@@ -230,3 +230,9 @@ function createTrashPath(): string {
     V48
     a16 16 0 0 0-16-16z`;
 }
+
+export function getOffset(event: any): { x: number, y: number } {
+    const x = Math.max(event.offsetX || 0, event.layerX || 0);
+    const y = Math.max(event.offsetY || 0, event.layerY || 0);
+    return {x, y};
+}

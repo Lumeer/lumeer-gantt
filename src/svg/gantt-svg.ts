@@ -30,7 +30,7 @@ import {
     getOrCreateWrapperElements, getSettingsTableHeight,
     stepHoursMultiplier, tasksChanged
 } from '../utils/gantt.utils';
-import {createSVG, setAttributes} from '../utils/svg.utils';
+import {createSVG, getOffset, setAttributes} from '../utils/svg.utils';
 import {arraySubtract, deepObjectsEquals, isNotNullOrUndefined} from '../utils/common.utils';
 import {
     addToDate,
@@ -413,9 +413,10 @@ export class GanttSvg {
 
     private onDragStart(element: any, event?: any) {
         if (event && event.target && this.options.createTasks && this.gridSvg.isTaskGridElement(event.target)) {
-            const barsSvg = this.linesSvg.findBarsSvgByY(event.offsetY);
+            const offset = getOffset(event);
+            const barsSvg = this.linesSvg.findBarsSvgByY(offset.y);
             if (barsSvg) {
-                this.createDragBar(barsSvg, event.offsetX, event.offsetY);
+                this.createDragBar(barsSvg, offset.x, offset.y);
             }
         } else {
             this.linesSvg && this.linesSvg.handleDragStart(element);
@@ -527,9 +528,10 @@ export class GanttSvg {
 
     private onDoubleClick(event: any) {
         if (this.options.createTasks && this.gridSvg.isTaskGridElement(event.target)) {
-            const barsSvg = this.linesSvg.findBarsSvgByY(event.offsetY);
+            const offset = getOffset(event);
+            const barsSvg = this.linesSvg.findBarsSvgByY(offset.y);
             if (barsSvg) {
-                this.createDragBar(barsSvg, event.offsetX, event.offsetY);
+                this.createDragBar(barsSvg, offset.x, offset.y);
             }
         } else {
             this.linesSvg.onDoubleClick(event.target);
