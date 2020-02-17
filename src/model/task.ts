@@ -23,7 +23,7 @@ export interface Task {
     start: string;
     end: string;
     progress: number;
-    swimlanes: string[];
+    swimlanes: {value?: any, title: string, data?: any}[];
     dependencies: string[];
     allowedDependencies: string[];
     barColor?: string,

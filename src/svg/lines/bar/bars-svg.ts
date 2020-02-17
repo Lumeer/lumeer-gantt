@@ -45,14 +45,14 @@ export class BarsSvg {
         return this.y;
     }
 
-    public get swimlaneTitles(): string[] {
-        return (this.swimlanes || []).map(swimlane => swimlane && swimlane.value || '');
+    public get swimlaneObjects(): { value: any, title: string, data?: any }[] {
+        return (this.swimlanes || []).map(obj => ({value: obj?.value, title: obj?.title, data: obj?.data}));
     }
 
     constructor(private tasks: GanttTask[],
                 private yPosition: number,
                 private gantt: GanttSvg,
-                private  swimlanes: GanttSwimlane[]) {
+                private swimlanes: GanttSwimlane[]) {
         this.y = yPosition;
     }
 
@@ -266,7 +266,7 @@ export class BarsSvg {
     }
 
     public createBarSvg(task: GanttTask, barY: number) {
-        task.swimlanes = this.swimlaneTitles;
+        task.swimlanes = this.swimlaneObjects;
 
         const barSvg = new BarSvg(task, barY - this.gantt.options.padding / 2, this.gantt, this);
         barSvg.render();
