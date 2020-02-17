@@ -24,7 +24,7 @@ import {GanttLine, GanttSettings, GanttSwimlane, GanttWrapper} from '../model/ga
 import {
     arrayContainsSameItems,
     completeArrayWithNulls,
-    isArray, isNullOrUndefined,
+    isArray, isNotNullOrUndefined, isNullOrUndefined,
     mergeFlatObjects,
     uniqueValues
 } from './common.utils';
@@ -243,7 +243,9 @@ interface Swimlanes {
 }
 
 interface Swimlane {
-    value: string;
+    value: any;
+    title: string;
+    data?: any;
     children?: Swimlane[];
     tasks?: GanttTask[];
 }
@@ -274,9 +276,9 @@ export function createGanttLines(tasks: GanttTask[], options: GanttOptions): Gan
 }
 
 function iterateGanttLines(line: Swimlane, ganttLines: GanttLine[], ganttSwimLanes: GanttSwimlane[], maxLevel: number) {
-    const id = generateId(line.value);
+    const id = generateId(line.title);
 
-    const newSwimLanes = [...ganttSwimLanes, {id, value: line.value}];
+    const newSwimLanes = [...ganttSwimLanes, {id, value: swimlaneValue(line), title: line.title, data: line.data}];
 
     (line.children || []).forEach(l => iterateGanttLines(l, ganttLines, newSwimLanes, maxLevel));
 
@@ -358,13 +360,15 @@ function createSwimlanes(tasks: GanttTask[], info: GanttSwimlaneInfo[]): Swimlan
             let currentMaxLevel = 1;
             let parentSwimLane: Swimlane;
             if (!info[0] || !info[0].static) {
-                parentSwimLane = arr.find(s => s.value === (task.swimlanes[0] || ''));
+                parentSwimLane = arr.find(s => swimlaneValue(s) === swimlaneValue(task.swimlanes[0]));
             }
 
             const isLastSwimLane = task.swimlanes.length === 1;
             if (!parentSwimLane) {
                 parentSwimLane = {
-                    value: task.swimlanes[0] || '',
+                    value: swimlaneValue(task.swimlanes[0]),
+                    title: isNotNullOrUndefined(task.swimlanes[0]) ? task.swimlanes[0].title : '',
+                    data: task.swimlanes[0]?.data,
                     children: [],
                     tasks: isLastSwimLane ? [task] : []
                 };
@@ -376,7 +380,7 @@ function createSwimlanes(tasks: GanttTask[], info: GanttSwimlaneInfo[]): Swimlan
             task.swimlanes.slice(1).forEach((swimLane, index) => {
                 let childSwimLane: Swimlane;
                 if (!info[index + 1] || !info[index + 1].static) {
-                    childSwimLane = parentSwimLane.children.find(s => s.value === (swimLane || ''));
+                    childSwimLane = parentSwimLane.children.find(s => swimlaneValue(s) === swimlaneValue(swimLane));
                 }
 
                 const shouldAddTask = index === task.swimlanes.length - 2;
@@ -385,7 +389,7 @@ function createSwimlanes(tasks: GanttTask[], info: GanttSwimlaneInfo[]): Swimlan
                         childSwimLane.tasks.push(task);
                     }
                 } else {
-                    childSwimLane = {value: swimLane || '', children: [], tasks: shouldAddTask ? [task] : []};
+                    childSwimLane = {value: swimlaneValue(swimLane), title: swimLane?.title || '', data: swimLane?.data, children: [], tasks: shouldAddTask ? [task] : []};
                     parentSwimLane.children.push(childSwimLane);
                 }
 
@@ -399,6 +403,10 @@ function createSwimlanes(tasks: GanttTask[], info: GanttSwimlaneInfo[]): Swimlan
         return arr;
     }, []);
     return {otherTasks, lines, maxLevel};
+}
+
+function swimlaneValue(swimlane: { value?: any, title: string }): any {
+    return swimlane && (isNotNullOrUndefined(swimlane.value) ? swimlane.value : swimlane.title) || '';
 }
 
 export function getOrCreateWrapperElements(wrapper: GanttWrapper): { svgElement: SVGElement, wrapperElement: HTMLElement } {

@@ -1,6 +1,6 @@
 {
   "name": "@lumeer/lumeer-gantt",
-  "version": "1.0.17",
+  "version": "1.0.18",
   "description": "A simple, modern, interactive gantt library for the web",
   "main": "dist/lumeer-gantt.js",
   "types": "dist/index.d.ts",
@@ -45,7 +45,7 @@
     "rollup-plugin-node-resolve": "^5.2.0",
     "rollup-watch": "^4.3.1",
     "postcss-simple-vars": "^5.0.2",
-    "typescript": "^3.6.3"
+    "typescript": "^3.7.5"
   },
   "eslintIgnore": [
     "dist"

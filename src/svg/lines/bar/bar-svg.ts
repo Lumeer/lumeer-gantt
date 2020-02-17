@@ -783,7 +783,7 @@ export class BarSvg {
         this.task.endDate = computeDateByPosition(this.gantt.options, this.gantt.settings, this.x2);
         this.task.end = formatDate(this.task.endDate, this.gantt.options.dateFormat);
         this.task.progress = this.progress;
-        this.task.swimlanes = this.parent.swimlaneTitles;
+        this.task.swimlanes = this.parent.swimlaneObjects;
     }
 
     public dragBar(dx1: number, dx2: number) {
@@ -862,7 +862,7 @@ export class BarSvg {
         if (isNotNullOrUndefined(this.parentSvgDrag)) {
             this.parentSvg = this.parentSvgDrag;
             this.parentSvgDrag = null;
-            this.task.swimlanes = this.parentSvg.swimlaneTitles;
+            this.task.swimlanes = this.parentSvg.swimlaneObjects;
         }
         if (positionUpdated) {
             this.updatePositions();
