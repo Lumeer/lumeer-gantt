@@ -88,14 +88,14 @@ export class SwimlaneColumnSvg {
                 class: `swimlane-rect ${className || ''}`,
             }, swimLaneGroup);
 
-            if (swimLane && swimLane.value) {
+            if (swimLane?.value) {
                 this.textElements[index] = createSVG('text', {
                     x: this.x + this.gantt.options.padding,
                     y: y + height / 2,
                     'dominant-baseline': 'middle',
                     'text-anchor': 'start',
                     class: 'swimlane-label',
-                }, swimLaneGroup, swimLane.value);
+                }, swimLaneGroup, swimLane?.title || swimLane?.value);
             }
         }
 

@@ -50,8 +50,8 @@ export class SwimlanesSvg {
     private computeSwimLaneWidths(): number[] {
         const longestTitles = (this.gantt.lines || []).reduce<string[]>((arr, line) => {
             line.swimlanes.forEach((sl, index) => {
-                if (sl && (!arr[index] || arr[index].length < sl.value.length)) {
-                    arr[index] = sl.value;
+                if (sl && (!arr[index] || arr[index].length < sl.title.length)) {
+                    arr[index] = sl.title;
                 }
             });
             return arr;
@@ -287,5 +287,5 @@ export class SwimlanesSvg {
 }
 
 function isEmptyLine(swimlanes: GanttSwimlane[]): boolean {
-    return swimlanes.every(sw => !sw || !sw.value);
+    return swimlanes.every(sw => !sw || !sw.title);
 }
