@@ -289,16 +289,27 @@ export class BarsSvg {
         }
     }
 
-    public removeBarSvg(barSvg: BarSvg) {
+    public removeBarSvg(barSvg: BarSvg, checkHeight = true) {
+        const heightCopy = this.height;
         for (let i = 0; i < this.barLinesSvgs.length; i++) {
             if (this.barLinesSvgs[i]) {
                 this.barLinesSvgs[i] = this.barLinesSvgs[i].filter(svg => svg.id !== barSvg.id);
             }
         }
+        if (checkHeight) {
+            const bars = [...this.barSvgs];
+            this.barLinesSvgs = [];
+            bars.forEach(bar => this.checkBarPosition(bar));
+
+            if (checkHeight && heightCopy !== this.height) {
+                this.gantt.linesSvg.onLineResized(this, this.height - heightCopy);
+            }
+
+        }
     }
 
     public updateBarSvgLine(barSvg: BarSvg, barY: number) {
-        this.removeBarSvg(barSvg);
+        this.removeBarSvg(barSvg, false);
         this.addBarSvg(barSvg, barY);
     }
 
