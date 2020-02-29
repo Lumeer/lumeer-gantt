@@ -248,10 +248,10 @@ export class SwimlaneColumnSvg {
         });
         this.textElements.forEach((element, index) => {
             if (element !== this.textElements[index - 1]) {
-                const height = this.elementHeight(index);
-                setAttributes(element, {x: this.x + this.gantt.options.padding, y: this.ys[index] + height / 2});
+                const x = this.x + this.gantt.options.padding;
+                setAttributes(element, {x});
                 if (this.textBackgroundElements[index]) {
-                    setAttributes(this.textBackgroundElements[index], {x: this.x + this.gantt.options.padding, y: this.ys[index] + height / 2});
+                    setAttributes(this.textBackgroundElements[index], {x: x - this.backgroundPaddingVertical});
                 }
             }
         });
