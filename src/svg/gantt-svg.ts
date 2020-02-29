@@ -25,10 +25,9 @@ import {GanttTask, Task} from '../model/task';
 import {
     addToDateByMode, computeDateByPosition,
     createGanttLines, createGanttOptions,
-    createGanttTasksMap,
-    datePadding, generateId, getColumnWidth,
+    createGanttTasksMap, generateId, getColumnWidth,
     getOrCreateWrapperElements, getSettingsTableHeight,
-    stepHoursMultiplier, tasksChanged
+    stepHoursMultiplier, tasksChanged, setupRange, datePadding
 } from '../utils/gantt.utils';
 import {createSVG, getOffset, setAttributes} from '../utils/svg.utils';
 import {arraySubtract, deepObjectsEquals, isNotNullOrUndefined} from '../utils/common.utils';
@@ -39,7 +38,6 @@ import {
     isAfter, isBefore,
     now,
     setupLanguage,
-    startOf,
     startOfToday
 } from '../utils/date.utils';
 import {CreateArrowsSvg} from './drag/create-arrows-svg';
@@ -105,6 +103,9 @@ export class GanttSvg {
             this.svgContainer = createSVG('svg', {class: 'gantt'}, wrapperElement);
         }
 
+        wrapperElement.addEventListener('scroll', event => console.log(1, event));
+        wrapperElement.addEventListener('onscroll', event => console.log(2, event));
+
         this.swimlanesContainer = document.createElement('div');
         this.swimlanesContainer.classList.add('gantt-swimlanes-container');
 
@@ -160,10 +161,29 @@ export class GanttSvg {
         if (force || !deepObjectsEquals(this.options, options)) {
             this.options = options;
             setupLanguage(options.language);
-            this.snapshotDate();
+            if (!this.viewportWidthChangedALot(this.tasks, tasks, options)) {
+                this.snapshotDate();
+            }
             this.setupSwimLanes(tasks, this.options);
             this.setupAndRender();
         }
+    }
+
+    private viewportWidthChangedALot(previousTasks: Task[], currentTasks: Task[], options: GanttOptions): boolean {
+        if (previousTasks.length === 0 && currentTasks.length > 0) {
+            return true;
+        }
+        if (!this.settings.minDate || !this.settings.maxDate) {
+            return true;
+        }
+
+        const currentGanttTasksMap = createGanttTasksMap(currentTasks, options).tasksMap;
+        const {minDate, maxDate} = setupRange(Object.values(currentGanttTasksMap), options);
+
+        const {value, scale} = datePadding(options.viewMode);
+        const previousMinDate = addToDate(this.settings.minDate, -value, scale);
+        const previousMaxDate = addToDate(this.settings.minDate, value, scale);
+        return (minDate.getTime() < previousMinDate.getTime() || maxDate.getTime() > previousMaxDate.getTime())
     }
 
     public removeTask(taskToRemove: Task) {
@@ -172,7 +192,7 @@ export class GanttSvg {
     }
 
     private snapshotDate() {
-        const svgParent = this.svgContainer && this.svgContainer.parentElement;
+        const svgParent = this.svgContainer?.parentElement;
         if (!svgParent) {
             return;
         }
@@ -196,43 +216,9 @@ export class GanttSvg {
     }
 
     private setupRange() {
-        let {minDate, maxDate} = Object.values(this.tasksMap).reduce((value, task) => {
-            if (!value.minDate || value.minDate.getTime() > task.startDate.getTime()) {
-                value.minDate = task.startDate;
-            }
-            if (!value.maxDate || value.maxDate.getTime() < task.endDate.getTime()) {
-                value.maxDate = task.endDate;
-            }
-            return value;
-        }, {minDate: null, maxDate: null});
-
-        const dateScale = this.getDateScaleByViewMode(this.options.viewMode);
-
-        if (!minDate || !maxDate) {
-            minDate = startOf(startOfToday(), dateScale);
-            maxDate = addToDate(minDate, 1, DateScale.Year);
-        } else {
-            minDate = startOf(minDate, dateScale);
-            maxDate = startOf(maxDate, dateScale);
-        }
-
-        const {value, scale} = datePadding(this.options.viewMode);
-        this.settings.minDate = addToDate(minDate, -value, scale);
-        this.settings.maxDate = addToDate(maxDate, value, scale);
-    }
-
-    private getDateScaleByViewMode(mode: GanttMode): DateScale {
-        switch (mode) {
-            case GanttMode.QuarterDay:
-            case GanttMode.HalfDay:
-            case GanttMode.Day:
-                return DateScale.Day;
-            case GanttMode.Week:
-            case GanttMode.Month:
-                return DateScale.Month;
-            case GanttMode.Year:
-                return DateScale.Year;
-        }
+        const {minDate, maxDate} = setupRange(this.tasks, this.options);
+        this.settings.minDate = minDate;
+        this.settings.maxDate = maxDate;
     }
 
     private setupDateValues() {
@@ -312,7 +298,7 @@ export class GanttSvg {
 
     private clear() {
         this.svgContainer.innerHTML = '';
-        Object.values(this.layers || {}).forEach(layer => layer && layer.remove());
+        Object.values(this.layers || {}).forEach(layer => layer?.remove());
     }
 
     private setupLayers() {
@@ -371,13 +357,15 @@ export class GanttSvg {
                 this.scrollToDate(firstTaskInPast.endDate);
                 return;
             }
+
+            this.scrollToToday();
         }
     }
 
     private findFirstTaskInFuture(): GanttTask {
         const nowDate = now();
         let firstTask: GanttTask = null;
-        Object.values(this.tasksMap || {}).forEach(task => {
+        this.tasks.forEach(task => {
             if (isAfter(task.startDate, nowDate) && (!firstTask || isBefore(task.startDate, firstTask.startDate))) {
                 firstTask = task;
             }
@@ -389,7 +377,7 @@ export class GanttSvg {
     private findFirstTaskInPast(): GanttTask {
         const nowDate = now();
         let firstTask: GanttTask = null;
-        Object.values(this.tasksMap || {}).forEach(task => {
+        this.tasks.forEach(task => {
             if (isBefore(task.endDate, nowDate) && (!firstTask || isAfter(task.endDate, firstTask.endDate))) {
                 firstTask = task;
             }
@@ -399,7 +387,7 @@ export class GanttSvg {
     }
 
     private scrollToDate(date: Date) {
-        const svgParent = this.svgContainer && this.svgContainer.parentElement;
+        const svgParent = this.svgContainer?.parentElement;
         if (svgParent) {
             const scrollWidth = svgParent.scrollWidth;
             const datesDiff = this.settings.maxDate.getTime() - this.settings.minDate.getTime();
@@ -412,33 +400,33 @@ export class GanttSvg {
     }
 
     private onDragStart(element: any, event?: any) {
-        if (event && event.target && this.options.createTasks && this.gridSvg.isTaskGridElement(event.target)) {
+        if (event?.target && this.options.createTasks && this.gridSvg.isTaskGridElement(event.target)) {
             const offset = getOffset(event);
             const barsSvg = this.linesSvg.findBarsSvgByY(offset.y);
             if (barsSvg) {
                 this.createDragBar(barsSvg, offset.x, offset.y);
             }
         } else {
-            this.linesSvg && this.linesSvg.handleDragStart(element);
-            this.gridSvg && this.gridSvg.handleDragStart(element);
+            this.linesSvg?.handleDragStart(element);
+            this.gridSvg?.handleDragStart(element);
         }
     }
 
     private onDrag(element: any, dx: number, dy: number, x: number, y: number) {
-        this.linesSvg && this.linesSvg.handleDrag(element, dx, dy, x, y);
+        this.linesSvg?.handleDrag(element, dx, dy, x, y);
     }
 
     private onDragEnd(element: any) {
-        this.linesSvg && this.linesSvg.handleDragEnd(element);
-        this.gridSvg && this.gridSvg.handleDragEnd(element);
+        this.linesSvg?.handleDragEnd(element);
+        this.gridSvg?.handleDragEnd(element);
     }
 
     private onKeyUp(event: KeyboardEvent) {
         if (event.key === 'Escape') {
             this.onEscapeKeyUp();
         }
-        this.linesSvg && this.linesSvg.onKeyUp(event);
-        this.gridSvg && this.gridSvg.onKeyUp(event);
+        this.linesSvg?.onKeyUp(event);
+        this.gridSvg?.onKeyUp(event);
         this.updateWrapperHeight();
     }
 

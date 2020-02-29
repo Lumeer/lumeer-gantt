@@ -34,6 +34,7 @@ export class SwimlaneColumnSvg {
 
     private rectElements: SVGElement[] = [];
     private textElements: SVGElement[] = [];
+    private textBackgroundElements: SVGElement[] = [];
 
     private headerRectElement: SVGElement;
     private headerTextElement: SVGElement;
@@ -63,10 +64,19 @@ export class SwimlaneColumnSvg {
         return this.x + this.width - handleWidth / 2;
     }
 
+    private get backgroundPaddingHorizontal(): number {
+        return (this.gantt?.options?.padding / 4) || 4;
+    }
+
+    private get backgroundPaddingVertical(): number {
+        return (this.gantt?.options?.padding / 2) || 8;
+    }
+
     public renderCell(swimLane: GanttSwimlane, index: number, height: number, y: number, isSameSwimlane: boolean, className?: string) {
         if (isSameSwimlane) {
             this.rectElements[index] = this.rectElements[index - 1];
             this.textElements[index] = this.textElements[index - 1];
+            this.textBackgroundElements[index] = this.textBackgroundElements[index - 1];
 
             if (this.rectElements[index]) {
                 addToAttribute(this.rectElements[index], 'height', height);
@@ -74,11 +84,13 @@ export class SwimlaneColumnSvg {
 
             if (this.textElements[index]) {
                 addToAttribute(this.textElements[index], 'y', height / 2);
+                if (this.textBackgroundElements[index]) {
+                    addToAttribute(this.textBackgroundElements[index], 'y', height / 2);
+                }
             }
         } else {
-
             const swimLaneGroup = createSVG('g', {
-                id: swimLane && swimLane.id || generateId(),
+                id: swimLane?.id || generateId(),
                 class: 'swimlane',
             }, this.gantt.layers.swimlanes);
 
@@ -88,14 +100,35 @@ export class SwimlaneColumnSvg {
                 class: `swimlane-rect ${className || ''}`,
             }, swimLaneGroup);
 
-            if (swimLane?.value) {
+            if (swimLane?.value || swimLane?.title) {
+                if (swimLane?.background) {
+                    this.textBackgroundElements[index] = createSVG('rect', {
+                        x: 0, y: 0, width: 0, height: 0, // will be set after text element is rendered
+                        rx: 8, ry: 8,
+                        fill: swimLane.background,
+                    }, swimLaneGroup);
+                }
+
+                const textX = this.x + this.gantt.options.padding;
+                const textY = y + height / 2;
+
                 this.textElements[index] = createSVG('text', {
-                    x: this.x + this.gantt.options.padding,
-                    y: y + height / 2,
+                    x: textX, y: textY,
+                    fill: swimLane.color,
                     'dominant-baseline': 'middle',
                     'text-anchor': 'start',
                     class: 'swimlane-label',
                 }, swimLaneGroup, swimLane?.title || swimLane?.value);
+
+                if (this.textBackgroundElements[index]) {
+                    const boundRect = this.textElements[index].getBoundingClientRect();
+                    setAttributes(this.textBackgroundElements[index], {
+                        x: textX - this.backgroundPaddingVertical,
+                        y: textY - boundRect.height / 2 - this.backgroundPaddingHorizontal,
+                        width: boundRect.width + this.backgroundPaddingVertical * 2,
+                        height: boundRect.height + this.backgroundPaddingHorizontal * 2 - 2,
+                    })
+                }
             }
         }
 
@@ -215,8 +248,11 @@ export class SwimlaneColumnSvg {
         });
         this.textElements.forEach((element, index) => {
             if (element !== this.textElements[index - 1]) {
-                const height = this.elementHeight(index);
-                setAttributes(element, {x: this.x + this.gantt.options.padding, y: this.ys[index] + height / 2});
+                const x = this.x + this.gantt.options.padding;
+                setAttributes(element, {x});
+                if (this.textBackgroundElements[index]) {
+                    setAttributes(this.textBackgroundElements[index], {x: x - this.backgroundPaddingVertical});
+                }
             }
         });
         this.headerRectElement && setAttributes(this.headerRectElement, {x: this.x, width: this.width});

@@ -506,13 +506,13 @@ export class BarSvg {
 
     private onEndpointEndClick() {
         if (!this.gantt.preventEventListeners) {
-            this.endpointEndElement && this.endpointEndElement.classList.add('active');
+            this.endpointEndElement?.classList.add('active');
             this.gantt.createDragArrow(this);
         }
     }
 
     public onCreateArrowDestroyed() {
-        this.endpointEndElement && this.endpointEndElement.classList.remove('active');
+        this.endpointEndElement?.classList.remove('active');
     }
 
     private hasAnyDependencies(): boolean {

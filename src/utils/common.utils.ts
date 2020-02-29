@@ -61,7 +61,7 @@ export function mergeFlatObjects<T>(a: T, b: T): T {
         const bValue = b[key];
         if (isNotNullOrUndefined(bValue) && bValue !== '') {
             if (isNumeric(bValue)) {
-                result[key] = toNumber(bValue) > 0 ? toNumber(bValue) : a[key];
+                result[key] = toNumber(bValue) >= 0 ? toNumber(bValue) : a[key];
             } else {
                 result[key] = bValue;
             }

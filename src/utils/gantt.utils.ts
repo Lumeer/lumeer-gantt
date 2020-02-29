@@ -18,8 +18,8 @@
  */
 
 import {defaultOptions, GanttMode, GanttOptions, GanttSwimlaneInfo} from '../model/options';
-import {addToDate, DateScale, diffDates, formatDate, getDaysInMonth, parseDate} from './date.utils';
-import {GanttTask, Task, taskProperties} from '../model/task';
+import {addToDate, DateScale, diffDates, formatDate, getDaysInMonth, parseDate, startOf, startOfToday} from './date.utils';
+import {GanttTask, Swimlane, Task, taskProperties} from '../model/task';
 import {GanttLine, GanttSettings, GanttSwimlane, GanttWrapper} from '../model/gantt';
 import {
     arrayContainsSameItems,
@@ -237,18 +237,12 @@ export function generateId(value?: string): string {
 }
 
 interface Swimlanes {
-    lines: Swimlane[];
+    lines: SwimlaneWithTasks[];
     otherTasks: GanttTask[];
     maxLevel: number;
 }
 
-interface Swimlane {
-    value: any;
-    title: string;
-    data?: any;
-    children?: Swimlane[];
-    tasks?: GanttTask[];
-}
+type SwimlaneWithTasks = Swimlane & { children?: SwimlaneWithTasks[], tasks?: GanttTask[] };
 
 const defaultNumLines = 5;
 
@@ -275,10 +269,10 @@ export function createGanttLines(tasks: GanttTask[], options: GanttOptions): Gan
     return ganttLines;
 }
 
-function iterateGanttLines(line: Swimlane, ganttLines: GanttLine[], ganttSwimLanes: GanttSwimlane[], maxLevel: number) {
+function iterateGanttLines(line: SwimlaneWithTasks, ganttLines: GanttLine[], ganttSwimLanes: GanttSwimlane[], maxLevel: number) {
     const id = generateId(line.title);
 
-    const newSwimLanes = [...ganttSwimLanes, {id, value: swimlaneValue(line), title: line.title, data: line.data}];
+    const newSwimLanes = [...ganttSwimLanes, {...line, id, value: swimlaneValue(line)}];
 
     (line.children || []).forEach(l => iterateGanttLines(l, ganttLines, newSwimLanes, maxLevel));
 
@@ -355,41 +349,55 @@ export function refreshTasksTransitiveDependencies(tasksMap: Record<string, Gant
 function createSwimlanes(tasks: GanttTask[], info: GanttSwimlaneInfo[]): Swimlanes {
     const otherTasks = [];
     let maxLevel = 0;
-    const lines = (tasks || []).reduce<Swimlane[]>((arr, task) => {
+    const lines = (tasks || []).reduce<SwimlaneWithTasks[]>((arr, task) => {
         if ((task.swimlanes || []).some(value => !!value)) {
             let currentMaxLevel = 1;
-            let parentSwimLane: Swimlane;
+            let parentSwimLane: SwimlaneWithTasks;
             if (!info[0] || !info[0].static) {
                 parentSwimLane = arr.find(s => swimlaneValue(s) === swimlaneValue(task.swimlanes[0]));
             }
 
             const isLastSwimLane = task.swimlanes.length === 1;
-            if (!parentSwimLane) {
+            if (parentSwimLane) {
+                parentSwimLane.background = parentSwimLane.background || task.swimlanes[0]?.background;
+                parentSwimLane.color = parentSwimLane.color || task.swimlanes[0]?.color;
+                parentSwimLane.avatarUrl = parentSwimLane.avatarUrl || task.swimlanes[0]?.avatarUrl;
+                if (isLastSwimLane) {
+                    parentSwimLane.tasks.push(task);
+                }
+            } else {
                 parentSwimLane = {
+                    ...task.swimlanes[0],
                     value: swimlaneValue(task.swimlanes[0]),
-                    title: isNotNullOrUndefined(task.swimlanes[0]) ? task.swimlanes[0].title : '',
-                    data: task.swimlanes[0]?.data,
+                    title: task.swimlanes[0]?.title || '',
                     children: [],
-                    tasks: isLastSwimLane ? [task] : []
+                    tasks: isLastSwimLane ? [task] : [],
                 };
                 arr.push(parentSwimLane);
-            } else if (isLastSwimLane) {
-                parentSwimLane.tasks.push(task);
             }
 
             task.swimlanes.slice(1).forEach((swimLane, index) => {
-                let childSwimLane: Swimlane;
+                let childSwimLane: SwimlaneWithTasks;
                 if (!info[index + 1] || !info[index + 1].static) {
                     childSwimLane = parentSwimLane.children.find(s => swimlaneValue(s) === swimlaneValue(swimLane));
                 }
 
-                const shouldAddTask = index === task.swimlanes.length - 2;
+                const isLastSwimLane = index === task.swimlanes.length - 2;
                 if (childSwimLane) {
-                    if (shouldAddTask) {
+                    childSwimLane.background = childSwimLane.background || swimLane?.background;
+                    childSwimLane.color = childSwimLane.color || swimLane?.color;
+                    childSwimLane.avatarUrl = childSwimLane.avatarUrl || swimLane?.avatarUrl;
+                    if (isLastSwimLane) {
                         childSwimLane.tasks.push(task);
                     }
                 } else {
-                    childSwimLane = {value: swimlaneValue(swimLane), title: swimLane?.title || '', data: swimLane?.data, children: [], tasks: shouldAddTask ? [task] : []};
+                    childSwimLane = {
+                        ...swimLane,
+                        value: swimlaneValue(swimLane),
+                        title: swimLane?.title || '',
+                        children: [],
+                        tasks: isLastSwimLane ? [task] : [],
+                    };
                     parentSwimLane.children.push(childSwimLane);
                 }
 
@@ -529,6 +537,45 @@ export function cleanGanttTask(task: GanttTask, overrideId?: any): Task {
         dependencies, allowedDependencies,
         metadata: task.metadata
     };
+}
+
+export function setupRange(tasks: GanttTask[], options: GanttOptions): { minDate: Date, maxDate: Date } {
+    let {minDate, maxDate} = tasks.reduce((value, task) => {
+        if (!value.minDate || value.minDate.getTime() > task.startDate.getTime()) {
+            value.minDate = task.startDate;
+        }
+        if (!value.maxDate || value.maxDate.getTime() < task.endDate.getTime()) {
+            value.maxDate = task.endDate;
+        }
+        return value;
+    }, {minDate: null, maxDate: null});
+
+    const dateScale = getDateScaleByViewMode(options.viewMode);
+
+    if (!minDate || !maxDate) {
+        minDate = startOf(startOfToday(), dateScale);
+        maxDate = addToDate(minDate, 1, DateScale.Month);
+    } else {
+        minDate = startOf(minDate, dateScale);
+        maxDate = startOf(maxDate, dateScale);
+    }
+
+    const {value, scale} = datePadding(options.viewMode);
+    return {minDate: addToDate(minDate, -value, scale), maxDate: addToDate(maxDate, value, scale)};
+}
+
+function getDateScaleByViewMode(mode: GanttMode): DateScale {
+    switch (mode) {
+        case GanttMode.QuarterDay:
+        case GanttMode.HalfDay:
+        case GanttMode.Day:
+            return DateScale.Day;
+        case GanttMode.Week:
+        case GanttMode.Month:
+            return DateScale.Month;
+        case GanttMode.Year:
+            return DateScale.Year;
+    }
 }
 
 

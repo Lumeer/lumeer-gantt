@@ -179,7 +179,7 @@ export class GridSvg {
             }, this.gantt.layers.date, date.lower.text);
 
             const gridRect = this.gantt.layers.grid.getBoundingClientRect();
-            if (date.upper && date.upper.x < gridRect.width) {
+            if (date.upper?.x < gridRect.width) {
                 createSVG('text', {
                     x: date.upper.x,
                     y: date.upper.y,

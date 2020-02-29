@@ -70,7 +70,7 @@ export function parseDate(date: string | Date, format?: string): Date {
 }
 
 export function isDateValid(date: Date): boolean {
-    return date && date.getTime && !isNaN(date.getTime());
+    return date?.getTime && !isNaN(date.getTime());
 }
 
 export function startOf(date: Date, scale: DateScale): Date {
