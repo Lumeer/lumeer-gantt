@@ -203,6 +203,10 @@ $font-size: 13px;
   border: 1px solid #ced4da;
 }
 
+.circle-image {
+  clip-path: circle(50%);
+}
+
 .gantt-swimlanes-container {
   position: relative;
   overflow: auto;
@@ -222,13 +226,11 @@ $font-size: 13px;
       .swimlane-rect:not(.empty) {
         stroke: $border-color;
         stroke-width: 1.4;
-        fill: #ffffff;
       }
 
       .swimlane-rect.empty {
         stroke: none;
         stroke-width: 0;
-        fill: transparent;
       }
 
     }

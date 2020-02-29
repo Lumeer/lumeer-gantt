@@ -19,15 +19,9 @@
 
 import {defaultOptions, GanttMode, GanttOptions, GanttSwimlaneInfo} from '../model/options';
 import {addToDate, DateScale, diffDates, formatDate, getDaysInMonth, parseDate, startOf, startOfToday} from './date.utils';
-import {GanttTask, Swimlane, Task, taskProperties} from '../model/task';
+import {GanttSwimlaneType, GanttTask, Swimlane, Task, taskProperties} from '../model/task';
 import {GanttLine, GanttSettings, GanttSwimlane, GanttWrapper} from '../model/gantt';
-import {
-    arrayContainsSameItems,
-    completeArrayWithNulls,
-    isArray, isNotNullOrUndefined, isNullOrUndefined,
-    mergeFlatObjects,
-    uniqueValues
-} from './common.utils';
+import {arrayContainsSameItems, completeArrayWithNulls, isArray, isNotNullOrUndefined, isNullOrUndefined, mergeFlatObjects, uniqueValues} from './common.utils';
 
 export function createGanttOptions(options: GanttOptions): GanttOptions {
     const mergedOptions = mergeFlatObjects<GanttOptions>(defaultOptions, options);
@@ -35,6 +29,10 @@ export function createGanttOptions(options: GanttOptions): GanttOptions {
     mergedOptions.columnWidth = Math.max(mergedOptions.columnWidth, 20);
     mergedOptions.barHeight = Math.max(mergedOptions.barHeight, 10);
     mergedOptions.maxInitialSwimlaneWidth = Math.max(mergedOptions.maxInitialSwimlaneWidth, 30);
+    mergedOptions.checkboxSize = Math.max(mergedOptions.checkboxSize, 10);
+    mergedOptions.avatarSize = Math.max(mergedOptions.avatarSize, 12);
+    mergedOptions.avatarPadding = Math.max(mergedOptions.avatarPadding, 2);
+    mergedOptions.textBackgroundPadding = Math.max(mergedOptions.textBackgroundPadding, 4);
     return mergedOptions;
 }
 
@@ -359,9 +357,7 @@ function createSwimlanes(tasks: GanttTask[], info: GanttSwimlaneInfo[]): Swimlan
 
             const isLastSwimLane = task.swimlanes.length === 1;
             if (parentSwimLane) {
-                parentSwimLane.background = parentSwimLane.background || task.swimlanes[0]?.background;
-                parentSwimLane.color = parentSwimLane.color || task.swimlanes[0]?.color;
-                parentSwimLane.avatarUrl = parentSwimLane.avatarUrl || task.swimlanes[0]?.avatarUrl;
+                mergeSwimlaneProperties(parentSwimLane, task.swimlanes[0]);
                 if (isLastSwimLane) {
                     parentSwimLane.tasks.push(task);
                 }
@@ -384,9 +380,7 @@ function createSwimlanes(tasks: GanttTask[], info: GanttSwimlaneInfo[]): Swimlan
 
                 const isLastSwimLane = index === task.swimlanes.length - 2;
                 if (childSwimLane) {
-                    childSwimLane.background = childSwimLane.background || swimLane?.background;
-                    childSwimLane.color = childSwimLane.color || swimLane?.color;
-                    childSwimLane.avatarUrl = childSwimLane.avatarUrl || swimLane?.avatarUrl;
+                    mergeSwimlaneProperties(childSwimLane, swimLane);
                     if (isLastSwimLane) {
                         childSwimLane.tasks.push(task);
                     }
@@ -411,6 +405,14 @@ function createSwimlanes(tasks: GanttTask[], info: GanttSwimlaneInfo[]): Swimlan
         return arr;
     }, []);
     return {otherTasks, lines, maxLevel};
+}
+
+function mergeSwimlaneProperties(swimLaneWithTasks: SwimlaneWithTasks, swimLane: Swimlane) {
+    swimLaneWithTasks.textBackground = swimLaneWithTasks.textBackground || swimLane?.textBackground;
+    swimLaneWithTasks.textColor = swimLaneWithTasks.textColor || swimLane?.textColor;
+    swimLaneWithTasks.avatarUrl = swimLaneWithTasks.avatarUrl || swimLane?.avatarUrl;
+    swimLaneWithTasks.background = swimLaneWithTasks.background || swimLane?.background;
+    swimLaneWithTasks.type = swimLaneWithTasks.type || swimLane?.type || GanttSwimlaneType.Text;
 }
 
 function swimlaneValue(swimlane: { value?: any, title: string }): any {

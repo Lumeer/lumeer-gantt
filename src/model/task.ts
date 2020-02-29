@@ -46,8 +46,15 @@ export interface Swimlane {
     title: string;
     data?: any;
     background?: string;
-    color?: string;
+    textBackground?: string;
+    textColor?: string;
     avatarUrl?: string;
+    type?: GanttSwimlaneType;
+}
+
+export enum GanttSwimlaneType {
+    Text = 'text',
+    Checkbox = 'checkbox',
 }
 
 export const taskProperties = ['id', 'name', 'start', 'end', 'progress', 'swimlanes',

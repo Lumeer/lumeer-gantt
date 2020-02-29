@@ -38,7 +38,7 @@
             end: '2020-10-20',
             progress: 3,
             allowedDependencies: ['T9', 'T1', 'T3'],
-            swimlanes: [{title: 'Ahoj'}, {title: 'A'}],
+            swimlanes: [{title: 'Ahojj', avatarUrl: 'https://www.gravatar.com/avatar/205e460b479e2e5b48aec07710c08d50.jpg', textBackground: 'red'}, {title: 'A'}],
             barColor: 'rgb(34,120,255)',
             progressColor: 'red',
             textColor: 'white',
@@ -101,7 +101,7 @@
             start: '2020-11-01',
             end: '2020-12-08',
             progress: 1,
-            swimlanes: [{title: 'B', background: 'blue'}, {title: 'C', background: 'yellow'}],
+            swimlanes: [{value: '', title: '', type: 'checkbox'}, {title: 'C', background: 'yellow'}],
             barColor: 'rgb(34,120,255)',
             progressColor: 'cyan',
             startDrag: true,
@@ -123,7 +123,7 @@
     const ganttChart = new Gantt(".gantt-target", tasks, {
         columnWidth: 50,
         swimlaneInfo: [{
-            title: 'First Attr First AttrFirst AttrFirst AttrFirst AttrFirst AttrFirst Attr First AttrFirst AttrFirst AttrFirst AttrFirst AttrFirst AttrFirst AttrFirst AttrFirst AttrFirst AttrFirst AttrFirst AttrFirst AttrFirst Attr First Attr First AttrFirst AttrFirst AttrFirst AttrFirst AttrFirst Attr First AttrFirst AttrFirst AttrFirst AttrFirst AttrFirst AttrFirst AttrFirst AttrFirst AttrFirst AttrFirst AttrFirst AttrFirst AttrFirst AttrFirst Attr First AttrFirst AttrFirst AttrFirst AttrFirst AttrFirst Attr First AttrFirst AttrFirst AttrFirst AttrFirst AttrFirst AttrFirst AttrFirst AttrFirst AttrFirst AttrFirst AttrFirst AttrFirst AttrFirst AttrFirst Attr First AttrFirst AttrFirst AttrFirst AttrFirst AttrFirst Attr First AttrFirst AttrFirst AttrFirst AttrFirst AttrFirst AttrFirst AttrFirst AttrFirst AttrFirst AttrFirst AttrFirst AttrFirst AttrFirst AttrFirst Attr First AttrFirst AttrFirst AttrFirst AttrFirst AttrFirst Attr First AttrFirst AttrFirst AttrFirst AttrFirst AttrFirst AttrFirst AttrFirst AttrFirst AttrFirst AttrFirst AttrFirst AttrFirst AttrFirst AttrFirst Attr First AttrFirst AttrFirst AttrFirst AttrFirst AttrFirst Attr First AttrFirst AttrFirst AttrFirst AttrFirst AttrFirst AttrFirst AttrFirst AttrFirst AttrFirst AttrFirst AttrFirst AttrFirst AttrFirst AttrFirst Attr First AttrFirst AttrFirst AttrFirst AttrFirst AttrFirst Attr First AttrFirst AttrFirst AttrFirst AttrFirst AttrFirst AttrFirst AttrFirst AttrFirst AttrFirst AttrFirst AttrFirst AttrFirst AttrFirst AttrFirst Attr First AttrFirst AttrFirst AttrFirst AttrFirst AttrFirst Attr First AttrFirst AttrFirst AttrFirst AttrFirst AttrFirst AttrFirst AttrFirst AttrFirst AttrFirst AttrFirst AttrFirst AttrFirst AttrFirst AttrFirst Attr First AttrFirst AttrFirst AttrFirst AttrFirst AttrFirst Attr First AttrFirst AttrFirst AttrFirst AttrFirst AttrFirst AttrFirst AttrFirst AttrFirst AttrFirst AttrFirst AttrFirst AttrFirst AttrFirst AttrFirst Attr First AttrFirst AttrFirst AttrFirst AttrFirst AttrFirst Attr First AttrFirst AttrFirst AttrFirst AttrFirst AttrFirst AttrFirst AttrFirst AttrFirst AttrFirst AttrFirst AttrFirst AttrFirst AttrFirst Attr',
+            title: 'First',
             color: 'red',
             background: '#A2BAFF',
         }, {
@@ -133,7 +133,7 @@
         language: 'sk',
         viewMode: 'Day',
         lockResize: true,
-        maxInitialSwimlaneWidth: 100
+        maxInitialSwimlaneWidth: 200
     });
 
     ganttChart.onTaskDependencyAdded = (fromTask, toTask) => console.log('onTaskDependencyAdded', fromTask, toTask);
