@@ -29,6 +29,7 @@ export interface GanttOptions {
     dateFormat?: string,
     language?: string
     maxInitialSwimlaneWidth?: number;
+
     swimlaneInfo?: GanttSwimlaneInfo[];
 
     lockResize?: boolean;

@@ -23,7 +23,7 @@ export interface Task {
     start: string;
     end: string;
     progress: number;
-    swimlanes: {value?: any, title: string, data?: any}[];
+    swimlanes: Swimlane[];
     dependencies: string[];
     allowedDependencies: string[];
     barColor?: string,
@@ -39,6 +39,15 @@ export interface Task {
     editable: boolean;
 
     metadata?: any;
+}
+
+export interface Swimlane {
+    value?: any;
+    title: string;
+    data?: any;
+    background?: string;
+    color?: string;
+    avatarUrl?: string;
 }
 
 export const taskProperties = ['id', 'name', 'start', 'end', 'progress', 'swimlanes',

@@ -62,7 +62,7 @@ export class SwimlanesSvg {
         }
 
         (this.gantt.options.swimlaneInfo || []).forEach((header, index) => {
-            const title = header && header.title;
+            const title = header?.title;
             if (title && (!longestTitles[index] || longestTitles[index].length < title.length)) {
                 longestTitles[index] = title;
             }
@@ -77,7 +77,7 @@ export class SwimlanesSvg {
 
         const widths = longestTitles.reduce((arr, title, index) => {
             const header = (this.gantt.options.swimlaneInfo || [])[index];
-            if (header && header.width) {
+            if (header?.width) {
                 arr[index] = header.width;
             } else {
                 helperTextSvg.innerHTML = title;

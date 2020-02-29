@@ -100,8 +100,8 @@ export class ArrowSvg {
     }
 
     private resetArrow() {
-        this.deleteIconElement && this.deleteIconElement.removeEventListener('click', this.deleteClickListener);
-        this.deleteIconElement && this.deleteIconElement.remove();
+        this.deleteIconElement?.removeEventListener('click', this.deleteClickListener);
+        this.deleteIconElement?.remove();
         this.deleteIconElement = null;
         this.deleteClickListener = null;
         this.removeActive();

@@ -57,6 +57,9 @@ export interface GanttLine {
 export interface GanttSwimlane {
     id: string;
     value: any;
-    data: any;
     title: string;
+    data?: any;
+    background?: string;
+    color?: string;
+    avatarUrl?: string;
 }

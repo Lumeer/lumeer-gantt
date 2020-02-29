@@ -41,7 +41,7 @@ export function setAttributes(element: Element, attributes: Record<string, any>)
 }
 
 export function setAttribute(element: Element, attribute: string, value: any) {
-    element && element.setAttribute(attribute, value);
+    element?.setAttribute(attribute, value);
 }
 
 export function setOpacity(element: Element) {
@@ -49,7 +49,7 @@ export function setOpacity(element: Element) {
 }
 
 export function addToAttribute(element: Element, attribute: string, dx: number) {
-    if (element.hasAttribute(attribute)) {
+    if (element?.hasAttribute(attribute)) {
         const value = +element.getAttribute(attribute);
         setAttribute(element, attribute, value + dx);
     }
@@ -72,27 +72,27 @@ export function hideElement(element: Element) {
 }
 
 export function getX(element: Element): number {
-    return +element.getAttribute('x');
+    return +element?.getAttribute('x');
 }
 
 export function getY(element: Element): number {
-    return +element.getAttribute('y');
+    return +element?.getAttribute('y');
 }
 
 export function getCX(element: Element): number {
-    return +element.getAttribute('cx');
+    return +element?.getAttribute('cx');
 }
 
 export function getCY(element: Element): number {
-    return +element.getAttribute('cy');
+    return +element?.getAttribute('cy');
 }
 
 export function getWidth(element: Element): number {
-    return +element.getAttribute('width');
+    return +element?.getAttribute('width');
 }
 
 export function getHeight(element: Element): number {
-    return +element.getAttribute('height');
+    return +element?.getAttribute('height');
 }
 
 export function getEndX(element: Element): number {
