@@ -30,6 +30,11 @@ export interface GanttOptions {
     language?: string
     maxInitialSwimlaneWidth?: number;
 
+    avatarSize?: number;
+    avatarPadding?: number;
+    textBackgroundPadding?: number;
+    checkboxSize?: number;
+
     swimlaneInfo?: GanttSwimlaneInfo[];
 
     lockResize?: boolean;
@@ -78,11 +83,16 @@ export const defaultOptions: GanttOptions = {
     language: 'en',
     maxInitialSwimlaneWidth: 200,
 
+    avatarPadding: 5,
+    avatarSize: 30,
+    checkboxSize: 16,
+    textBackgroundPadding: 8,
+
     lockResize: true,
     createTasks: true,
     resizeSwimlanes: true,
     resizeTaskLeft: true,
     resizeTaskRight: true,
     resizeProgress: true,
-    dragTaskSwimlanes: true,
+    dragTaskSwimlanes: true
 };

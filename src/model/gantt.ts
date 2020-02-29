@@ -17,7 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {GanttTask} from './task';
+import {GanttTask, Swimlane} from './task';
 
 export type GanttWrapper = HTMLElement | string | SVGElement;
 
@@ -54,12 +54,6 @@ export interface GanttLine {
     tasks: GanttTask[];
 }
 
-export interface GanttSwimlane {
+export interface GanttSwimlane extends Swimlane {
     id: string;
-    value: any;
-    title: string;
-    data?: any;
-    background?: string;
-    color?: string;
-    avatarUrl?: string;
 }

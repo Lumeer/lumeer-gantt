@@ -137,6 +137,10 @@
   border: 1px solid #ced4da;
 }
 
+.circle-image {
+  clip-path: circle(50%);
+}
+
 .gantt-swimlanes-container {
   position: relative;
   overflow: auto;
@@ -151,12 +155,10 @@
 .gantt-swimlanes-container .gantt-swimlanes .swimlane .swimlane-rect:not(.empty) {
   stroke: #dee2e6;
   stroke-width: 1.4;
-  fill: #ffffff;
 }
 .gantt-swimlanes-container .gantt-swimlanes .swimlane .swimlane-rect.empty {
   stroke: none;
   stroke-width: 0;
-  fill: transparent;
 }
 .gantt-swimlanes-container .gantt-swimlanes .swimlane-header-rect {
   stroke: #dee2e6;

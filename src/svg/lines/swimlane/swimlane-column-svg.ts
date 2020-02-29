@@ -17,13 +17,14 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {addToAttribute, createSVG, setAttributes} from '../../../utils/svg.utils';
+import {addToAttribute, createCheckboxElement, createSVG, setAttributes} from '../../../utils/svg.utils';
 import {generateId} from '../../../utils/gantt.utils';
 import {GanttSwimlane} from '../../../model/gantt';
 import {GanttSwimlaneInfo} from '../../../model/options';
 import {SwimlanesSvg} from './swimlanes-svg';
 import {copyArray} from '../../../utils/common.utils';
 import {GanttSvg} from '../../gantt-svg';
+import {GanttSwimlaneType} from "../../../model/task";
 
 const minSwimLaneWidth = 5;
 const handleWidth = 10;
@@ -35,6 +36,9 @@ export class SwimlaneColumnSvg {
     private rectElements: SVGElement[] = [];
     private textElements: SVGElement[] = [];
     private textBackgroundElements: SVGElement[] = [];
+    private textImageElements: Element[] = [];
+
+    private swimlanes: GanttSwimlane[] = [];
 
     private headerRectElement: SVGElement;
     private headerTextElement: SVGElement;
@@ -64,19 +68,26 @@ export class SwimlaneColumnSvg {
         return this.x + this.width - handleWidth / 2;
     }
 
-    private get backgroundPaddingHorizontal(): number {
-        return (this.gantt?.options?.padding / 4) || 4;
+    private get avatarSize(): number {
+        return this.gantt.options.avatarSize;
     }
 
-    private get backgroundPaddingVertical(): number {
-        return (this.gantt?.options?.padding / 2) || 8;
+    private get avatarPadding(): number {
+        return this.gantt.options.avatarPadding;
+    }
+
+    private get checkboxSize(): number {
+        return this.gantt.options.checkboxSize;
     }
 
     public renderCell(swimLane: GanttSwimlane, index: number, height: number, y: number, isSameSwimlane: boolean, className?: string) {
+        this.swimlanes[index] = swimLane;
+
         if (isSameSwimlane) {
             this.rectElements[index] = this.rectElements[index - 1];
             this.textElements[index] = this.textElements[index - 1];
             this.textBackgroundElements[index] = this.textBackgroundElements[index - 1];
+            this.textImageElements[index] = this.textImageElements[index - 1];
 
             if (this.rectElements[index]) {
                 addToAttribute(this.rectElements[index], 'height', height);
@@ -86,6 +97,9 @@ export class SwimlaneColumnSvg {
                 addToAttribute(this.textElements[index], 'y', height / 2);
                 if (this.textBackgroundElements[index]) {
                     addToAttribute(this.textBackgroundElements[index], 'y', height / 2);
+                }
+                if (this.textImageElements[index]) {
+                    addToAttribute(this.textImageElements[index], 'y', height / 2);
                 }
             }
         } else {
@@ -97,36 +111,63 @@ export class SwimlaneColumnSvg {
             this.rectElements[index] = createSVG('rect', {
                 x: this.x, y, width: this.width,
                 height,
+                fill: swimLane?.background || 'white',
                 class: `swimlane-rect ${className || ''}`,
             }, swimLaneGroup);
 
-            if (swimLane?.value || swimLane?.title) {
-                if (swimLane?.background) {
+            console.log(swimLane?.background);
+
+            if (swimLane?.value || swimLane?.title || swimLane?.type === GanttSwimlaneType.Checkbox) {
+
+                let startX = this.x + this.gantt.options.padding;
+
+                if (swimLane?.textBackground) {
                     this.textBackgroundElements[index] = createSVG('rect', {
                         x: 0, y: 0, width: 0, height: 0, // will be set after text element is rendered
                         rx: 8, ry: 8,
-                        fill: swimLane.background,
+                        fill: swimLane.textBackground,
                     }, swimLaneGroup);
+
+                    startX += this.gantt.options.textBackgroundPadding;
                 }
 
-                const textX = this.x + this.gantt.options.padding;
-                const textY = y + height / 2;
+                const middleY = y + height / 2;
 
-                this.textElements[index] = createSVG('text', {
-                    x: textX, y: textY,
-                    fill: swimLane.color,
-                    'dominant-baseline': 'middle',
-                    'text-anchor': 'start',
-                    class: 'swimlane-label',
-                }, swimLaneGroup, swimLane?.title || swimLane?.value);
+                let contentWidth = 0;
+                let contentHeight = 0;
+                if (swimLane?.type === GanttSwimlaneType.Checkbox) {
+                    contentWidth = this.checkboxSize;
+                    contentHeight = this.checkboxSize;
+                    this.textImageElements[index] = createCheckboxElement(startX, middleY - this.checkboxSize / 2, this.checkboxSize, !!swimLane?.value, swimLaneGroup);
+                } else {
+                    if (swimLane?.avatarUrl) {
+                        this.textImageElements[index] = createSVG('image', {
+                            x: startX, y: middleY - this.avatarSize / 2, width: this.avatarSize, height: this.avatarSize,
+                            href: swimLane?.avatarUrl, class: 'circle-image'
+                        }, swimLaneGroup);
+                        contentWidth = this.avatarSize + this.avatarPadding;
+                        contentHeight = this.avatarSize;
+                    }
+
+                    this.textElements[index] = createSVG('text', {
+                        x: startX + contentWidth, y: middleY,
+                        fill: swimLane.textColor,
+                        'dominant-baseline': 'middle',
+                        'text-anchor': 'start',
+                        class: 'swimlane-label',
+                    }, swimLaneGroup, swimLane?.title || swimLane?.value);
+
+                    const textBoundRect = this.textElements[index].getBoundingClientRect();
+                    contentWidth += textBoundRect.width;
+                    contentHeight = Math.max(contentHeight, textBoundRect.height);
+                }
 
                 if (this.textBackgroundElements[index]) {
-                    const boundRect = this.textElements[index].getBoundingClientRect();
                     setAttributes(this.textBackgroundElements[index], {
-                        x: textX - this.backgroundPaddingVertical,
-                        y: textY - boundRect.height / 2 - this.backgroundPaddingHorizontal,
-                        width: boundRect.width + this.backgroundPaddingVertical * 2,
-                        height: boundRect.height + this.backgroundPaddingHorizontal * 2 - 2,
+                        x: startX - this.gantt.options.textBackgroundPadding,
+                        y: middleY - contentHeight / 2 - this.gantt.options.textBackgroundPadding / 2,
+                        width: contentWidth + this.gantt.options.textBackgroundPadding * 2,
+                        height: contentHeight + this.gantt.options.textBackgroundPadding,
                     })
                 }
             }
@@ -246,13 +287,25 @@ export class SwimlaneColumnSvg {
                 setAttributes(element, {x: this.x, width: this.width, height, y: this.ys[index]});
             }
         });
-        this.textElements.forEach((element, index) => {
-            if (element !== this.textElements[index - 1]) {
-                const x = this.x + this.gantt.options.padding;
-                setAttributes(element, {x});
+        this.swimlanes.forEach((swimlane, index) => {
+            if (swimlane !== this.swimlanes[index - 1]) {
+                let startX = this.x + this.gantt.options.padding;
+
                 if (this.textBackgroundElements[index]) {
-                    setAttributes(this.textBackgroundElements[index], {x: x - this.backgroundPaddingVertical});
+                    setAttributes(this.textBackgroundElements[index], {x: startX});
+                    startX += this.gantt.options.textBackgroundPadding;
                 }
+
+                if (this.textImageElements[index]) {
+                    setAttributes(this.textImageElements[index], {x: startX});
+                    startX += this.avatarPadding + this.avatarSize;
+                }
+
+                if (this.textElements[index]) {
+                    setAttributes(this.textElements[index], {x: startX});
+                }
+
+
             }
         });
         this.headerRectElement && setAttributes(this.headerRectElement, {x: this.x, width: this.width});

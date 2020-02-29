@@ -23,6 +23,8 @@ import {GanttLine, GanttSwimlane} from '../../../model/gantt';
 import {SwimlaneColumnSvg} from './swimlane-column-svg';
 import {GanttSvg} from '../../gantt-svg';
 import {copyArray} from '../../../utils/common.utils';
+import {GanttSwimlaneType} from "../../../model/task";
+import {GanttOptions} from "../../../model/options";
 
 export class SwimlanesSvg {
 
@@ -48,26 +50,6 @@ export class SwimlanesSvg {
     }
 
     private computeSwimLaneWidths(): number[] {
-        const longestTitles = (this.gantt.lines || []).reduce<string[]>((arr, line) => {
-            line.swimlanes.forEach((sl, index) => {
-                if (sl && (!arr[index] || arr[index].length < sl.title.length)) {
-                    arr[index] = sl.title;
-                }
-            });
-            return arr;
-        }, []);
-
-        if (longestTitles.length === 0) {
-            return [];
-        }
-
-        (this.gantt.options.swimlaneInfo || []).forEach((header, index) => {
-            const title = header?.title;
-            if (title && (!longestTitles[index] || longestTitles[index].length < title.length)) {
-                longestTitles[index] = title;
-            }
-        });
-
         const helperSvg = createSVG('g', {}, this.gantt.layers.swimlanes);
         const helperTextSvg = createSVG('text', {
             x: 0,
@@ -75,16 +57,7 @@ export class SwimlanesSvg {
             class: 'swimlane-label',
         }, helperSvg);
 
-        const widths = longestTitles.reduce((arr, title, index) => {
-            const header = (this.gantt.options.swimlaneInfo || [])[index];
-            if (header?.width) {
-                arr[index] = header.width;
-            } else {
-                helperTextSvg.innerHTML = title;
-                arr[index] = Math.min(helperTextSvg.getBoundingClientRect().width + 2 * this.gantt.options.padding, this.gantt.options.maxInitialSwimlaneWidth);
-            }
-            return arr;
-        }, []);
+        const widths = computeWidths(helperTextSvg, this.gantt.lines, this.gantt.options);
 
         helperSvg.remove();
 
@@ -285,6 +258,57 @@ export class SwimlanesSvg {
         this.columnsSvgs.forEach(svg => svg.resizeColumn(index, diff));
     }
 }
+
+function computeWidths(helperTextSvg: SVGElement, lines: GanttLine[], options: GanttOptions): number[] {
+    const widths = (lines || []).reduce((array, line) => {
+        (line.swimlanes || []).forEach((swimLane, index) => {
+            const header = (options.swimlaneInfo || [])[index];
+            let width = 0;
+            if (header?.width) {
+                width = header?.width;
+            } else {
+                if (swimLane?.type === GanttSwimlaneType.Checkbox) {
+                    width = options.checkboxSize;
+                } else if (swimLane?.title) {
+                    helperTextSvg.innerHTML = swimLane.title;
+                    width = helperTextSvg.getBoundingClientRect().width;
+                }
+
+                if (width > 0 && swimLane?.textBackground) {
+                    width += 2 * options.textBackgroundPadding;
+                }
+                if (swimLane?.avatarUrl) {
+                    width += options.avatarSize + options.avatarPadding;
+                }
+
+                if (width === 0 && swimLane?.background) {
+                    width = 30;
+                }
+
+                width += options.padding * 2;
+                width = Math.min(width, options.maxInitialSwimlaneWidth);
+            }
+
+            array[index] = Math.max(array[index] || 0, width);
+
+        });
+
+
+        return array;
+    }, []);
+
+    (options.swimlaneInfo || []).forEach((header, index) => {
+        if (!header?.width && header?.title) {
+            helperTextSvg.innerHTML = header.title;
+            const width = Math.min(helperTextSvg.getBoundingClientRect().width + 2 * options.padding, options.maxInitialSwimlaneWidth);
+            widths[index] = Math.max(widths[index] || 0, width);
+        }
+    });
+
+
+    return widths;
+}
+
 
 function isEmptyLine(swimlanes: GanttSwimlane[]): boolean {
     return swimlanes.every(sw => !sw || !sw.title);
