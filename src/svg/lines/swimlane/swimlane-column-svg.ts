@@ -92,15 +92,14 @@ export class SwimlaneColumnSvg {
             if (this.rectElements[index]) {
                 addToAttribute(this.rectElements[index], 'height', height);
             }
-
             if (this.textElements[index]) {
                 addToAttribute(this.textElements[index], 'y', height / 2);
-                if (this.textBackgroundElements[index]) {
-                    addToAttribute(this.textBackgroundElements[index], 'y', height / 2);
-                }
-                if (this.textImageElements[index]) {
-                    addToAttribute(this.textImageElements[index], 'y', height / 2);
-                }
+            }
+            if (this.textBackgroundElements[index]) {
+                addToAttribute(this.textBackgroundElements[index], 'y', height / 2);
+            }
+            if (this.textImageElements[index]) {
+                addToAttribute(this.textImageElements[index], 'y', height / 2);
             }
         } else {
             const swimLaneGroup = createSVG('g', {
@@ -115,9 +114,7 @@ export class SwimlaneColumnSvg {
                 class: `swimlane-rect ${className || ''}`,
             }, swimLaneGroup);
 
-            console.log(swimLane?.background);
-
-            if (swimLane?.value || swimLane?.title || swimLane?.type === GanttSwimlaneType.Checkbox) {
+            if (swimLane?.title || swimLane?.type === GanttSwimlaneType.Checkbox) {
 
                 let startX = this.x + this.gantt.options.padding;
 
@@ -155,7 +152,7 @@ export class SwimlaneColumnSvg {
                         'dominant-baseline': 'middle',
                         'text-anchor': 'start',
                         class: 'swimlane-label',
-                    }, swimLaneGroup, swimLane?.title || swimLane?.value);
+                    }, swimLaneGroup, swimLane?.title);
 
                     const textBoundRect = this.textElements[index].getBoundingClientRect();
                     contentWidth += textBoundRect.width;
