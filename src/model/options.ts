@@ -29,6 +29,7 @@ export interface GanttOptions {
     dateFormat?: string,
     language?: string
     maxInitialSwimlaneWidth?: number;
+    initialScroll?: number;
 
     avatarSize?: number;
     avatarPadding?: number;

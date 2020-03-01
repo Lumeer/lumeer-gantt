@@ -71,7 +71,7 @@ export class CreateArrowsSvg {
     }
 
     private onClick() {
-        if (this.selectedToBars && this.selectedToBars.length) {
+        if (this.selectedToBars?.length) {
             this.gantt.createArrows(this.fromBars || [this.fromBar], this.selectedToBars);
         }
         this.destroy();
@@ -126,7 +126,7 @@ export class CreateArrowsSvg {
 
     public destroy() {
         this.paths = null;
-        this.arrowElements && this.arrowElements.forEach(element => element.remove());
+        this.arrowElements?.forEach(element => element.remove());
         this.fromBar.onCreateArrowDestroyed();
 
         this.removeListeners();

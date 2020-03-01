@@ -137,10 +137,6 @@
   border: 1px solid #ced4da;
 }
 
-.circle-image {
-  clip-path: circle(50%);
-}
-
 .gantt-swimlanes-container {
   position: relative;
   overflow: auto;
@@ -171,8 +167,4 @@
 .gantt-swimlanes-container .gantt-swimlanes .swimlane-resize-handle {
   cursor: col-resize;
   fill: transparent;
-}
-
-.swimlane-label {
-  transition: y;
 }

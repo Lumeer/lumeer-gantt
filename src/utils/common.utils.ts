@@ -79,13 +79,9 @@ export function isNumeric(value: any): boolean {
 }
 
 export function toNumber(value: any): number {
-    const val =
-        value &&
-        value
-            .toString()
-            .replace(/\s/g, '')
-            .replace(',', '.');
-
+    const val = value?.toString()
+        ?.replace(/\s/g, '')
+        ?.replace(',', '.');
     return Number(val);
 }
 
@@ -115,7 +111,7 @@ export function addEventListenerForSelector(element: any, event: string, selecto
 export function closestElement(selector: string, element: any): Element {
     if (!element) return null;
 
-    if (element.matches && element.matches(selector)) {
+    if (element.matches?.(selector)) {
         return element;
     }
 

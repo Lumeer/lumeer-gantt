@@ -26,6 +26,7 @@ import {GanttSvg} from '../gantt-svg';
 import {isNotNullOrUndefined, uniqueValues} from '../../utils/common.utils';
 import {cleanGanttTask, refreshTasksTransitiveDependencies} from '../../utils/gantt.utils';
 import {GanttSwimlane} from '../../model/gantt';
+import {GanttSwimlaneInfo} from "../..";
 
 export class LinesSvg {
 
@@ -124,7 +125,7 @@ export class LinesSvg {
 
     private checkAfterBarDragging(bar: BarSvg, movedTaskIds: string[]) {
         this.barsSvgs.forEach(barsSvg => {
-            if (bar.parent !== barsSvg) {
+            if (bar.currentParent !== barsSvg) {
                 const bars = barsSvg.barSvgs.filter(bar => movedTaskIds.includes(bar.id));
                 if (bars.length) {
                     barsSvg.onBarDragging(bars[0], false);
@@ -223,17 +224,22 @@ export class LinesSvg {
             || (index === this.barsSvgs.length - 1 && y >= barsSvg.getY + barsSvg.height)
             || ((barsSvg.getY <= y) && (barsSvg.getY + barsSvg.height >= y)));
 
+        if (newParent?.hasStaticSwimlane() && bar.initialParent !== newParent
+            && !nonStaticSwimlaneChanged(bar.initialParent, newParent, this.gantt.options.swimlaneInfo)) {
+            return false;
+        }
+
         const previousY = bar.getY;
         let parentChanged = false;
         let newY = newParent.getNewBarYPosition(y);
 
-        if (newParent === bar.parent) {
+        if (newParent === bar.currentParent) {
             newParent.updateBarSvgLine(bar, newY);
         } else {
             if (dy < 0 && newParent.someBarOverflows(bar, newY)) {
                 newY = newParent.getNextLineY(newY);
             }
-            bar.parent.removeBarSvg(bar);
+            bar.currentParent.removeBarSvg(bar);
             newParent.addBarSvg(bar, newY);
             parentChanged = true;
         }
@@ -259,4 +265,12 @@ export class LinesSvg {
             }
         }
     }
+}
+
+function nonStaticSwimlaneChanged(bar1: BarsSvg, bar2: BarsSvg, swimlanesInfo: GanttSwimlaneInfo[]): boolean {
+    return bar1.swimlaneObjects.some((swimlane, index) => {
+        const swimlaneInfo = (swimlanesInfo || [])[index];
+        const bar2Swimlane = bar2.swimlaneObjects[index];
+        return !swimlaneInfo?.static && swimlane.value !== bar2Swimlane?.value;
+    });
 }

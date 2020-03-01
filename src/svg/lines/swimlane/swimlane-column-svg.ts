@@ -181,7 +181,7 @@ export class SwimlaneColumnSvg {
 
         this.headerRectElement = createSVG('rect', {
             x: this.x, y, width: this.width, height,
-            style: header && header.background ? `fill: ${header.background};` : '',
+            style: header?.background ? `fill: ${header.background};` : '',
             class: 'swimlane-header-rect' + (!header ? ' empty' : ''),
         }, swimLaneGroup);
 

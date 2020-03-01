@@ -17,7 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {GanttTask} from '../../../model/task';
+import {GanttTask, Swimlane} from '../../../model/task';
 import {BarSvg} from './bar-svg';
 import {copyMatrix} from '../../../utils/common.utils';
 import {GanttSvg} from '../../gantt-svg';
@@ -45,8 +45,8 @@ export class BarsSvg {
         return this.y;
     }
 
-    public get swimlaneObjects(): { value: any, title: string, data?: any }[] {
-        return (this.swimlanes || []).map(obj => ({value: obj?.value, title: obj?.title, data: obj?.data}));
+    public get swimlaneObjects(): Swimlane[] {
+        return (this.swimlanes || []).map(obj => ({...obj}));
     }
 
     constructor(private tasks: GanttTask[],
@@ -61,6 +61,15 @@ export class BarsSvg {
             arr.push(...line);
             return arr;
         }, []);
+    }
+
+    public hasStaticSwimlane(): boolean {
+        return this.staticSwimlaneIndex() !== -1;
+    }
+
+    public staticSwimlaneIndex(): number {
+        const swimlaneInfo = this.gantt.options.swimlaneInfo || [];
+        return this.swimlanes.findIndex((swimlane, index) => swimlaneInfo[index]?.static);
     }
 
     public render() {
