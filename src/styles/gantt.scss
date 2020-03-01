@@ -203,10 +203,6 @@ $font-size: 13px;
   border: 1px solid #ced4da;
 }
 
-.circle-image {
-  clip-path: circle(50%);
-}
-
 .gantt-swimlanes-container {
   position: relative;
   overflow: auto;
@@ -252,8 +248,3 @@ $font-size: 13px;
 
   }
 }
-
-.swimlane-label {
-  transition: y;
-}
-
