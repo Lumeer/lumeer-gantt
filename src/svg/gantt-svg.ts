@@ -44,7 +44,7 @@ import {CreateArrowsSvg} from './drag/create-arrows-svg';
 import {BarSvg} from './lines/bar/bar-svg';
 import {CreateBarSvg} from './drag/create-bar-svg';
 import {BarsSvg} from './lines/bar/bars-svg';
-import Gantt from '../index';
+import {Gantt} from '../gantt';
 
 export class GanttSvg {
 

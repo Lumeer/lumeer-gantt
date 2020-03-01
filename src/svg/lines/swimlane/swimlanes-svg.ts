@@ -311,5 +311,5 @@ function computeWidths(helperTextSvg: SVGElement, lines: GanttLine[], options: G
 
 
 function isEmptyLine(swimlanes: GanttSwimlane[]): boolean {
-    return swimlanes.every(sw => !sw || !sw.title);
+    return swimlanes.every(sw => !sw || !sw.title && sw.type !== GanttSwimlaneType.Checkbox && !sw.background);
 }

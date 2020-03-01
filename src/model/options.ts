@@ -84,7 +84,7 @@ export const defaultOptions: GanttOptions = {
     maxInitialSwimlaneWidth: 200,
 
     avatarPadding: 5,
-    avatarSize: 30,
+    avatarSize: 24,
     checkboxSize: 16,
     textBackgroundPadding: 8,
 

@@ -38,7 +38,7 @@
             end: '2020-10-20',
             progress: 3,
             allowedDependencies: ['T9', 'T1', 'T3'],
-            swimlanes: [{title: 'Ahojj', avatarUrl: 'https://www.gravatar.com/avatar/205e460b479e2e5b48aec07710c08d50.jpg', textBackground: 'red'}, {title: 'A'}],
+            swimlanes: [{title: '', value: 'red', background: 'red'}, {title: 'A'}],
             barColor: 'rgb(34,120,255)',
             progressColor: 'red',
             textColor: 'white',
@@ -57,7 +57,7 @@
             end: '2020-10-10',
             progress: 120,
             allowedDependencies: ['T0'],
-            swimlanes: [{title: 'Ahoj'}, null],
+            swimlanes: [{title: '', value: 'blue', background: 'blue'}, null],
             barColor: 'rgb(34,120,255)',
             progressColor: 'green',
             startDrag: true,
@@ -72,7 +72,7 @@
             start: '2020-10-08',
             end: '2020-10-10',
             progress: 40,
-            swimlanes: [{title: 'Ahoj', background: 'red', color: 'white'}, undefined],
+            swimlanes: [{title: '', value: 'green', background: 'green'}, undefined],
             barColor: 'rgb(34,120,255)',
             progressColor: 'orange',
             startDrag: true,
@@ -87,7 +87,7 @@
             start: '2020-10-21',
             end: '2020-10-25',
             progress: 99,
-            swimlanes: [{title: 'Ahoj'}, {title: ''}],
+            swimlanes: [{ttitle: '', value: 'pink', background: 'pink'}, {title: ''}],
             barColor: 'rgb(34,120,255)',
             progressColor: 'yellow',
             startDrag: true,
@@ -101,7 +101,7 @@
             start: '2020-11-01',
             end: '2020-12-08',
             progress: 1,
-            swimlanes: [{value: '', title: '', type: 'checkbox'}, {title: 'C', background: 'yellow'}],
+            swimlanes: [{title: '', value: 'red', background: 'red'}, {title: 'C', background: 'yellow'}],
             barColor: 'rgb(34,120,255)',
             progressColor: 'cyan',
             startDrag: true,
@@ -120,7 +120,7 @@
             editable: true,
         },
     ];
-    const ganttChart = new Gantt(".gantt-target", tasks, {
+    const ganttChart = new Gantt.default(".gantt-target", tasks, {
         columnWidth: 50,
         swimlaneInfo: [{
             title: 'First',
