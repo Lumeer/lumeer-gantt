@@ -1,2 +1,6 @@
 tsconfig.json
+index.html
 src
+.vscode/
+.idea/
+.rpt2_cache/

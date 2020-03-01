@@ -103,9 +103,6 @@ export class GanttSvg {
             this.svgContainer = createSVG('svg', {class: 'gantt'}, wrapperElement);
         }
 
-        wrapperElement.addEventListener('scroll', event => console.log(1, event));
-        wrapperElement.addEventListener('onscroll', event => console.log(2, event));
-
         this.swimlanesContainer = document.createElement('div');
         this.swimlanesContainer.classList.add('gantt-swimlanes-container');
 
@@ -309,6 +306,15 @@ export class GanttSvg {
         this.layers.bar = createSVG('g', {class: 'bar'}, this.svgContainer);
         this.layers.handle = createSVG('g', {class: 'handle'}, this.svgContainer);
         this.layers.swimlanes = createSVG('svg', {class: 'gantt-swimlanes'}, this.swimlanesContainer);
+
+        this.setupHelperDefinitions();
+    }
+
+    private setupHelperDefinitions() {
+        // clip-path for avatars in swimlanes
+        const defs = createSVG('defs', {}, this.layers.swimlanes);
+        const clipPath = createSVG('clipPath', {id: 'clip', clipPathUnits: 'objectBoundingBox'}, defs);
+        createSVG('circle', {cx: '.5', cy: '.5', r: '.5'}, clipPath);
     }
 
     private renderGridAndLines() {
