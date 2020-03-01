@@ -140,7 +140,7 @@ export class SwimlaneColumnSvg {
                     if (swimLane?.avatarUrl) {
                         this.textImageElements[index] = createSVG('image', {
                             x: startX, y: middleY - this.avatarSize / 2, width: this.avatarSize, height: this.avatarSize,
-                            href: swimLane?.avatarUrl, class: 'circle-image'
+                            href: swimLane?.avatarUrl, 'clip-path': 'url(#clip)'
                         }, swimLaneGroup);
                         contentWidth = this.avatarSize + this.avatarPadding;
                         contentHeight = this.avatarSize;
@@ -285,6 +285,9 @@ export class SwimlaneColumnSvg {
             }
         });
         this.swimlanes.forEach((swimlane, index) => {
+            const height = this.elementHeight(index);
+            const middleY = this.ys[index] + height / 2;
+            let contentHeight = 0;
             if (swimlane !== this.swimlanes[index - 1]) {
                 let startX = this.x + this.gantt.options.padding;
 
@@ -295,14 +298,25 @@ export class SwimlaneColumnSvg {
 
                 if (this.textImageElements[index]) {
                     setAttributes(this.textImageElements[index], {x: startX});
-                    startX += this.avatarPadding + this.avatarSize;
+                    if (swimlane?.type === GanttSwimlaneType.Checkbox) {
+                        setAttributes(this.textImageElements[index], {y: middleY - this.checkboxSize / 2});
+                        contentHeight = this.checkboxSize;
+                    } else if (swimlane?.avatarUrl) {
+                        setAttributes(this.textImageElements[index], {y: middleY - this.avatarSize / 2});
+                        startX += this.avatarPadding + this.avatarSize;
+                        contentHeight = this.avatarSize;
+                    }
                 }
 
                 if (this.textElements[index]) {
-                    setAttributes(this.textElements[index], {x: startX});
+                    setAttributes(this.textElements[index], {x: startX, y: middleY});
+                    const textBoundRect = this.textElements[index].getBoundingClientRect();
+                    contentHeight = Math.max(contentHeight, textBoundRect.height);
                 }
 
-
+                if (this.textBackgroundElements[index]) {
+                    setAttributes(this.textBackgroundElements[index], {y: middleY - contentHeight / 2 - this.gantt.options.textBackgroundPadding / 2})
+                }
             }
         });
         this.headerRectElement && setAttributes(this.headerRectElement, {x: this.x, width: this.width});

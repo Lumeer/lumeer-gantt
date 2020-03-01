@@ -172,3 +172,7 @@
   cursor: col-resize;
   fill: transparent;
 }
+
+.swimlane-label {
+  transition: y;
+}
