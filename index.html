@@ -57,7 +57,7 @@
             end: '2020-10-10',
             progress: 120,
             allowedDependencies: ['T0'],
-            swimlanes: [{title: '', value: 'blue', background: 'blue'}, null],
+            swimlanes: [{title: '', value: 'red', background: 'blue'}, {title: 'A'}],
             barColor: 'rgb(34,120,255)',
             progressColor: 'green',
             startDrag: true,
@@ -72,7 +72,7 @@
             start: '2020-10-08',
             end: '2020-10-10',
             progress: 40,
-            swimlanes: [{title: 'green', value: 'green', textBackground: 'green'}, undefined],
+            swimlanes: [{title: 'green', value: 'green', textBackground: 'green'}, {title: 'A'}],
             barColor: 'rgb(34,120,255)',
             progressColor: 'orange',
             startDrag: true,
@@ -87,7 +87,7 @@
             start: '2020-10-21',
             end: '2020-10-25',
             progress: 99,
-            swimlanes: [{title: 'tiitle', value: 'pink', avatarUrl: 'https://www.gravatar.com/avatar/344857133adb4660797bc5700d04b73a?r=g&d=retro'}, {title: ''}],
+            swimlanes: [{title: 'tiitle', value: 'pink', avatarUrl: 'https://www.gravatar.com/avatar/344857133adb4660797bc5700d04b73a?r=g&d=retro'}, {title: 'A'}],
             barColor: 'rgb(34,120,255)',
             progressColor: 'yellow',
             startDrag: true,
@@ -101,7 +101,7 @@
             start: '2020-11-01',
             end: '2020-12-08',
             progress: 1,
-            swimlanes: [{title: '', value: 'red', background: 'red'}, {title: 'C', background: 'yellow'}],
+            swimlanes: [{title: '', value: 'red', background: 'red'}, {title: 'A'}],
             barColor: 'rgb(34,120,255)',
             progressColor: 'cyan',
             startDrag: true,
@@ -122,10 +122,12 @@
     ];
     const ganttChart = new Gantt.default(".gantt-target", tasks, {
         columnWidth: 50,
+        initialScroll: 1607875136672,
         swimlaneInfo: [{
             title: 'First',
             color: 'red',
             background: '#A2BAFF',
+            static: true,
         }, {
             title: 'Second Attr',
             background: '#ffff87',
@@ -148,6 +150,7 @@
         columnWidth: 50,
         barCornerRadius: 0,
         arrowCurve: 0,
+        initialScroll: 1583346611832,
         swimlaneInfo: [{
             width: 100,
             title: 'First Attr',
@@ -156,6 +159,7 @@
         }, {
             title: 'Second Attr',
             background: '#b823ff',
+            static: true,
         }],
         language: 'es',
         viewMode: 'Day',

@@ -116,8 +116,11 @@ export class GanttSvg {
     }
 
     private setupOptions(options: GanttOptions) {
-        this.options = createGanttOptions(options);
-        setupLanguage(this.options.language);
+        this.setOptions(createGanttOptions(options));
+
+        if (this.options.initialScroll) {
+            this.scrollSnapshotDate = new Date(this.options.initialScroll);
+        }
     }
 
     private setupSwimLanes(tasks: Task[], options: GanttOptions) {
@@ -156,14 +159,20 @@ export class GanttSvg {
 
     private refreshGantt(tasks: Task[], options: GanttOptions, force?: boolean) {
         if (force || !deepObjectsEquals(this.options, options)) {
-            this.options = options;
-            setupLanguage(options.language);
-            if (!this.viewportWidthChangedALot(this.tasks, tasks, options)) {
+            this.setOptions(options);
+            if (options.initialScroll) {
+                this.scrollSnapshotDate = new Date(options.initialScroll);
+            } else if (!this.viewportWidthChangedALot(this.tasks, tasks, options)) {
                 this.snapshotDate();
             }
             this.setupSwimLanes(tasks, this.options);
             this.setupAndRender();
         }
+    }
+
+    private setOptions(options: GanttOptions) {
+        this.options = options;
+        setupLanguage(options.language);
     }
 
     private viewportWidthChangedALot(previousTasks: Task[], currentTasks: Task[], options: GanttOptions): boolean {
@@ -189,16 +198,20 @@ export class GanttSvg {
     }
 
     private snapshotDate() {
+        this.scrollSnapshotDate = this.currentMidleDate();
+    }
+
+    private currentMidleDate(): Date {
         const svgParent = this.svgContainer?.parentElement;
         if (!svgParent) {
-            return;
+            return null;
         }
         const centerPosition = svgParent.scrollLeft + svgParent.clientWidth / 2;
         const part = centerPosition / svgParent.scrollWidth;
 
         const datesDiff = this.settings.maxDate.getTime() - this.settings.minDate.getTime();
         const millisDiff = datesDiff * part;
-        this.scrollSnapshotDate = addToDate(this.settings.minDate, millisDiff, DateScale.Millisecond);
+        return addToDate(this.settings.minDate, millisDiff, DateScale.Millisecond);
     }
 
     private setupAndRender() {
@@ -518,6 +531,14 @@ export class GanttSvg {
             _this.onDoubleClick(event);
         }
 
+        this.tasksContainer.addEventListener('scroll', () => this.onTaskContainerScrolled());
+    }
+
+    private onTaskContainerScrolled() {
+        const snapshotDate = this.currentMidleDate();
+        if (snapshotDate) {
+            this.master.onScrolledHorizontally?.(snapshotDate.getTime());
+        }
     }
 
     private onDoubleClick(event: any) {
@@ -595,27 +616,27 @@ export class GanttSvg {
     }
 
     public onSwimlaneResized(index: number, width: number) {
-        this.master.onSwimlaneResized && this.master.onSwimlaneResized(index, width);
+        this.master.onSwimlaneResized?.(index, width);
     }
 
     public onTaskChanged(task: Task) {
-        this.master.onTaskChanged && this.master.onTaskChanged(task);
+        this.master.onTaskChanged?.(task);
     }
 
     public onTaskDependencyAdded(fromTask: Task, toTask: Task) {
-        this.master.onTaskDependencyAdded && this.master.onTaskDependencyAdded(fromTask, toTask);
+        this.master.onTaskDependencyAdded?.(fromTask, toTask);
     }
 
     public onTaskDependencyRemoved(fromTask: Task, toTask: Task) {
-        this.master.onTaskDependencyRemoved && this.master.onTaskDependencyRemoved(fromTask, toTask);
+        this.master.onTaskDependencyRemoved?.(fromTask, toTask);
     }
 
     public onTaskCreated(task: Task) {
-        this.master.onTaskCreated && this.master.onTaskCreated(task);
+        this.master.onTaskCreated?.(task);
     }
 
     public onTaskDoubleClick(task: Task) {
-        this.master.onTaskDetail && this.master.onTaskDetail(task);
+        this.master.onTaskDetail?.(task);
     }
 
 }

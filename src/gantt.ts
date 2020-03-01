@@ -33,6 +33,7 @@ export class Gantt {
     public onTaskDependencyRemoved?: (fromTask: Task, toTask: Task) => void;
     public onTaskCreated?: (task: Task) => void;
     public onTaskDetail?: (task: Task) => void;
+    public onScrolledHorizontally?: (value: number) => void;
 
     constructor(wrapper: GanttWrapper, tasks: Task[], options: GanttOptions) {
         this.ganttSvg = new GanttSvg(wrapper, tasks, options, this);

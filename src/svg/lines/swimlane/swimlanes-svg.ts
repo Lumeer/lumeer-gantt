@@ -128,7 +128,7 @@ export class SwimlanesSvg {
                 this.columnsSvgs[i] = new SwimlaneColumnSvg(this.gantt, this, width, x);
             }
             const className = isEmptyLine(line.swimlanes) ? 'empty' : null;
-            const isSameSwimLane = previousLines[i] && swimlane && previousLines[i].id === swimlane.id;
+            const isSameSwimLane = previousLines[i]?.id === swimlane?.id;
             this.columnsSvgs[i].renderCell(swimlane, index, height, y, isSameSwimLane, className);
 
             x += width;
@@ -190,7 +190,7 @@ export class SwimlanesSvg {
         if (this.swimlaneWidthsDrag) {
             const changedIndex = (this.swimlaneWidths || []).findIndex((width, index) => this.swimlaneWidthsDrag[index] !== width);
             if (changedIndex !== -1) {
-                const info = this.gantt.options.swimlaneInfo && this.gantt.options.swimlaneInfo[changedIndex];
+                const info = this.gantt.options.swimlaneInfo?.[changedIndex];
                 if (info) {
                     info.width = this.swimlaneWidths[changedIndex];
                 }

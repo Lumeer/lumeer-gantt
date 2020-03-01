@@ -152,8 +152,12 @@ export class BarSvg {
         return this.startEndpointCY;
     }
 
-    public get parent(): BarsSvg {
+    public get currentParent(): BarsSvg {
         return this.parentSvg;
+    }
+
+    public get initialParent(): BarsSvg {
+        return this.parentSvgDrag || this.parentSvg;
     }
 
     public progressChanged(): boolean {
@@ -783,7 +787,7 @@ export class BarSvg {
         this.task.endDate = computeDateByPosition(this.gantt.options, this.gantt.settings, this.x2);
         this.task.end = formatDate(this.task.endDate, this.gantt.options.dateFormat);
         this.task.progress = this.progress;
-        this.task.swimlanes = this.parent.swimlaneObjects;
+        this.task.swimlanes = this.currentParent.swimlaneObjects;
     }
 
     public dragBar(dx1: number, dx2: number) {
