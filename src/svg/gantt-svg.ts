@@ -188,7 +188,7 @@ export class GanttSvg {
 
         const {value, scale} = datePadding(options.viewMode);
         const previousMinDate = addToDate(this.settings.minDate, -value, scale);
-        const previousMaxDate = addToDate(this.settings.minDate, value, scale);
+        const previousMaxDate = addToDate(this.settings.maxDate, value, scale);
         return (minDate.getTime() < previousMinDate.getTime() || maxDate.getTime() > previousMaxDate.getTime())
     }
 
