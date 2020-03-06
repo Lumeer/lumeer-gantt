@@ -245,11 +245,13 @@ export class SwimlanesSvg {
     }
 
     private updateWrapperSize() {
-        setAttributes(this.gantt.layers.swimlanes, {
-            height: this.swimlaneHeight + this.gantt.settings.headerHeight,
-            width: this.swimlaneWidth
-        });
-        setAttributes(this.swimlaneBackgroundElement, {height: this.swimlaneHeight});
+        if (this.containsSwimLanes) {
+            setAttributes(this.gantt.layers.swimlanes, {
+                height: this.swimlaneHeight + this.gantt.settings.headerHeight,
+                width: this.swimlaneWidth
+            });
+            setAttributes(this.swimlaneBackgroundElement, {height: this.swimlaneHeight});
+        }
     }
 
     public lineResized(index: number, diff: number) {
