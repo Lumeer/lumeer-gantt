@@ -270,7 +270,8 @@ export function createGanttLines(tasks: GanttTask[], options: GanttOptions): Gan
 function iterateGanttLines(line: SwimlaneWithTasks, ganttLines: GanttLine[], ganttSwimLanes: GanttSwimlane[], maxLevel: number) {
     const id = generateId(line.title);
 
-    const newSwimLanes = [...ganttSwimLanes, {...line, id, value: swimlaneValue(line)}];
+    const lineWithoutTasks = {...line, children: undefined, tasks: undefined};
+    const newSwimLanes = [...ganttSwimLanes, {...lineWithoutTasks, id, value: swimlaneValue(line)}];
 
     (line.children || []).forEach(l => iterateGanttLines(l, ganttLines, newSwimLanes, maxLevel));
 
