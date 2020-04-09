@@ -114,7 +114,7 @@ export class SwimlaneColumnSvg {
                 class: `swimlane-rect ${className || ''}`,
             }, swimLaneGroup);
 
-            if (swimLane?.title || swimLane?.type === GanttSwimlaneType.Checkbox) {
+            if (swimLane?.title || swimLane?.avatarUrl || swimLane?.type === GanttSwimlaneType.Checkbox) {
 
                 let startX = this.x + this.gantt.options.padding;
 
