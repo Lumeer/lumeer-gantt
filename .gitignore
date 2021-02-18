@@ -33,6 +33,4 @@ gh-pages
 .vscode/
 .idea/
 .rpt2_cache/
-dist
-!dist/lumeer-gantt.css
-!dist/lumeer-gantt.min.js
+/dist
