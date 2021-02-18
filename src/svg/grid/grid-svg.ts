@@ -36,6 +36,7 @@ const rowLineClass = 'row-line';
 const tickClass = 'tick';
 const todayClass = 'today-highlight';
 const taskGridClasses = [gridRowClass, rowLineClass, tickClass, todayClass];
+const todayMinWidth = 10;
 
 export class GridSvg {
 
@@ -134,16 +135,16 @@ export class GridSvg {
     }
 
     private renderGridHighlights() {
-        const supportedModes = [GanttMode.QuarterDay, GanttMode.HalfDay, GanttMode.Day, GanttMode.Week];
-        if (!supportedModes.includes(this.gantt.options.viewMode)) {
-            return;
-        }
-
         const steps = diffDates(startOfToday(), this.gantt.settings.minDate, DateScale.Hour) / this.gantt.settings.hoursStep;
-        const x = steps * getColumnWidth(this.gantt.options);
+        let x = steps * getColumnWidth(this.gantt.options);
         const y = 0;
-        const width = getColumnWidth(this.gantt.options) / stepHoursMultiplier(this.gantt.options.viewMode);
+        let width = getColumnWidth(this.gantt.options) / stepHoursMultiplier(this.gantt.options.viewMode);
         const height = getTableHeight(this.gantt.settings.headerHeight, this.gantt.settings.rowHeights);
+
+        if (width < todayMinWidth) {
+            x -= (todayMinWidth - width) / 2;
+            width = todayMinWidth;
+        }
 
         this.gridHighlightElement = createSVG('rect', {
             x,

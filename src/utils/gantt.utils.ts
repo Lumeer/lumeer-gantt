@@ -556,11 +556,11 @@ export function setupRange(tasks: GanttTask[], options: GanttOptions): { minDate
     const dateScale = getDateScaleByViewMode(options.viewMode);
 
     if (!minDate || !maxDate) {
-        minDate = startOf(startOfToday(), dateScale);
-        maxDate = addToDate(minDate, 1, DateScale.Month);
+        minDate = startOf(startOfToday(), DateScale.Day);
+        maxDate = addToDate(minDate, 1, dateScale);
     } else {
-        minDate = startOf(minDate, dateScale);
-        maxDate = startOf(maxDate, dateScale);
+        minDate = startOf(minDate, DateScale.Day);
+        maxDate = startOf(maxDate, DateScale.Day);
     }
 
     const {value, scale} = datePadding(options.viewMode);

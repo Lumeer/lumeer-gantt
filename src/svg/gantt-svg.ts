@@ -198,10 +198,10 @@ export class GanttSvg {
     }
 
     private snapshotDate() {
-        this.scrollSnapshotDate = this.currentMidleDate();
+        this.scrollSnapshotDate = this.currentMiddleDate();
     }
 
-    private currentMidleDate(): Date {
+    private currentMiddleDate(): Date {
         const svgParent = this.svgContainer?.parentElement;
         if (!svgParent) {
             return null;
@@ -233,12 +233,12 @@ export class GanttSvg {
 
     private setupDateValues() {
         this.settings.hoursStep = 24 * stepHoursMultiplier(this.options.viewMode);
-        this.settings.dates = [this.settings.minDate];
+        this.settings.dates = [];
         let currentDate: Date = this.settings.minDate;
 
         while (currentDate.getTime() < this.settings.maxDate.getTime()) {
-            currentDate = addToDateByMode(currentDate, this.options.viewMode, this.settings.hoursStep);
             this.settings.dates.push(currentDate);
+            currentDate = addToDateByMode(currentDate, this.options.viewMode, this.settings.hoursStep);
         }
 
         let lastX = 0;
@@ -535,7 +535,7 @@ export class GanttSvg {
     }
 
     private onTaskContainerScrolled() {
-        const snapshotDate = this.currentMidleDate();
+        const snapshotDate = this.currentMiddleDate();
         if (snapshotDate) {
             this.master.onScrolledHorizontally?.(snapshotDate.getTime());
         }

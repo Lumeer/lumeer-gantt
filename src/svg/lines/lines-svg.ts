@@ -224,8 +224,8 @@ export class LinesSvg {
             || (index === this.barsSvgs.length - 1 && y >= barsSvg.getY + barsSvg.height)
             || ((barsSvg.getY <= y) && (barsSvg.getY + barsSvg.height >= y)));
 
-        if (newParent?.hasStaticSwimlane() && bar.initialParent !== newParent
-            && !nonStaticSwimlaneChanged(bar.initialParent, newParent, this.gantt.options.swimlaneInfo)) {
+        if (!newParent || (newParent.hasStaticSwimlane() && bar.initialParent !== newParent
+            && !nonStaticSwimlaneChanged(bar.initialParent, newParent, this.gantt.options.swimlaneInfo))) {
             return false;
         }
 
