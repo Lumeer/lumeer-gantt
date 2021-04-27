@@ -35,7 +35,7 @@
             id: "T0",
             name: '<b>Some html</b>',
             start: '2021-10-01',
-            end: '2021-10-20',
+            end: '2021-10-25',
             progress: 3,
             allowedDependencies: ['T9', 'T1', 'T3'],
             swimlanes: [{title: '', value: 'red', type: 'checkbox'}, {title: 'A'}],
@@ -122,7 +122,6 @@
     ];
     const ganttChart = new Gantt.default(".gantt-target", tasks, {
         columnWidth: 50,
-        initialScroll: 1607875136672,
         swimlaneInfo: [{
             title: 'First',
             color: 'red',
@@ -133,7 +132,7 @@
             background: '#ffff87',
         }],
         language: 'sk',
-        viewMode: 'Day',
+        viewMode: 'Month',
         lockResize: true,
         maxInitialSwimlaneWidth: 200
     });
