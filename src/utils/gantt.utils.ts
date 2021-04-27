@@ -119,7 +119,7 @@ export function computeDistanceFromStart(options: GanttOptions, settings: GanttS
         for (const date of settings.dates) {
             const width = getColumnWidth(options, date);
             if (date.getTime() > destinationDate.getTime()) {
-                const hoursStep = settings.hoursStep / 30 * getDaysInMonth(date);
+                const hoursStep = settings.hoursStep / stepHoursMultiplier(options.viewMode) * getDaysInMonth(date);
                 const lastPartSteps = diffDates(destinationDate, date, DateScale.Hour) / hoursStep;
                 return x + (lastPartSteps * width);
             }
@@ -138,7 +138,7 @@ export function computeDateByPosition(options: GanttOptions, settings: GanttSett
         for (const date of settings.dates) {
             const width = getColumnWidth(options, date);
             if (x + width > position) {
-                const hoursStep = settings.hoursStep / 30 * getDaysInMonth(date);
+                const hoursStep = settings.hoursStep / stepHoursMultiplier(options.viewMode) * getDaysInMonth(date);
                 const steps = (position - x) / width * hoursStep;
                 return addToDate(date, steps, DateScale.Hour);
             }
@@ -157,7 +157,7 @@ export function getColumnWidth(options: GanttOptions, date?: Date): number {
     const width = options.columnWidth * columnWidthMultiplier(options.viewMode);
     if (options.viewMode === GanttMode.Month && date) {
         const daysInMonth = getDaysInMonth(date);
-        return width / 30 * daysInMonth;
+        return width / stepHoursMultiplier(options.viewMode) * daysInMonth;
     }
     return width;
 }
@@ -556,11 +556,11 @@ export function setupRange(tasks: GanttTask[], options: GanttOptions): { minDate
     const dateScale = getDateScaleByViewMode(options.viewMode);
 
     if (!minDate || !maxDate) {
-        minDate = startOf(startOfToday(), DateScale.Day);
+        minDate = startOf(startOfToday(), dateScale);
         maxDate = addToDate(minDate, 1, dateScale);
     } else {
-        minDate = startOf(minDate, DateScale.Day);
-        maxDate = startOf(maxDate, DateScale.Day);
+        minDate = startOf(minDate, dateScale);
+        maxDate = startOf(maxDate, dateScale);
     }
 
     const {value, scale} = datePadding(options.viewMode);
