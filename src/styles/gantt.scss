@@ -30,21 +30,40 @@ $blue: #a3a3ff !default;
 $font-size: 13px;
 
 .gantt-container {
-  position: relative;
-  overflow: auto;
-  font-size: $font-size;
-  padding-bottom: 15px;
+  display: grid;
+  grid-template-rows: min-content 1fr;
+
+  .gantt-header-container {
+    display: grid;
+    grid-template-columns: min-content 1fr;
+    font-size: $font-size;
+
+    .gantt-dates-container {
+      overflow-x: auto;
+    }
+  }
+
+  .gantt-body-container {
+    display: grid;
+    grid-template-columns: min-content 1fr;
+
+    .gantt-tasks-container {
+      overflow-x: auto;
+    }
+  }
+}
+
+.gantt-header {
+  .grid-header {
+    fill: #ffffff;
+    stroke: $border-color;
+    stroke-width: 1.4;
+  }
 }
 
 .gantt {
   .grid-background {
     fill: none;
-  }
-
-  .grid-header {
-    fill: #ffffff;
-    stroke: $border-color;
-    stroke-width: 1.4;
   }
 
   .grid-row {
@@ -199,23 +218,38 @@ $font-size: 13px;
   }
 }
 
+.gantt-attributes, .gantt-header {
+  border-top: 1px solid $gray-400;
+  border-right: 1px solid $gray-400;
+  border-left: 1px solid $gray-400;
+}
+
 .gantt, .gantt-swimlanes {
-  border: 1px solid #ced4da;
+  border-right: 1px solid $gray-400;
+  border-left: 1px solid $gray-400;
+  border-bottom: 1px solid $gray-400;
+}
+
+.swimlanes-header, .swimlanes-background {
+  fill: #ffffff;
+  stroke: $border-color;
+  stroke-width: 1.4;
+}
+
+.swimlane-header-rect {
+  stroke: $border-color;
+  stroke-width: 1.4;
+  fill: #ffffff;
+
+  &.empty {
+    stroke: none;
+  }
 }
 
 .gantt-swimlanes-container {
-  position: relative;
-  overflow: auto;
   font-size: $font-size;
-  float: left;
 
   .gantt-swimlanes {
-
-    .swimlanes-header, .swimlanes-background {
-      fill: #ffffff;
-      stroke: $border-color;
-      stroke-width: 1.4;
-    }
 
     .swimlane {
 
@@ -231,20 +265,23 @@ $font-size: 13px;
 
     }
 
-    .swimlane-header-rect {
-      stroke: $border-color;
-      stroke-width: 1.4;
-      fill: #ffffff;
-
-      &.empty {
-        stroke: none;
-      }
-    }
-
     .swimlane-resize-handle {
       cursor: col-resize;
       fill: transparent;
     }
 
+  }
+}
+
+.invisible-scroll-y {
+  overflow-y: scroll;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none; /* removes scrollbar for Firefox */
+  -ms-overflow-style: none; /* removes scrollbar for Internet Explorer 10+ */
+
+  &::-webkit-scrollbar {
+    /* removes scrollbar for WebKit */
+    width: 0;
+    height: 0;
   }
 }

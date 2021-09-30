@@ -51,7 +51,7 @@ export class LinesSvg {
         this.barsSvgs = [];
         this.barSvgsMap = {};
 
-        let y = this.gantt.settings.headerHeight;
+        let y = 0;
 
         (this.gantt.lines || []).forEach((line, index) => {
             const barsSvg = this.renderTasksLines(line.tasks, y, line.swimlanes);
