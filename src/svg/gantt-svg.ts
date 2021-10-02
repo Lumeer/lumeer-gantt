@@ -99,6 +99,7 @@ export class GanttSvg {
     this.setupAndRender();
     this.bindListeners();
     this.syncHorizontalScroll();
+    this.syncVerticalScroll();
   }
 
   private setupWrapper(wrapper: GanttWrapper) {
@@ -106,6 +107,7 @@ export class GanttSvg {
 
     this.container = document.createElement('div');
     this.container.classList.add('gantt-container');
+    this.container.classList.add('gantt');
     wrapperElement.appendChild(this.container);
 
     this.headerContainer = document.createElement('div');
@@ -118,7 +120,7 @@ export class GanttSvg {
 
     this.datesContainer = document.createElement('div');
     this.datesContainer.classList.add('gantt-dates-container');
-    this.datesContainer.classList.add('invisible-scroll-y');
+    this.datesContainer.classList.add('invisible-scroll');
     this.headerContainer.appendChild(this.datesContainer);
 
     this.bodyContainer = document.createElement('div');
@@ -127,6 +129,7 @@ export class GanttSvg {
 
     this.swimlanesContainer = document.createElement('div');
     this.swimlanesContainer.classList.add('gantt-swimlanes-container');
+    this.swimlanesContainer.classList.add('invisible-scroll');
     this.bodyContainer.appendChild(this.swimlanesContainer);
 
     this.tasksContainer = document.createElement('div');
@@ -383,6 +386,9 @@ export class GanttSvg {
     }
     setAttributes(this.svgContainer, attributes);
     setAttributes(this.svgDatesContainer, {...attributes, height: this.settings.headerHeight});
+
+    this.attributesContainer.style.height = `${this.settings.headerHeight}px`;
+    this.datesContainer.style.height = `${this.settings.headerHeight}px`;
   }
 
   private setScrollPosition() {
@@ -576,6 +582,26 @@ export class GanttSvg {
           }
           if (target !== this.tasksContainer) {
             this.tasksContainer.scrollLeft = target.scrollLeft;
+          }
+        })
+      })
+  }
+
+  private syncVerticalScroll() {
+    let activeElement: HTMLElement;
+
+    [this.swimlanesContainer, this.tasksContainer]
+      .forEach(element => {
+        element.addEventListener('mouseenter', event => activeElement = event.target as HTMLElement);
+
+        element.addEventListener('scroll', event => {
+          const target = event.target as HTMLElement;
+
+          if (target !== this.swimlanesContainer) {
+            this.swimlanesContainer.scrollTop = target.scrollTop;
+          }
+          if (target !== this.tasksContainer) {
+            this.tasksContainer.scrollTop = target.scrollTop;
           }
         })
       })

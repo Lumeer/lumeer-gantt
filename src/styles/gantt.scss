@@ -31,12 +31,16 @@ $font-size: 13px;
 
 .gantt-container {
   display: grid;
-  grid-template-rows: min-content 1fr;
+  height: 100%;
+  grid-template-rows: min-content minmax(0, 1fr);
 
   .gantt-header-container {
     display: grid;
     grid-template-columns: min-content 1fr;
     font-size: $font-size;
+    border-top: 1px solid $gray-400;
+    border-right: 1px solid $gray-400;
+    border-left: 1px solid $gray-400;
 
     .gantt-dates-container {
       overflow-x: auto;
@@ -46,9 +50,17 @@ $font-size: 13px;
   .gantt-body-container {
     display: grid;
     grid-template-columns: min-content 1fr;
+    border-right: 1px solid $gray-400;
+    border-left: 1px solid $gray-400;
+    border-bottom: 1px solid $gray-400;
+
+    .gantt-swimlanes-container {
+      overflow-y: auto;
+      padding-bottom: 20px; // bcs tasks-container contains scrollbar
+    }
 
     .gantt-tasks-container {
-      overflow-x: auto;
+      overflow: auto;
     }
   }
 }
@@ -218,18 +230,6 @@ $font-size: 13px;
   }
 }
 
-.gantt-attributes, .gantt-header {
-  border-top: 1px solid $gray-400;
-  border-right: 1px solid $gray-400;
-  border-left: 1px solid $gray-400;
-}
-
-.gantt, .gantt-swimlanes {
-  border-right: 1px solid $gray-400;
-  border-left: 1px solid $gray-400;
-  border-bottom: 1px solid $gray-400;
-}
-
 .swimlanes-header, .swimlanes-background {
   fill: #ffffff;
   stroke: $border-color;
@@ -273,8 +273,15 @@ $font-size: 13px;
   }
 }
 
-.invisible-scroll-y {
+.scroll-y {
   overflow-y: scroll;
+}
+
+.scroll-x {
+  overflow-x: scroll;
+}
+
+.invisible-scroll {
   -webkit-overflow-scrolling: touch;
   scrollbar-width: none; /* removes scrollbar for Firefox */
   -ms-overflow-style: none; /* removes scrollbar for Internet Explorer 10+ */

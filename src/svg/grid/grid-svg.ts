@@ -219,7 +219,7 @@ export class GridSvg {
     this.gridHighlightElement && setAttributes(this.gridHighlightElement, {height});
     this.gridTicksElements.forEach(element => setAttributes(element, {height}));
 
-    let rowY = this.gantt.settings.headerHeight;
+    let rowY = 0;
 
     for (let i = 0; i < this.gantt.settings.numberRows; i++) {
       const rowHeight = this.gantt.settings.rowHeights[i] || this.gantt.settings.defaultRowHeight;

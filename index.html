@@ -17,7 +17,7 @@
 <body>
 <div class="container">
    <h2>Interactive Gantt Chart entirely made in SVG!</h2>
-   <div class="gantt-target"></div>
+   <div class="gantt-target" style="height: 300px"></div>
 </div>
 <button type="button" onclick='ganttChart.changeViewMode("Quarter Day")'>Quarter Day</button>
 <button type="button" onclick='ganttChart.changeViewMode("Half Day")'>Half Day</button>
@@ -110,15 +110,59 @@
         },
         {
             id: "T4",
-            name: 'T4444444',
-            start: '2021-02-05',
-            end: '2021-02-06',
+            name: 'T4',
+            start: '2021-09-05',
+            end: '2021-09-06',
             swimlanes: [null, null],
             barColor: 'rgb(34,120,255)',
             startDrag: true,
             endDrag: true,
             editable: true,
         },
+       {
+          id: "T44",
+          name: 'T44',
+          start: '2021-09-05',
+          end: '2021-09-06',
+          swimlanes: [null, null],
+          barColor: 'rgb(34,120,255)',
+          startDrag: true,
+          endDrag: true,
+          editable: true,
+       },
+       {
+          id: "T444",
+          name: 'T444',
+          start: '2021-09-05',
+          end: '2021-09-06',
+          swimlanes: [null, null],
+          barColor: 'rgb(34,120,255)',
+          startDrag: true,
+          endDrag: true,
+          editable: true,
+       },
+       {
+          id: "T4444",
+          name: 'T4444',
+          start: '2021-09-05',
+          end: '2021-09-06',
+          swimlanes: [null, null],
+          barColor: 'rgb(34,120,255)',
+          startDrag: true,
+          endDrag: true,
+          editable: true,
+       },
+       {
+          id: "T44444",
+          name: 'T44444',
+          start: '2021-09-05',
+          end: '2021-09-06',
+          swimlanes: [null, null],
+          barColor: 'rgb(34,120,255)',
+          startDrag: true,
+          endDrag: true,
+          editable: true,
+       },
     ];
     const ganttChart = new Gantt.default(".gantt-target", tasks, {
         columnWidth: 50,
