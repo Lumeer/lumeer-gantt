@@ -75,7 +75,8 @@ export class GanttSvg {
 
   public taskIdsMap: Record<string, string[]>; // taskId to generatedIds
 
-  private scrollSnapshotDate?: Date;
+  private scrollSnapshotDate: Date;
+  private verticalSnapshot: number;
 
   private createDragArrowsSvg: CreateArrowsSvg;
   private createDragBarSvg: CreateBarSvg;
@@ -190,6 +191,7 @@ export class GanttSvg {
       } else if (!this.viewportWidthChangedALot(this.tasks, tasks, options)) {
         this.snapshotDate();
       }
+      this.snapshotVerticalScroll();
       this.setupSwimLanes(tasks, this.options);
       this.setupAndRender();
     }
@@ -224,6 +226,10 @@ export class GanttSvg {
 
   private snapshotDate() {
     this.scrollSnapshotDate = this.currentMiddleDate();
+  }
+
+  private snapshotVerticalScroll() {
+    this.verticalSnapshot = this.tasksContainer.scrollTop;
   }
 
   private currentMiddleDate(): Date {
@@ -409,6 +415,11 @@ export class GanttSvg {
       }
 
       this.scrollToToday();
+    }
+
+    if(this.verticalSnapshot) {
+      this.tasksContainer.scrollTop = this.verticalSnapshot;
+      this.swimlanesContainer.scrollTop = this.verticalSnapshot;
     }
   }
 
