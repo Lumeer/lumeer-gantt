@@ -713,22 +713,26 @@ export class BarSvg {
   private dragWrapper(dx: number, dy: number, x: number, y: number) {
     this.draggingVertically = this.dragBarVertical(dy, y) || this.draggingVertically;
     if (dx < 0) {
-      const x1BeforeResize = this.x1;
-      this.resizeLeft(dx, x, false);
-      const diff = this.x1 - x1BeforeResize;
-      if (diff !== 0) {
-        this.x2 += diff;
-        this.updatePositions();
-        this.emitBarDragging(diff, diff, this.draggingVertically);
+      if (this.isDraggableRight()) {
+        const x1BeforeResize = this.x1;
+        this.resizeLeft(dx, x, false);
+        const diff = this.x1 - x1BeforeResize;
+        if (diff !== 0) {
+          this.x2 += diff;
+          this.updatePositions();
+          this.emitBarDragging(diff, diff, this.draggingVertically);
+        }
       }
     } else if (dx > 0) {
-      const x2BeforeResize = this.x2;
-      this.resizeRight(dx, x, false);
-      const diff = this.x2 - x2BeforeResize;
-      if (diff !== 0) {
-        this.x1 += diff;
-        this.updatePositions();
-        this.emitBarDragging(diff, diff, this.draggingVertically);
+      if (this.isDraggableLeft()) {
+        const x2BeforeResize = this.x2;
+        this.resizeRight(dx, x, false);
+        const diff = this.x2 - x2BeforeResize;
+        if (diff !== 0) {
+          this.x1 += diff;
+          this.updatePositions();
+          this.emitBarDragging(diff, diff, this.draggingVertically);
+        }
       }
     } else if (this.isDraggableVertically()) {
       this.updateTaskData();
