@@ -466,7 +466,6 @@ export class GanttSvg {
     if (event?.target && this.options.createTasks && this.gridSvg.isTaskGridElement(event.target)) {
       const offset = getOffset(event);
       const barsSvg = this.linesSvg.findBarsSvgByY(offset.y);
-      console.log(offset, barsSvg, event);
       if (barsSvg) {
         this.createDragBar(barsSvg, offset.x, offset.y);
       }

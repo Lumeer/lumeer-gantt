@@ -557,16 +557,16 @@ export class BarSvg {
       if (this.sideHandlesOverflowing) {
         this.assignHandleOverflowElement(dx);
         if (this.handleOverflowElement === this.handleRightElement) {
-          this.resizeRight(dx, x);
+          this.isDraggableRight() && this.resizeRight(dx, x);
         } else if (this.handleOverflowElement === this.handleLeftElement) {
-          this.resizeLeft(dx, x);
+          this.isDraggableLeft() && this.resizeLeft(dx, x);
         }
 
       } else {
         if (element === this.handleLeftElement) {
-          this.resizeLeft(dx, x);
+          this.isDraggableLeft() && this.resizeLeft(dx, x);
         } else if (element === this.handleRightElement) {
-          this.resizeRight(dx, x);
+          this.isDraggableRight() && this.resizeRight(dx, x);
         }
       }
 
@@ -591,7 +591,7 @@ export class BarSvg {
   }
 
   private resizeLeft(dx: number, x: number, update: boolean = true) {
-    if (dx === 0 || !this.isDraggableLeft()) {
+    if (dx === 0) {
       return;
     }
 
@@ -628,7 +628,7 @@ export class BarSvg {
   }
 
   private resizeRight(dx: number, x: number, update: boolean = true) {
-    if (dx === 0 || !this.isDraggableRight()) {
+    if (dx === 0) {
       return;
     }
 
