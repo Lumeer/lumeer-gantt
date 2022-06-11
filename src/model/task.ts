@@ -36,7 +36,7 @@ export interface Task {
     startDrag: boolean;
     endDrag: boolean;
     progressDrag: boolean;
-    editable: boolean;
+    draggable: boolean;
 
     metadata?: any;
 }

@@ -388,15 +388,19 @@ export class BarSvg {
   }
 
   private isDraggableLeft(): boolean {
-    return this.task.editable && this.task.startDrag && this.gantt.options.resizeTaskLeft;
+    return this.task.startDrag && this.gantt.options.resizeTaskLeft;
   }
 
   private isDraggableRight(): boolean {
-    return this.task.editable && this.task.endDrag && this.gantt.options.resizeTaskRight;
+    return this.task.endDrag && this.gantt.options.resizeTaskRight;
   }
 
   private isProgressDraggable(): boolean {
-    return this.task.editable && this.task.progressDrag && this.gantt.options.resizeProgress && isNotNullOrUndefined(this.progress);
+    return this.task.progressDrag && this.gantt.options.resizeProgress && isNotNullOrUndefined(this.progress);
+  }
+
+  private isDraggable(): boolean {
+    return this.task.draggable;
   }
 
   private renderProgressResizeHandle() {
@@ -495,7 +499,7 @@ export class BarSvg {
   }
 
   private checkEndpointEndClickListener() {
-    const clickable = this.task.editable && this.hasPossibleDependencies();
+    const clickable = this.hasPossibleDependencies();
     if (clickable && !this.endpointEndClickListener) {
       this.endpointEndClickListener = () => this.onEndpointEndClick();
       this.endpointEndElement.addEventListener('click', this.endpointEndClickListener);
@@ -568,7 +572,7 @@ export class BarSvg {
 
     } else if (element === this.handleProgressElement) {
       this.resizeProgress(dx, x);
-    } else if (this.task.editable) {
+    } else if (this.task.draggable) {
       const barElement = closestElement(`.${barWrapperClass}`, element);
       if (barElement === this.barWrapperElement) {
         this.dragWrapper(dx, dy, x, y);
@@ -713,7 +717,7 @@ export class BarSvg {
   private dragWrapper(dx: number, dy: number, x: number, y: number) {
     this.draggingVertically = this.dragBarVertical(dy, y) || this.draggingVertically;
     if (dx < 0) {
-      if (this.isDraggableRight()) {
+      if (this.isDraggable()) {
         const x1BeforeResize = this.x1;
         this.resizeLeft(dx, x, false);
         const diff = this.x1 - x1BeforeResize;
@@ -724,7 +728,7 @@ export class BarSvg {
         }
       }
     } else if (dx > 0) {
-      if (this.isDraggableLeft()) {
+      if (this.isDraggable()) {
         const x2BeforeResize = this.x2;
         this.resizeRight(dx, x, false);
         const diff = this.x2 - x2BeforeResize;

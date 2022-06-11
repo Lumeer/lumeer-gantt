@@ -521,7 +521,7 @@ export function cleanGanttTask(task: GanttTask, overrideId?: any): Task {
     start: task.start,
     end: task.end,
     swimlanes: task.swimlanes,
-    editable: task.editable,
+    draggable: task.draggable,
     startDrag: task.startDrag,
     endDrag: task.endDrag,
     textColor: task.textColor,

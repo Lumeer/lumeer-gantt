@@ -61,7 +61,7 @@ export class ArrowSvg {
 
   private renderElements() {
     this.arrowElement = this.createElementWithClass(arrowClass);
-    if (this.fromBar.task.editable && this.toBar.task.editable) {
+    if (this.fromBar.task.allowedDependencies.includes(this.toBar.task.id)) {
       this.arrowClickableElement = this.createElementWithClass('arrow-clickable');
       this.arrowClickListener = (event) => this.onArrowClick(event);
       this.arrowClickableElement.addEventListener('click', this.arrowClickListener);

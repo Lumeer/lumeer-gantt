@@ -44,10 +44,6 @@ export function setAttribute(element: Element, attribute: string, value: any) {
   element?.setAttribute(attribute, value);
 }
 
-export function setOpacity(element: Element) {
-
-}
-
 export function addToAttribute(element: Element, attribute: string, dx: number) {
   if (element?.hasAttribute(attribute)) {
     const value = +element.getAttribute(attribute);
@@ -242,7 +238,7 @@ function createTrashPath(): string {
 }
 
 export function getOffset(event: any): { x: number, y: number } {
-  const x = Math.max(event.offsetX || 0, event.layerX || 0);
-  const y = Math.max(event.offsetY || 0, event.layerY || 0);
+  const x = Math.max(event.offsetX || 0, 0);
+  const y = Math.max(event.offsetY || 0, 0);
   return {x, y};
 }

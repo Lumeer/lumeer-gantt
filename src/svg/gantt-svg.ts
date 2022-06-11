@@ -466,6 +466,7 @@ export class GanttSvg {
     if (event?.target && this.options.createTasks && this.gridSvg.isTaskGridElement(event.target)) {
       const offset = getOffset(event);
       const barsSvg = this.linesSvg.findBarsSvgByY(offset.y);
+      console.log(offset, barsSvg, event);
       if (barsSvg) {
         this.createDragBar(barsSvg, offset.x, offset.y);
       }
@@ -681,7 +682,6 @@ export class GanttSvg {
       taskId: null,
       name: '',
       startDate, endDate, start, end,
-      editable: false,
       parentDependencies: [],
       dependencies: [],
       allowedDependencies: [],
@@ -692,6 +692,7 @@ export class GanttSvg {
       endDrag: false,
       startDrag: false,
       progressDrag: false,
+      draggable: false,
     }
   }
 
