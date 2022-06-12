@@ -187,6 +187,7 @@
     ganttChart.onTaskChanged = (task) => console.log('onTaskChanged', task);
     ganttChart.onTaskCreated = (task) => console.log('onTaskCreated', task);
     ganttChart.onTaskDetail = (task) => console.log('onTaskDetail', task);
+    ganttChart.onScrolledHorizontally = (scroll) => console.log('onScrolled', scroll);
 
     const options2 = {
         barHeight: 50,

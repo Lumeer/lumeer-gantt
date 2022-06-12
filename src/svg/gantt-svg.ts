@@ -81,6 +81,8 @@ export class GanttSvg {
   private createDragArrowsSvg: CreateArrowsSvg;
   private createDragBarSvg: CreateBarSvg;
 
+  private horizontalScrollListener = () => this.onTaskContainerScrolled();
+
   public get tasks(): GanttTask[] {
     return Object.values(this.tasksMap || {});
   }
@@ -399,8 +401,10 @@ export class GanttSvg {
 
   private setScrollPosition() {
     if (this.scrollSnapshotDate) {
+      this.removeHorizontalScrollListener();
       this.scrollToDate(this.scrollSnapshotDate);
       this.scrollSnapshotDate = null;
+      setTimeout(() => this.bindHorizontalScrollListener());
     } else {
       const firstTaskInFuture = this.findFirstTaskInFuture();
       if (firstTaskInFuture) {
@@ -417,7 +421,7 @@ export class GanttSvg {
       this.scrollToToday();
     }
 
-    if(this.verticalSnapshot) {
+    if (this.verticalSnapshot) {
       this.tasksContainer.scrollTop = this.verticalSnapshot;
       this.swimlanesContainer.scrollTop = this.verticalSnapshot;
     }
@@ -575,7 +579,15 @@ export class GanttSvg {
       _this.onDoubleClick(event);
     }
 
-    this.tasksContainer.addEventListener('scroll', () => this.onTaskContainerScrolled());
+    setTimeout(() => this.bindHorizontalScrollListener());
+  }
+
+  private bindHorizontalScrollListener() {
+    this.tasksContainer.addEventListener('scroll', this.horizontalScrollListener);
+  }
+
+  private removeHorizontalScrollListener() {
+    this.tasksContainer.removeEventListener('scroll', this.horizontalScrollListener);
   }
 
   private syncHorizontalScroll() {
