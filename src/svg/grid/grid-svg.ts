@@ -176,6 +176,7 @@ export class GridSvg {
         x: date.lower.x,
         y: date.lower.y,
         class: 'lower-text',
+        'font-size': `${this.gantt.options.headerFontSize}px`,
       }, this.gantt.layers.date, date.lower.text);
 
       const gridRect = this.gantt.layers.date.getBoundingClientRect();
@@ -183,7 +184,8 @@ export class GridSvg {
         createSVG('text', {
           x: date.upper.x,
           y: date.upper.y,
-          class: 'upper-text'
+          class: 'upper-text',
+          'font-size': `${this.gantt.options.headerFontSize}px`,
         }, this.gantt.layers.date, date.upper.text);
       }
     }

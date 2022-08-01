@@ -25,15 +25,26 @@ import {arrayContainsSameItems, completeArrayWithNulls, isArray, isNotNullOrUnde
 
 export function createGanttOptions(options: GanttOptions): GanttOptions {
   const mergedOptions = mergeFlatObjects<GanttOptions>(defaultOptions, options);
-  mergedOptions.headerHeight = Math.max(mergedOptions.headerHeight, 30);
-  mergedOptions.columnWidth = Math.max(mergedOptions.columnWidth, 20);
-  mergedOptions.barHeight = Math.max(mergedOptions.barHeight, 10);
-  mergedOptions.maxInitialSwimlaneWidth = Math.max(mergedOptions.maxInitialSwimlaneWidth, 30);
-  mergedOptions.checkboxSize = Math.max(mergedOptions.checkboxSize, 10);
-  mergedOptions.avatarSize = Math.max(mergedOptions.avatarSize, 12);
-  mergedOptions.avatarPadding = Math.max(mergedOptions.avatarPadding, 2);
-  mergedOptions.textBackgroundPadding = Math.max(mergedOptions.textBackgroundPadding, 4);
+  mergedOptions.headerHeight = checkNumber(mergedOptions.headerHeight, 20);
+  mergedOptions.columnWidth = checkNumber(mergedOptions.columnWidth, 10);
+  mergedOptions.barHeight = checkNumber(mergedOptions.barHeight, 8);
+  mergedOptions.fontSize = checkNumber(mergedOptions.fontSize, 8);
+  mergedOptions.headerFontSize = checkNumber(mergedOptions.headerFontSize, 8);
+  mergedOptions.swimlaneFontSize = checkNumber(mergedOptions.swimlaneFontSize, 8);
+  mergedOptions.maxInitialSwimlaneWidth = checkNumber(mergedOptions.maxInitialSwimlaneWidth, 30);
+  mergedOptions.checkboxSize = checkNumber(mergedOptions.checkboxSize, 10);
+  mergedOptions.avatarSize = checkNumber(mergedOptions.avatarSize, 12);
+  mergedOptions.avatarPadding = checkNumber(mergedOptions.avatarPadding, 2);
+  mergedOptions.textBackgroundPadding = checkNumber(mergedOptions.textBackgroundPadding, 4);
   return mergedOptions;
+}
+
+function checkNumber(value: number, minValue: number): number {
+  if (!value || isNaN(value)) {
+    return minValue;
+  }
+
+  return Math.max(value, minValue);
 }
 
 export interface DatesInfo {

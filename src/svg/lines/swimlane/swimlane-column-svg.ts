@@ -152,6 +152,7 @@ export class SwimlaneColumnSvg {
             'dominant-baseline': 'middle',
             'text-anchor': 'start',
             class: 'swimlane-label',
+            'font-size': `${this.gantt.options.swimlaneFontSize}px`
           }, swimLaneGroup, swimLane?.title);
 
           const textBoundRect = this.textElements[index].getBoundingClientRect();
@@ -193,6 +194,7 @@ export class SwimlaneColumnSvg {
         'text-anchor': 'start',
         style: header.color ? `fill: ${header.color};` : '',
         class: 'swimlane-header-label',
+        'font-size': `${this.gantt.options.swimlaneFontSize}px`
       }, swimLaneGroup, header.title);
     }
 

@@ -327,6 +327,7 @@ export class BarSvg {
         x, y,
         style: this.task.textColor ? `fill: ${this.task.textColor};` : '',
         class: 'bar-label',
+        'font-size': `${this.gantt.options.fontSize}px`
       }, this.barGroupElement, this.task.name);
     }
 
@@ -445,6 +446,7 @@ export class BarSvg {
           x, y,
           class: 'bar-label',
           display: 'none',
+          'font-size': `${this.gantt.options.fontSize}px`
         }, this.handleProgressGroup, textProgress);
       }
 

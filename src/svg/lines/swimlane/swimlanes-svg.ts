@@ -55,6 +55,7 @@ export class SwimlanesSvg {
       x: 0,
       y: 0,
       class: 'swimlane-label',
+      'font-size': `${this.gantt.options.swimlaneFontSize}px`
     }, helperSvg);
 
     const widths = computeWidths(helperTextSvg, this.gantt.lines, this.gantt.options);

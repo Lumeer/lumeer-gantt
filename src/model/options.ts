@@ -19,9 +19,12 @@
 
 export interface GanttOptions {
     headerHeight?: number,
+    headerFontSize?: number;
     columnWidth?: number,
     viewModes?: GanttMode[],
     viewMode?: GanttMode,
+    fontSize?: number;
+    swimlaneFontSize?: number;
     barHeight?: number,
     barCornerRadius?: number,
     arrowCurve?: number,
