@@ -21,7 +21,7 @@ import {BarSvg} from '../lines/bar/bar-svg';
 import {GanttSvg} from '../gantt-svg';
 import {createSVG, getOffset, setAttribute} from '../../utils/svg.utils';
 import {createArrowPath} from '../../utils/arrow.utils';
-import {arrowClass} from '../lines/bar/arrow-svg';
+import {arrowClass, arrowFontSizeMultiplier} from '../lines/bar/arrow-svg';
 
 export class CreateArrowsSvg {
 
@@ -47,6 +47,7 @@ export class CreateArrowsSvg {
     return createSVG('path', {
       d: path,
       class: arrowClass,
+      'stroke-width': `${this.gantt.options.fontSize / arrowFontSizeMultiplier}`,
     }, this.gantt.layers.arrow);
   }
 

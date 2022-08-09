@@ -23,6 +23,7 @@ import {GanttSvg} from '../../gantt-svg';
 import {createArrowPath} from '../../../utils/arrow.utils';
 
 export const arrowClass = 'arrow';
+export const arrowFontSizeMultiplier = 8;
 
 export class ArrowSvg {
 
@@ -118,6 +119,7 @@ export class ArrowSvg {
     return createSVG('path', {
       d: this.path,
       class: className,
+      'stroke-width': `${this.gantt.options.fontSize / arrowFontSizeMultiplier}`,
     }, this.gantt.layers.arrow);
   }
 

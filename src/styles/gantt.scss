@@ -109,7 +109,6 @@ $blue: #a3a3ff !default;
     cursor: pointer;
     fill: none;
     stroke: $gray-600;
-    stroke-width: 1.5px;
 
     &.active {
       stroke: $success;
