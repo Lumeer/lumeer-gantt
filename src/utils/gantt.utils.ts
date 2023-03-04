@@ -71,6 +71,13 @@ export function getDateInfo(date: Date, previousDate: Date | null, index: number
   let upperXOffset = 0;
 
   switch (options.viewMode) {
+    case GanttMode.Hour: {
+      lowerFormat = 'HH';
+      upperFormat = !previousDate || date.getDate() !== previousDate.getDate() ? 'D MMM YYYY' : '';
+      lowerXOffset = index === 0 ? options.columnWidth / 4 : 0;
+      upperXOffset = options.columnWidth * 13;
+      break;
+    }
     case GanttMode.QuarterDay: {
       lowerFormat = 'HH';
       upperFormat = !previousDate || date.getDate() !== previousDate.getDate() ?
@@ -188,6 +195,8 @@ function columnWidthMultiplier(mode: GanttMode): number {
 
 export function stepHoursMultiplier(mode: GanttMode): number {
   switch (mode) {
+    case GanttMode.Hour:
+      return 1 / 24;
     case GanttMode.QuarterDay:
       return 1 / 4;
     case GanttMode.HalfDay:
@@ -216,6 +225,8 @@ export function addToDateByMode(date: Date, mode: GanttMode, step: number): Date
 
 export function datePadding(mode: GanttMode): { value: number, scale: DateScale } {
   switch (mode) {
+    case GanttMode.Hour:
+      return {value: 2, scale: DateScale.Week};
     case GanttMode.QuarterDay:
     case GanttMode.HalfDay:
       return {value: 1, scale: DateScale.Month};
@@ -571,6 +582,7 @@ export function setupRange(tasks: GanttTask[], options: GanttOptions): { minDate
 
 function getDateScaleByViewMode(mode: GanttMode): DateScale {
   switch (mode) {
+    case GanttMode.Hour:
     case GanttMode.QuarterDay:
     case GanttMode.HalfDay:
     case GanttMode.Day:

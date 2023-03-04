@@ -19,6 +19,7 @@
    <h2>Interactive Gantt Chart entirely made in SVG!</h2>
    <div class="gantt-target" style="height: 300px"></div>
 </div>
+<button type="button" onclick='ganttChart.changeViewMode("Hour")'>Hour</button>
 <button type="button" onclick='ganttChart.changeViewMode("Quarter Day")'>Quarter Day</button>
 <button type="button" onclick='ganttChart.changeViewMode("Half Day")'>Half Day</button>
 <button type="button" onclick='ganttChart.changeViewMode("Day")'>Day</button>
@@ -180,7 +181,7 @@
             background: '#ffff87',
         }],
         language: 'sk',
-        viewMode: 'Month',
+        viewMode: 'Hour',
         lockResize: true,
         maxInitialSwimlaneWidth: 200
     });

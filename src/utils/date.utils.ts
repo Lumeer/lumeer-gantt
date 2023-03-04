@@ -18,13 +18,13 @@
  */
 
 import moment from 'moment';
-import enLocale from 'moment/locale/en-gb';
-import skLocale from 'moment/locale/sk';
-import csLocale from 'moment/locale/cs';
-import huLocale from 'moment/locale/cs';
-import deLocale from 'moment/locale/de';
-import esLocale from 'moment/locale/es';
-import frLocale from 'moment/locale/fr';
+import 'moment/locale/en-gb';
+import 'moment/locale/sk';
+import 'moment/locale/cs';
+import 'moment/locale/cs';
+import 'moment/locale/de';
+import 'moment/locale/es';
+import 'moment/locale/fr';
 
 export enum DateScale {
   Year = 'year',
@@ -39,25 +39,25 @@ export enum DateScale {
 export function setupLanguage(language: string) {
   switch (language) {
     case 'sk':
-      moment.updateLocale(language, skLocale);
+      moment.updateLocale(language, {});
       break;
     case 'cs':
-      moment.updateLocale(language, csLocale);
+      moment.updateLocale(language, {});
       break;
     case 'hu':
-      moment.updateLocale(language, huLocale);
+      moment.updateLocale(language, {});
       break;
     case 'de':
-      moment.updateLocale(language, deLocale);
+      moment.updateLocale(language, {});
       break;
     case 'es':
-      moment.updateLocale(language, esLocale);
+      moment.updateLocale(language, {});
       break;
     case 'fr':
-      moment.updateLocale(language, frLocale);
+      moment.updateLocale(language, {});
       break;
     default:
-      moment.updateLocale('en', enLocale);
+      moment.updateLocale('en', {});
       break;
   }
 }
@@ -105,6 +105,14 @@ export function formatDate(date: Date, format: string): string {
 
 export function diffDates(d1: Date, d2: Date, scale: DateScale): number {
   return moment.utc(d1).diff(moment.utc(d2), scale);
+}
+
+export function dayOfWeek(d1: Date): number {
+  return moment.utc(d1).weekday();
+}
+
+export function hourOfDay(d1: Date): number {
+  return moment.utc(d1).hour();
 }
 
 export function isAfter(d1: Date, d2: Date): boolean {

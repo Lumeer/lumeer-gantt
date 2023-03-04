@@ -293,7 +293,7 @@ export class GanttSvg {
   }
 
   private getTaskTicksDivider(date: Date): number {
-    if (this.options.viewMode === GanttMode.Week) {
+     if (this.options.viewMode === GanttMode.Week) {
       return 7; // days
     } else if (this.options.viewMode === GanttMode.Year) {
       return 12; // months

@@ -19,15 +19,8 @@
 
 import {createSVG, setAttributes} from '../../utils/svg.utils';
 import {GanttMode, GanttOptions} from '../../model/options';
-import {DateScale, diffDates, startOfToday} from '../../utils/date.utils';
-import {
-  DatesInfo,
-  getColumnWidth,
-  getDateInfo,
-  getSettingsTableHeight,
-  getTableHeight,
-  stepHoursMultiplier
-} from '../../utils/gantt.utils';
+import {DateScale, dayOfWeek, diffDates, hourOfDay, startOfToday} from '../../utils/date.utils';
+import {DatesInfo, getColumnWidth, getDateInfo, getSettingsTableHeight, getTableHeight, stepHoursMultiplier} from '../../utils/gantt.utils';
 import {GanttSvg} from '../gantt-svg';
 import {copyArray} from '../../utils/common.utils';
 
@@ -156,9 +149,14 @@ export class GridSvg {
 
   private isTickThick(date: Date): boolean {
     switch (this.gantt.options.viewMode) {
+      case GanttMode.Hour:
+      case GanttMode.QuarterDay:
+        // start of the date
+        return hourOfDay(date) === 0;
+      case GanttMode.HalfDay:
       case GanttMode.Day:
         // monday
-        return date.getDate() === 1;
+        return dayOfWeek(date) === 0 && hourOfDay(date) === 0;
       case GanttMode.Week:
         // first week
         return date.getDate() >= 1 && date.getDate() < 8;
