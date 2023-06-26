@@ -17,8 +17,9 @@
 <body>
 <div class="container">
    <h2>Interactive Gantt Chart entirely made in SVG!</h2>
-   <div class="gantt-target"></div>
+   <div class="gantt-target" style="height: 300px"></div>
 </div>
+<button type="button" onclick='ganttChart.changeViewMode("Hour")'>Hour</button>
 <button type="button" onclick='ganttChart.changeViewMode("Quarter Day")'>Quarter Day</button>
 <button type="button" onclick='ganttChart.changeViewMode("Half Day")'>Half Day</button>
 <button type="button" onclick='ganttChart.changeViewMode("Day")'>Day</button>
@@ -35,16 +36,15 @@
             id: "T0",
             name: '<b>Some html</b>',
             start: '2021-10-01',
-            end: '2021-10-25',
+            end: '2021-10-03',
             progress: 3,
             allowedDependencies: ['T9', 'T1', 'T3'],
-            swimlanes: [{title: '', value: 'red', type: 'checkbox'}, {title: 'A'}],
+            swimlanes: [{title: '', value: '', type: 'checkbox'}, {title: 'A'}],
             barColor: 'rgb(34,120,255)',
-            progressColor: 'red',
             textColor: 'white',
             startDrag: true,
             endDrag: true,
-            editable: true,
+            draggable: true,
             minProgress: 20,
             maxProgress: 80,
             progressDrag: true,
@@ -59,12 +59,11 @@
             allowedDependencies: ['T0'],
             swimlanes: [{title: '', value: 'red', background: 'blue'}, {title: 'A'}],
             barColor: 'rgb(34,120,255)',
-            progressColor: 'green',
             startDrag: true,
             maxProgress: 100,
             endDrag: true,
             progressDrag: true,
-            editable: true,
+            draggable: true,
         },
         {
             id: "T444",
@@ -74,12 +73,11 @@
             progress: 40,
             swimlanes: [{title: 'green', value: 'green', textBackground: 'green'}, {title: 'A'}],
             barColor: 'rgb(34,120,255)',
-            progressColor: 'orange',
             startDrag: true,
             minProgress: 30,
             progressDrag: true,
             endDrag: true,
-            editable: true,
+            draggable: true,
         },
         {
             id: "T9",
@@ -89,39 +87,87 @@
             progress: 99,
             swimlanes: [{title: '', value: 'pink', avatarUrl: 'https://www.gravatar.com/avatar/344857133adb4660797bc5700d04b73a?r=g&d=retro'}, {title: 'A'}],
             barColor: 'rgb(34,120,255)',
-            progressColor: 'yellow',
             startDrag: true,
             endDrag: true,
-            editable: true,
+            draggable: true,
             metadata: {a: 1, b: 2},
         },
         {
             id: "T3",
             name: 'T3333333',
             start: '2021-11-01',
-            end: '2021-12-08',
-            progress: 1,
+            end: '2021-11-06',
+            progress: 10,
             swimlanes: [{title: '', value: 'red', background: 'red'}, {title: 'A'}],
+            milestones: [{start: '2021-11-02', color: 'red'}, {start: '2021-11-04', color: 'green'}, {start: '2021-11-15', color: 'orange'}],
             barColor: 'rgb(34,120,255)',
-            progressColor: 'cyan',
             startDrag: true,
-            endDrag: true,
-            editable: true,
+            endDrag: false,
+            progressDrag: true,
+            draggable: true,
         },
         {
             id: "T4",
-            name: 'T4444444',
-            start: '2021-02-05',
-            end: '2021-02-06',
+            name: 'T4',
+            start: '2021-09-05',
+            end: '2021-09-06',
             swimlanes: [null, null],
             barColor: 'rgb(34,120,255)',
             startDrag: true,
             endDrag: true,
-            editable: true,
+            draggable: true,
         },
+       {
+          id: "T44",
+          name: 'T44',
+          start: '2021-09-05',
+          end: '2021-09-06',
+          swimlanes: [null, null],
+          barColor: 'rgb(34,120,255)',
+          startDrag: true,
+          endDrag: true,
+          editable: true,
+       },
+       {
+          id: "T444",
+          name: 'T444',
+          start: '2021-09-05',
+          end: '2021-09-06',
+          swimlanes: [null, null],
+          barColor: 'rgb(34,120,255)',
+          startDrag: true,
+          endDrag: true,
+          editable: true,
+       },
+       {
+          id: "T4444",
+          name: 'T4444',
+          start: '2021-09-05',
+          end: '2021-09-06',
+          swimlanes: [null, null],
+          barColor: 'rgb(34,120,255)',
+          startDrag: true,
+          endDrag: true,
+          editable: true,
+       },
+       {
+          id: "T44444",
+          name: 'T44444',
+          start: '2021-09-05',
+          end: '2021-09-06',
+          swimlanes: [null, null],
+          barColor: 'rgb(34,120,255)',
+          startDrag: true,
+          endDrag: true,
+          editable: true,
+       },
     ];
     const ganttChart = new Gantt.default(".gantt-target", tasks, {
         columnWidth: 50,
+        barHeight: 10,
+        fontSize: 12,
+        headerFontSize: 14,
+        swimlaneFontSize: 14,
         swimlaneInfo: [{
             title: 'First',
             color: 'red',
@@ -132,7 +178,7 @@
             background: '#ffff87',
         }],
         language: 'sk',
-        viewMode: 'Month',
+        viewMode: 'Day',
         lockResize: true,
         maxInitialSwimlaneWidth: 200
     });
@@ -143,6 +189,7 @@
     ganttChart.onTaskChanged = (task) => console.log('onTaskChanged', task);
     ganttChart.onTaskCreated = (task) => console.log('onTaskCreated', task);
     ganttChart.onTaskDetail = (task) => console.log('onTaskDetail', task);
+    ganttChart.onScrolledHorizontally = (scroll) => console.log('onScrolled', scroll);
 
     const options2 = {
         barHeight: 50,

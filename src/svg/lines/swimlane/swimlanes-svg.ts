@@ -28,290 +28,292 @@ import {GanttOptions} from "../../../model/options";
 
 export class SwimlanesSvg {
 
-    public readonly containsSwimLanes: boolean;
+  public readonly containsSwimLanes: boolean;
 
-    private swimlaneWidths: number[];
-    private swimlaneWidthsDrag: number[];
+  private swimlaneWidths: number[];
+  private swimlaneWidthsDrag: number[];
 
-    private swimlaneWidth: number;
-    private swimlaneWidthDrag: number;
+  private swimlaneWidth: number;
+  private swimlaneWidthDrag: number;
 
-    private swimlaneHeight: number;
-    private swimlaneHeightDrag: number;
+  private swimlaneHeight: number;
+  private swimlaneHeightDrag: number;
 
-    private swimlaneHeaderElement: SVGElement;
-    private swimlaneBackgroundElement: SVGElement;
-    private columnsSvgs: SwimlaneColumnSvg[] = [];
+  private swimlaneHeaderElement: SVGElement;
+  private swimlaneBackgroundElement: SVGElement;
+  private columnsSvgs: SwimlaneColumnSvg[] = [];
 
-    constructor(private gantt: GanttSvg) {
-        this.swimlaneWidths = this.computeSwimLaneWidths();
-        this.swimlaneWidth = this.swimlaneWidths.reduce((s, w) => s + w, 0);
-        this.containsSwimLanes = this.swimlaneWidths.length > 0;
+  constructor(private gantt: GanttSvg) {
+    this.swimlaneWidths = this.computeSwimLaneWidths();
+    this.swimlaneWidth = this.swimlaneWidths.reduce((s, w) => s + w, 0);
+    this.containsSwimLanes = this.swimlaneWidths.length > 0;
+  }
+
+  private computeSwimLaneWidths(): number[] {
+    const helperSvg = createSVG('g', {}, this.gantt.layers.swimlanes);
+    const helperTextSvg = createSVG('text', {
+      x: 0,
+      y: 0,
+      class: 'swimlane-label',
+      'font-size': `${this.gantt.options.swimlaneFontSize}px`
+    }, helperSvg);
+
+    const widths = computeWidths(helperTextSvg, this.gantt.lines, this.gantt.options);
+
+    helperSvg.remove();
+
+    return widths;
+  }
+
+  public render() {
+    if (this.containsSwimLanes) {
+      this.showSwimLanes();
+    } else {
+      this.hideSwimLanes();
+    }
+  }
+
+  private showSwimLanes() {
+    showElement(this.gantt.layers.swimlanes);
+    showElement(this.gantt.layers.attributes);
+
+    this.renderSwimLaneWrappers();
+    this.renderColumns();
+    this.renderHeaders();
+    this.updateWrapperSize();
+  }
+
+  private renderSwimLaneWrappers() {
+    this.swimlaneHeaderElement = createSVG('rect', {
+      x: 0,
+      y: 0,
+      width: this.swimlaneWidth,
+      height: this.gantt.settings.headerHeight,
+      class: 'swimlanes-header',
+    }, this.gantt.layers.attributes);
+
+    this.swimlaneBackgroundElement = createSVG('rect', {
+      x: 0,
+      y: 0,
+      width: this.swimlaneWidth,
+      height: getSettingsTableHeight(this.gantt.settings),
+      class: 'swimlanes-background',
+    }, this.gantt.layers.swimlanes);
+  }
+
+  private hideSwimLanes() {
+    hideElement(this.gantt.layers.swimlanes);
+    hideElement(this.gantt.layers.attributes);
+  }
+
+  private renderColumns() {
+    this.columnsSvgs = [];
+
+    let y = 0;
+    let previousLines: GanttSwimlane[] = [];
+    this.swimlaneHeight = 0;
+
+    (this.gantt.lines || []).forEach((line, index) => {
+      const height = this.gantt.settings.rowHeights[index];
+      this.swimlaneHeight += height;
+      this.renderSwimLane(line, index, y, height, previousLines);
+      previousLines = line.swimlanes || [];
+      y += height;
+    });
+  }
+
+  private renderSwimLane(line: GanttLine, index: number, y: number, height: number, previousLines: GanttSwimlane[]) {
+    let x = 0;
+    for (let i = 0; i < (line.swimlanes || []).length; i++) {
+      const width = this.swimlaneWidths[i];
+      const swimlane = line.swimlanes[i];
+
+      if (!this.columnsSvgs[i]) {
+        this.columnsSvgs[i] = new SwimlaneColumnSvg(this.gantt, this, width, x);
+      }
+      const className = isEmptyLine(line.swimlanes) ? 'empty' : null;
+      const isSameSwimLane = previousLines[i]?.id === swimlane?.id;
+      this.columnsSvgs[i].renderCell(swimlane, index, height, y, isSameSwimLane, className);
+
+      x += width;
+    }
+  }
+
+  private renderHeaders() {
+    const headerHeight = Math.min(this.gantt.settings.defaultRowHeight, this.gantt.settings.headerHeight);
+    const y = this.gantt.settings.headerHeight - headerHeight;
+
+    const length = Math.min((this.gantt.options.swimlaneInfo || []).length, (this.columnsSvgs || []).length);
+    for (let i = 0; i < length; i++) {
+      const header = this.gantt.options.swimlaneInfo[i];
+      this.columnsSvgs[i].renderHeaderCell(header, y, headerHeight);
     }
 
-    private computeSwimLaneWidths(): number[] {
-        const helperSvg = createSVG('g', {}, this.gantt.layers.swimlanes);
-        const helperTextSvg = createSVG('text', {
-            x: 0,
-            y: 0,
-            class: 'swimlane-label',
-        }, helperSvg);
+    const handleHeight = getSettingsTableHeight(this.gantt.settings) - (this.swimlaneContainsEmptyLine() ? this.gantt.settings.defaultRowHeight : 0);
 
-        const widths = computeWidths(helperTextSvg, this.gantt.lines, this.gantt.options);
-
-        helperSvg.remove();
-
-        return widths;
+    for (let i = 0; i < length; i++) {
+      this.columnsSvgs[i].renderResizeHandle(handleHeight, 0);
     }
+  }
 
-    public render() {
-        if (this.containsSwimLanes) {
-            this.showSwimLanes();
-        } else {
-            this.hideSwimLanes();
+  private swimlaneContainsEmptyLine(): boolean {
+    const lastLine = this.gantt.lines[this.gantt.lines.length - 1];
+    return lastLine && isEmptyLine(lastLine.swimlanes || []);
+  }
+
+  public handleDragStart(element: any) {
+    this.columnsSvgs.forEach(svg => svg.handleDragStart(element));
+
+    this.swimlaneWidthsDrag = copyArray<number>(this.swimlaneWidths);
+    this.swimlaneWidthDrag = this.swimlaneWidth;
+    this.swimlaneHeightDrag = this.swimlaneHeight;
+  }
+
+  public handleDrag(element: any, dx: number, dy: number, x: number, y: number) {
+    this.columnsSvgs.forEach(svg => svg.handleDrag(element, dx, dy, x, y));
+  }
+
+  public handleDragEnd(element: any) {
+    this.checkWidthResized();
+
+    this.columnsSvgs.forEach(svg => svg.handleDragEnd(element));
+
+    this.swimlaneWidthsDrag = null;
+    this.swimlaneWidthDrag = null;
+    this.swimlaneHeightDrag = null;
+  }
+
+  private checkWidthResized() {
+    if (this.swimlaneWidthsDrag) {
+      const changedIndex = (this.swimlaneWidths || []).findIndex((width, index) => this.swimlaneWidthsDrag[index] !== width);
+      if (changedIndex !== -1) {
+        const info = this.gantt.options.swimlaneInfo?.[changedIndex];
+        if (info) {
+          info.width = this.swimlaneWidths[changedIndex];
         }
+
+        this.gantt.onSwimlaneResized(changedIndex, this.swimlaneWidths[changedIndex]);
+      }
     }
+  }
 
-    private showSwimLanes() {
-        showElement(this.gantt.layers.swimlanes);
-        this.renderSwimLaneWrappers();
-        this.renderColumns();
-        this.renderHeaders();
-        this.updateWrapperSize();
+  public onKeyUp(event: KeyboardEvent) {
+    this.columnsSvgs.forEach(svg => svg.onKeyUp(event));
+    if (event.key === 'Escape') {
+      this.onEscapeKeyUp();
     }
+  }
 
-    private renderSwimLaneWrappers() {
-        this.swimlaneHeaderElement = createSVG('rect', {
-            x: 0,
-            y: 0,
-            width: this.swimlaneWidth,
-            height: this.gantt.settings.headerHeight,
-            class: 'swimlanes-header',
-        }, this.gantt.layers.swimlanes);
-
-        this.swimlaneBackgroundElement = createSVG('rect', {
-            x: 0,
-            y: this.gantt.settings.headerHeight,
-            width: this.swimlaneWidth,
-            height: getSettingsTableHeight(this.gantt.settings) - this.gantt.settings.headerHeight,
-            class: 'swimlanes-background',
-        }, this.gantt.layers.swimlanes);
-    }
-
-    private hideSwimLanes() {
-        hideElement(this.gantt.layers.swimlanes);
-    }
-
-    private renderColumns() {
-        this.columnsSvgs = [];
-
-        let y = this.gantt.settings.headerHeight;
-        let previousLines: GanttSwimlane[] = [];
-        this.swimlaneHeight = 0;
-
-        (this.gantt.lines || []).forEach((line, index) => {
-            const height = this.gantt.settings.rowHeights[index];
-            this.swimlaneHeight += height;
-            this.renderSwimLane(line, index, y, height, previousLines);
-            previousLines = line.swimlanes || [];
-            y += height;
-        });
-    }
-
-    private renderSwimLane(line: GanttLine, index: number, y: number, height: number, previousLines: GanttSwimlane[]) {
-        let x = 0;
-        for (let i = 0; i < (line.swimlanes || []).length; i++) {
-            const width = this.swimlaneWidths[i];
-            const swimlane = line.swimlanes[i];
-
-            if (!this.columnsSvgs[i]) {
-                this.columnsSvgs[i] = new SwimlaneColumnSvg(this.gantt, this, width, x);
-            }
-            const className = isEmptyLine(line.swimlanes) ? 'empty' : null;
-            const isSameSwimLane = previousLines[i]?.id === swimlane?.id;
-            this.columnsSvgs[i].renderCell(swimlane, index, height, y, isSameSwimLane, className);
-
-            x += width;
-        }
-    }
-
-    private renderHeaders() {
-        const headerHeight = Math.min(this.gantt.settings.defaultRowHeight, this.gantt.settings.headerHeight);
-        const y = this.gantt.settings.headerHeight - headerHeight;
-
-        const length = Math.min((this.gantt.options.swimlaneInfo || []).length, (this.columnsSvgs || []).length);
-        for (let i = 0; i < length; i++) {
-            const header = this.gantt.options.swimlaneInfo[i];
-            this.columnsSvgs[i].renderHeaderCell(header, y, headerHeight);
-        }
-
-        const handleHeight = getSettingsTableHeight(this.gantt.settings) - this.gantt.settings.headerHeight
-            - (this.swimlaneContainsEmptyLine() ? this.gantt.settings.defaultRowHeight : 0);
-
-        for (let i = 0; i < length; i++) {
-            const header = this.gantt.options.swimlaneInfo[i];
-            const nextHeader = this.gantt.options.swimlaneInfo[i + 1];
-
-            const startFromHeader = !!(header || nextHeader);
-            const handleY = this.gantt.settings.headerHeight - (startFromHeader ? headerHeight : 0);
-            const height = handleHeight + (startFromHeader ? headerHeight : 0);
-            this.columnsSvgs[i].renderResizeHandle(startFromHeader, height, handleY);
-        }
-    }
-
-    private swimlaneContainsEmptyLine(): boolean {
-        const lastLine = this.gantt.lines[this.gantt.lines.length - 1];
-        return lastLine && isEmptyLine(lastLine.swimlanes || []);
-    }
-
-    public handleDragStart(element: any) {
-        this.columnsSvgs.forEach(svg => svg.handleDragStart(element));
-
-        this.swimlaneWidthsDrag = copyArray<number>(this.swimlaneWidths);
-        this.swimlaneWidthDrag = this.swimlaneWidth;
-        this.swimlaneHeightDrag = this.swimlaneHeight;
-    }
-
-    public handleDrag(element: any, dx: number, dy: number, x: number, y: number) {
-        this.columnsSvgs.forEach(svg => svg.handleDrag(element, dx, dy, x, y));
-    }
-
-    public handleDragEnd(element: any) {
-        this.checkWidthResized();
-
-        this.columnsSvgs.forEach(svg => svg.handleDragEnd(element));
-
-        this.swimlaneWidthsDrag = null;
+  private onEscapeKeyUp() {
+    if (this.swimlaneWidthDrag) {
+      if (this.swimlaneWidth !== this.swimlaneWidthDrag) {
+        this.swimlaneWidth = this.swimlaneWidthDrag;
         this.swimlaneWidthDrag = null;
+        this.updateWrapperPositions();
+      }
+    }
+    if (this.swimlaneHeightDrag) {
+      if (this.swimlaneHeight !== this.swimlaneHeightDrag) {
+        this.swimlaneHeight = this.swimlaneHeightDrag;
         this.swimlaneHeightDrag = null;
-    }
-
-    private checkWidthResized() {
-        if (this.swimlaneWidthsDrag) {
-            const changedIndex = (this.swimlaneWidths || []).findIndex((width, index) => this.swimlaneWidthsDrag[index] !== width);
-            if (changedIndex !== -1) {
-                const info = this.gantt.options.swimlaneInfo?.[changedIndex];
-                if (info) {
-                    info.width = this.swimlaneWidths[changedIndex];
-                }
-
-                this.gantt.onSwimlaneResized(changedIndex, this.swimlaneWidths[changedIndex]);
-            }
-        }
-    }
-
-    public onKeyUp(event: KeyboardEvent) {
-        this.columnsSvgs.forEach(svg => svg.onKeyUp(event));
-        if (event.key === 'Escape') {
-            this.onEscapeKeyUp();
-        }
-    }
-
-    private onEscapeKeyUp() {
-        if (this.swimlaneWidthDrag) {
-            if (this.swimlaneWidth !== this.swimlaneWidthDrag) {
-                this.swimlaneWidth = this.swimlaneWidthDrag;
-                this.swimlaneWidthDrag = null;
-                this.updateWrapperPositions();
-            }
-        }
-        if (this.swimlaneHeightDrag) {
-            if (this.swimlaneHeight !== this.swimlaneHeightDrag) {
-                this.swimlaneHeight = this.swimlaneHeightDrag;
-                this.swimlaneHeightDrag = null;
-                this.updateWrapperSize();
-            }
-        }
-        if (this.swimlaneWidthsDrag) {
-            this.swimlaneWidths = copyArray<number>(this.swimlaneWidthsDrag);
-            this.swimlaneWidthsDrag = null;
-        }
-    }
-
-    public swimlaneResizing(columnSvg: SwimlaneColumnSvg, diff: number) {
-        const index = this.columnsSvgs.findIndex(svg => svg === columnSvg);
-        if (index !== -1) {
-            this.swimlaneWidth += diff;
-            this.swimlaneWidths[index] += diff;
-            this.columnsSvgs.slice(index + 1).forEach(svg => svg.moveXPosition(diff));
-            this.updateWrapperPositions();
-        }
-    }
-
-    private updateWrapperPositions() {
-        setAttributes(this.swimlaneBackgroundElement, {width: this.swimlaneWidth});
-        setAttributes(this.swimlaneHeaderElement, {width: this.swimlaneWidth});
-        setAttributes(this.gantt.layers.swimlanes, {width: this.swimlaneWidth});
-    }
-
-    private updateWrapperSize() {
-        if (this.containsSwimLanes) {
-            setAttributes(this.gantt.layers.swimlanes, {
-                height: this.swimlaneHeight + this.gantt.settings.headerHeight,
-                width: this.swimlaneWidth
-            });
-            setAttributes(this.swimlaneBackgroundElement, {height: this.swimlaneHeight});
-        }
-    }
-
-    public lineResized(index: number, diff: number) {
-        this.swimlaneHeight += diff;
         this.updateWrapperSize();
-        this.columnsSvgs.forEach(svg => svg.resizeColumn(index, diff));
+      }
     }
+    if (this.swimlaneWidthsDrag) {
+      this.swimlaneWidths = copyArray<number>(this.swimlaneWidthsDrag);
+      this.swimlaneWidthsDrag = null;
+    }
+  }
+
+  public swimlaneResizing(columnSvg: SwimlaneColumnSvg, diff: number) {
+    const index = this.columnsSvgs.findIndex(svg => svg === columnSvg);
+    if (index !== -1) {
+      this.swimlaneWidth += diff;
+      this.swimlaneWidths[index] += diff;
+      this.columnsSvgs.slice(index + 1).forEach(svg => svg.moveXPosition(diff));
+      this.updateWrapperPositions();
+    }
+  }
+
+  private updateWrapperPositions() {
+    setAttributes(this.swimlaneBackgroundElement, {width: this.swimlaneWidth});
+    setAttributes(this.swimlaneHeaderElement, {width: this.swimlaneWidth});
+    setAttributes(this.gantt.layers.swimlanes, {width: this.swimlaneWidth});
+    setAttributes(this.gantt.layers.attributes, {width: this.swimlaneWidth});
+  }
+
+  private updateWrapperSize() {
+    if (this.containsSwimLanes) {
+      setAttributes(this.gantt.layers.attributes, {
+        height: this.gantt.settings.headerHeight,
+        width: this.swimlaneWidth,
+      });
+      setAttributes(this.gantt.layers.swimlanes, {
+        height: this.swimlaneHeight,
+        width: this.swimlaneWidth
+      });
+      setAttributes(this.swimlaneBackgroundElement, {height: this.swimlaneHeight});
+    }
+  }
+
+  public lineResized(index: number, diff: number) {
+    this.swimlaneHeight += diff;
+    this.updateWrapperSize();
+    this.columnsSvgs.forEach(svg => svg.resizeColumn(index, diff));
+  }
 }
 
 function computeWidths(helperTextSvg: SVGElement, lines: GanttLine[], options: GanttOptions): number[] {
-    const widths = (lines || []).reduce((array, line) => {
-        (line.swimlanes || []).forEach((swimLane, index) => {
-            const header = (options.swimlaneInfo || [])[index];
-            let width = 0;
-            if (header?.width) {
-                width = header?.width;
-            } else {
-                if (swimLane?.type === GanttSwimlaneType.Checkbox) {
-                    width = options.checkboxSize;
-                } else if (swimLane?.title) {
-                    helperTextSvg.innerHTML = swimLane.title;
-                    width = helperTextSvg.getBoundingClientRect().width;
-                }
-
-                if (width > 0 && swimLane?.textBackground) {
-                    width += 2 * options.textBackgroundPadding;
-                }
-                if (swimLane?.avatarUrl) {
-                    width += options.avatarSize + options.avatarPadding;
-                }
-
-                if (width === 0 && swimLane?.background) {
-                    width = 30;
-                }
-
-                width += options.padding * 2;
-                width = Math.min(width, options.maxInitialSwimlaneWidth);
-            }
-
-            array[index] = Math.max(array[index] || 0, width);
-
-        });
-
-
-        return array;
-    }, []);
-
-    (options.swimlaneInfo || []).forEach((header, index) => {
-        if (!header?.width && header?.title) {
-            helperTextSvg.innerHTML = header.title;
-            const width = Math.min(helperTextSvg.getBoundingClientRect().width + 2 * options.padding, options.maxInitialSwimlaneWidth);
-            widths[index] = Math.max(widths[index] || 0, width);
+  const widths = (lines || []).reduce((array, line) => {
+    (line.swimlanes || []).forEach((swimLane, index) => {
+      const header = (options.swimlaneInfo || [])[index];
+      let width = 0;
+      if (header?.width) {
+        width = header?.width;
+      } else {
+        if (swimLane?.type === GanttSwimlaneType.Checkbox) {
+          width = options.checkboxSize;
+        } else if (swimLane?.title) {
+          helperTextSvg.innerHTML = swimLane.title;
+          width = helperTextSvg.getBoundingClientRect().width;
         }
+
+        if (width > 0 && swimLane?.textBackground) {
+          width += 2 * options.textBackgroundPadding;
+        }
+        if (swimLane?.avatarUrl) {
+          width += options.avatarSize + options.avatarPadding;
+        }
+
+        if (width === 0 && swimLane?.background) {
+          width = 30;
+        }
+
+        width += options.padding * 2;
+        width = Math.min(width, options.maxInitialSwimlaneWidth);
+      }
+
+      array[index] = Math.max(array[index] || 0, width);
+
     });
 
 
-    return widths;
+    return array;
+  }, []);
+
+  (options.swimlaneInfo || []).forEach((header, index) => {
+    if (!header?.width && header?.title) {
+      helperTextSvg.innerHTML = header.title;
+      const width = Math.min(helperTextSvg.getBoundingClientRect().width + 2 * options.padding, options.maxInitialSwimlaneWidth);
+      widths[index] = Math.max(widths[index] || 0, width);
+    }
+  });
+
+
+  return widths;
 }
 
 
 function isEmptyLine(swimlanes: GanttSwimlane[]): boolean {
-    return swimlanes.every(sw => !sw || !sw.title && sw.type !== GanttSwimlaneType.Checkbox && !sw.background);
+  return swimlanes.every(sw => !sw || !sw.title && sw.type !== GanttSwimlaneType.Checkbox && !sw.background);
 }

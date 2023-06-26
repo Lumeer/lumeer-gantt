@@ -18,95 +18,107 @@
  */
 
 import moment from 'moment';
-import enLocale from 'moment/locale/en-gb';
-import skLocale from 'moment/locale/sk';
-import csLocale from 'moment/locale/cs';
-import deLocale from 'moment/locale/de';
-import esLocale from 'moment/locale/es';
-import frLocale from 'moment/locale/fr';
+import 'moment/locale/en-gb';
+import 'moment/locale/sk';
+import 'moment/locale/cs';
+import 'moment/locale/cs';
+import 'moment/locale/de';
+import 'moment/locale/es';
+import 'moment/locale/fr';
 
 export enum DateScale {
-    Year = 'year',
-    Month = 'month',
-    Week = 'week',
-    Day = 'day',
-    Hour = 'hour',
-    Second = 'second',
-    Millisecond = 'millisecond'
+  Year = 'year',
+  Month = 'month',
+  Week = 'week',
+  Day = 'day',
+  Hour = 'hour',
+  Second = 'second',
+  Millisecond = 'millisecond'
 }
 
 export function setupLanguage(language: string) {
-    switch (language) {
-        case 'sk':
-            moment.updateLocale(language, skLocale);
-            break;
-        case 'cs':
-            moment.updateLocale(language, csLocale);
-            break;
-        case 'de':
-            moment.updateLocale(language, deLocale);
-            break;
-        case 'es':
-            moment.updateLocale(language, esLocale);
-            break;
-        case 'fr':
-            moment.updateLocale(language, frLocale);
-            break;
-        default:
-            moment.updateLocale('en', enLocale);
-            break;
-    }
+  switch (language) {
+    case 'sk':
+      moment.updateLocale(language, {});
+      break;
+    case 'cs':
+      moment.updateLocale(language, {});
+      break;
+    case 'hu':
+      moment.updateLocale(language, {});
+      break;
+    case 'de':
+      moment.updateLocale(language, {});
+      break;
+    case 'es':
+      moment.updateLocale(language, {});
+      break;
+    case 'fr':
+      moment.updateLocale(language, {});
+      break;
+    default:
+      moment.updateLocale('en', {});
+      break;
+  }
 }
 
 export function parseDate(date: string | Date, format?: string): Date {
-    if (typeof date === 'string') {
-        const momentDate = moment.utc(date, format).toDate();
-        if (isDateValid(momentDate)) {
-            return momentDate;
-        }
+  if (typeof date === 'string') {
+    const momentDate = moment.utc(date, format).toDate();
+    if (isDateValid(momentDate)) {
+      return momentDate;
     }
+  }
 
-    return null;
+  return null;
 }
 
 export function isDateValid(date: Date): boolean {
-    return date?.getTime && !isNaN(date.getTime());
+  return date?.getTime && !isNaN(date.getTime());
 }
 
 export function startOf(date: Date, scale: DateScale): Date {
-    return moment.utc(date).startOf(scale).toDate();
+  return moment.utc(date).startOf(scale).toDate();
 }
 
 export function now(): Date {
-    return moment.utc().toDate();
+  return moment.utc().toDate();
 }
 
 export function startOfToday(): Date {
-    const date = new Date();
-    return moment.utc([date.getFullYear(), date.getMonth(), date.getDate()])
-        .startOf('day').toDate();
+  const date = new Date();
+  return moment.utc([date.getFullYear(), date.getMonth(), date.getDate()])
+    .startOf('day').toDate();
 }
 
 export function addToDate(date: Date, value: number, scale: DateScale): Date {
-    return moment.utc(date).add(value, scale).toDate();
+  return moment.utc(date).add(value, scale).toDate();
 }
 
 export function getDaysInMonth(date: Date): number {
-    return moment.utc(date).daysInMonth();
+  return moment.utc(date).daysInMonth();
 }
 
 export function formatDate(date: Date, format: string): string {
-    return moment.utc(date).format(format)
+  return moment.utc(date).format(format)
 }
 
 export function diffDates(d1: Date, d2: Date, scale: DateScale): number {
-    return moment.utc(d1).diff(moment.utc(d2), scale);
+  return moment.utc(d1).diff(moment.utc(d2), scale);
+}
+
+export function dayOfWeek(d1: Date): number {
+  return moment.utc(d1).weekday();
+}
+
+export function hourOfDay(d1: Date): number {
+  return moment.utc(d1).hour();
 }
 
 export function isAfter(d1: Date, d2: Date): boolean {
-    return d1.getTime() > d2.getTime();
+  return d1.getTime() > d2.getTime();
 }
 
 export function isBefore(d1: Date, d2: Date): boolean {
-    return d1.getTime() < d2.getTime();
+  return d1.getTime() < d2.getTime();
 }

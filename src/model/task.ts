@@ -24,10 +24,10 @@ export interface Task {
     end: string;
     progress: number;
     swimlanes: Swimlane[];
+    milestones: Milestone[];
     dependencies: string[];
     allowedDependencies: string[];
     barColor?: string,
-    progressColor?: string;
     textColor?: string;
 
     minProgress?: number;
@@ -36,7 +36,7 @@ export interface Task {
     startDrag: boolean;
     endDrag: boolean;
     progressDrag: boolean;
-    editable: boolean;
+    draggable: boolean;
 
     metadata?: any;
 }
@@ -52,19 +52,28 @@ export interface Swimlane {
     type?: GanttSwimlaneType;
 }
 
+export interface Milestone {
+    start: string;
+    color: string;
+    draggable: boolean;
+}
+
 export enum GanttSwimlaneType {
     Text = 'text',
     Checkbox = 'checkbox',
 }
 
-export const taskProperties = ['id', 'name', 'start', 'end', 'progress', 'swimlanes',
-    'dependencies', 'allowedDependencies', 'barColor', 'progressColor', 'textColor',
-    'startDrag', 'endDrag', 'progressDrag', 'editable', 'minProgress', 'maxProgress'];
+type TaskKey = keyof Task
+
+export const taskProperties: TaskKey[] = ['id', 'name', 'start', 'end', 'progress', 'swimlanes',
+    'dependencies', 'allowedDependencies', 'barColor', 'textColor', 'startDrag', 'endDrag',
+    'progressDrag', 'minProgress', 'maxProgress'];
 
 export interface GanttTask extends Task {
     taskId: string;
     startDate: Date;
     endDate: Date;
+    milestoneDates: Date[];
 
     parentDependencies: string[];
     transitiveDependencies: string[];

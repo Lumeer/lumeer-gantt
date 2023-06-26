@@ -22,6 +22,7 @@ import {GanttTask, Swimlane} from './task';
 export type GanttWrapper = HTMLElement | string | SVGElement;
 
 export interface GanttLayers {
+    attributes?: SVGElement;
     swimlanes?: SVGElement;
     grid?: SVGElement;
     date?: SVGElement;

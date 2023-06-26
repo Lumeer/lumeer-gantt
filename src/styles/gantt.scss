@@ -27,24 +27,52 @@ $text-muted: #666 !default;
 $text-color: #333 !default;
 $blue: #a3a3ff !default;
 
-$font-size: 13px;
-
 .gantt-container {
-  position: relative;
-  overflow: auto;
-  font-size: $font-size;
-  padding-bottom: 15px;
+  display: grid;
+  height: 100%;
+  grid-template-rows: min-content minmax(0, 1fr);
+
+  .gantt-header-container {
+    display: grid;
+    grid-template-columns: min-content 1fr;
+    border-top: 1px solid $gray-400;
+    border-right: 1px solid $gray-400;
+    border-left: 1px solid $gray-400;
+
+    .gantt-dates-container {
+      overflow-x: auto;
+    }
+  }
+
+  .gantt-body-container {
+    display: grid;
+    grid-template-columns: min-content 1fr;
+    border-right: 1px solid $gray-400;
+    border-left: 1px solid $gray-400;
+    border-bottom: 1px solid $gray-400;
+
+    .gantt-swimlanes-container {
+      overflow-y: auto;
+      padding-bottom: 20px; // bcs tasks-container contains scrollbar
+    }
+
+    .gantt-tasks-container {
+      overflow: auto;
+    }
+  }
+}
+
+.gantt-header {
+  .grid-header {
+    fill: #ffffff;
+    stroke: $border-color;
+    stroke-width: 1.4;
+  }
 }
 
 .gantt {
   .grid-background {
     fill: none;
-  }
-
-  .grid-header {
-    fill: #ffffff;
-    stroke: $border-color;
-    stroke-width: 1.4;
   }
 
   .grid-row {
@@ -81,7 +109,6 @@ $font-size: 13px;
     cursor: pointer;
     fill: none;
     stroke: $gray-600;
-    stroke-width: 1.5px;
 
     &.active {
       stroke: $success;
@@ -103,7 +130,6 @@ $font-size: 13px;
     fill: #fff;
     dominant-baseline: central;
     text-anchor: middle;
-    font-size: $font-size;
     font-weight: lighter;
 
     &.big {
@@ -182,7 +208,6 @@ $font-size: 13px;
   }
 
   .lower-text, .upper-text {
-    font-size: $font-size;
     text-anchor: middle;
   }
 
@@ -199,23 +224,25 @@ $font-size: 13px;
   }
 }
 
-.gantt, .gantt-swimlanes {
-  border: 1px solid #ced4da;
+.swimlanes-header, .swimlanes-background {
+  fill: #ffffff;
+  stroke: $border-color;
+  stroke-width: 1.4;
+}
+
+.swimlane-header-rect {
+  stroke: $border-color;
+  stroke-width: 1.4;
+  fill: #ffffff;
+
+  &.empty {
+    stroke: none;
+  }
 }
 
 .gantt-swimlanes-container {
-  position: relative;
-  overflow: auto;
-  font-size: $font-size;
-  float: left;
 
   .gantt-swimlanes {
-
-    .swimlanes-header, .swimlanes-background {
-      fill: #ffffff;
-      stroke: $border-color;
-      stroke-width: 1.4;
-    }
 
     .swimlane {
 
@@ -231,20 +258,30 @@ $font-size: 13px;
 
     }
 
-    .swimlane-header-rect {
-      stroke: $border-color;
-      stroke-width: 1.4;
-      fill: #ffffff;
-
-      &.empty {
-        stroke: none;
-      }
-    }
-
     .swimlane-resize-handle {
       cursor: col-resize;
       fill: transparent;
     }
 
+  }
+}
+
+.scroll-y {
+  overflow-y: scroll;
+}
+
+.scroll-x {
+  overflow-x: scroll;
+}
+
+.invisible-scroll {
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none; /* removes scrollbar for Firefox */
+  -ms-overflow-style: none; /* removes scrollbar for Internet Explorer 10+ */
+
+  &::-webkit-scrollbar {
+    /* removes scrollbar for WebKit */
+    width: 0;
+    height: 0;
   }
 }

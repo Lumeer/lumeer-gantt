@@ -19,191 +19,191 @@
 
 import {isNumeric, toNumber} from './common.utils';
 
-export function createSVG(tag: string, attributes: Record<string, any>, appendTo?: HTMLElement | SVGElement, innerHTML?: string): SVGGraphicsElement {
-    const svgElement: SVGGraphicsElement = document.createElementNS('http://www.w3.org/2000/svg', tag) as SVGGraphicsElement;
-    if (innerHTML) {
-        svgElement.innerHTML = innerHTML;
+export function createSVG(tag: string, attributes: Record<string, any>, appendTo?: Element, innerHTML?: string, insertBefore?: Element): SVGGraphicsElement {
+  const svgElement: SVGGraphicsElement = document.createElementNS('http://www.w3.org/2000/svg', tag) as SVGGraphicsElement;
+  if (innerHTML) {
+    svgElement.innerHTML = innerHTML;
+  }
+
+  Object.entries(attributes || {})
+    .forEach(([attribute, value]) => svgElement.setAttribute(attribute, value));
+
+  if (appendTo) {
+    if (insertBefore) {
+      appendTo.insertBefore(svgElement, insertBefore)
+    } else {
+      appendTo.appendChild(svgElement);
     }
+  }
 
-    Object.entries(attributes || {})
-        .forEach(([attribute, value]) => svgElement.setAttribute(attribute, value));
-
-    if (appendTo) {
-        appendTo.appendChild(svgElement);
-    }
-
-    return svgElement;
+  return svgElement;
 }
 
 export function setAttributes(element: Element, attributes: Record<string, any>) {
-    Object.keys(attributes || {})
-        .forEach(key => setAttribute(element, key, attributes[key]));
+  Object.keys(attributes || {})
+    .forEach(key => setAttribute(element, key, attributes[key]));
 }
 
 export function setAttribute(element: Element, attribute: string, value: any) {
-    element?.setAttribute(attribute, value);
-}
-
-export function setOpacity(element: Element) {
-
+  element?.setAttribute(attribute, value);
 }
 
 export function addToAttribute(element: Element, attribute: string, dx: number) {
-    if (element?.hasAttribute(attribute)) {
-        const value = +element.getAttribute(attribute);
-        setAttribute(element, attribute, value + dx);
-    }
+  if (element?.hasAttribute(attribute)) {
+    const value = +element.getAttribute(attribute);
+    setAttribute(element, attribute, value + dx);
+  }
 }
 
 export function showElements(...elements) {
-    elements.forEach(element => showElement(element))
+  elements.forEach(element => showElement(element))
 }
 
 export function showElement(element: Element) {
-    element && setAttribute(element, 'display', 'visible');
+  element && setAttribute(element, 'display', 'visible');
 }
 
 export function hideElements(...elements) {
-    elements.forEach(element => hideElement(element))
+  elements.forEach(element => hideElement(element))
 }
 
 export function hideElement(element: Element) {
-    element && setAttribute(element, 'display', 'none');
+  element && setAttribute(element, 'display', 'none');
 }
 
 export function getX(element: Element): number {
-    return +element?.getAttribute('x');
+  return +element?.getAttribute('x');
 }
 
 export function getY(element: Element): number {
-    return +element?.getAttribute('y');
+  return +element?.getAttribute('y');
 }
 
 export function getCX(element: Element): number {
-    return +element?.getAttribute('cx');
+  return +element?.getAttribute('cx');
 }
 
 export function getCY(element: Element): number {
-    return +element?.getAttribute('cy');
+  return +element?.getAttribute('cy');
 }
 
 export function getWidth(element: Element): number {
-    return +element?.getAttribute('width');
+  return +element?.getAttribute('width');
 }
 
 export function getHeight(element: Element): number {
-    return +element?.getAttribute('height');
+  return +element?.getAttribute('height');
 }
 
 export function getEndX(element: Element): number {
-    return getX(element) + getWidth(element);
+  return getX(element) + getWidth(element);
 }
 
 export function animateSVG(element: SVGElement, attribute: string, from: number, to: number) {
-    const animatedSvgElement = getAnimationElement(element, attribute, from, to);
+  const animatedSvgElement = getAnimationElement(element, attribute, from, to);
 
-    if (animatedSvgElement === element) {
-        // triggered 2nd time programmatically
-        // trigger artificial click event
-        const event = document.createEvent('HTMLEvents');
-        event.initEvent('click', true, true);
-        (event as any).eventName = 'click';
-        animatedSvgElement.dispatchEvent(event);
-    }
+  if (animatedSvgElement === element) {
+    // triggered 2nd time programmatically
+    // trigger artificial click event
+    const event = document.createEvent('HTMLEvents');
+    event.initEvent('click', true, true);
+    (event as any).eventName = 'click';
+    animatedSvgElement.dispatchEvent(event);
+  }
 }
 
 function getAnimationElement(
-    svgElement: SVGElement,
-    attribute: string,
-    from: number,
-    to: number,
-    duration = '0.4s',
-    begin = '0.1s'
+  svgElement: SVGElement,
+  attribute: string,
+  from: number,
+  to: number,
+  duration = '0.4s',
+  begin = '0.1s'
 ) {
-    const animEl = svgElement.querySelector('animate');
-    if (animEl) {
-        setAttributes(animEl, {
-            attributeName: attribute,
-            from,
-            to,
-            dur: duration,
-            begin: 'click + ' + begin // artificial click
-        });
-        return svgElement;
-    }
-
-    const animateElement = createSVG('animate', {
-        attributeName: attribute,
-        from,
-        to,
-        dur: duration,
-        begin,
-        calcMode: 'spline',
-        values: from + ';' + to,
-        keyTimes: '0; 1',
-        keySplines: cubic_bezier('ease-out')
+  const animEl = svgElement.querySelector('animate');
+  if (animEl) {
+    setAttributes(animEl, {
+      attributeName: attribute,
+      from,
+      to,
+      dur: duration,
+      begin: 'click + ' + begin // artificial click
     });
-    svgElement.appendChild(animateElement);
-
     return svgElement;
+  }
+
+  const animateElement = createSVG('animate', {
+    attributeName: attribute,
+    from,
+    to,
+    dur: duration,
+    begin,
+    calcMode: 'spline',
+    values: from + ';' + to,
+    keyTimes: '0; 1',
+    keySplines: cubic_bezier('ease-out')
+  });
+  svgElement.appendChild(animateElement);
+
+  return svgElement;
 }
 
 function cubic_bezier(name: string) {
-    return {
-        ease: '.25 .1 .25 1',
-        linear: '0 0 1 1',
-        'ease-in': '.42 0 1 1',
-        'ease-out': '0 0 .58 1',
-        'ease-in-out': '.42 0 .58 1'
-    }[name];
+  return {
+    ease: '.25 .1 .25 1',
+    linear: '0 0 1 1',
+    'ease-in': '.42 0 1 1',
+    'ease-out': '0 0 .58 1',
+    'ease-in-out': '.42 0 .58 1'
+  }[name];
 }
 
 export function createMarkerPath(x: number, y: number, scale = 3): string {
-    const {height} = getMarkerSize(scale);
+  const {height} = getMarkerSize(scale);
 
-    const points = [
-        ['c', 1.1, 0, 2.2, 0.5, 3, 1.3],
-        ['c', 0.8, 0.9, 1.3, 1.9, 1.3, 3.1],
-        ['s', -0.5, 2.5, -1.3, 3.3],
-        ['l', -3, 3.1],
-        ['l', -3, -3.1],
-        ['c', -0.8, -0.8, -1.3, -2, -1.3, -3.3],
-        ['c', 0, -1.2, 0.4, -2.2, 1.3, -3.1],
-        ['c', 0.8, -0.8, 1.9, -1.3, 3, -1.3],
-    ];
+  const points = [
+    ['c', 1.1, 0, 2.2, 0.5, 3, 1.3],
+    ['c', 0.8, 0.9, 1.3, 1.9, 1.3, 3.1],
+    ['s', -0.5, 2.5, -1.3, 3.3],
+    ['l', -3, 3.1],
+    ['l', -3, -3.1],
+    ['c', -0.8, -0.8, -1.3, -2, -1.3, -3.3],
+    ['c', 0, -1.2, 0.4, -2.2, 1.3, -3.1],
+    ['c', 0.8, -0.8, 1.9, -1.3, 3, -1.3],
+  ];
 
-    const path = points.reduce((str, p) => {
-        const part = p.map(v => isNumeric(v) ? (toNumber(v) * scale).toFixed(1) : v).join(' ');
-        return `${str} ${part}`;
-    }, '');
+  const path = points.reduce((str, p) => {
+    const part = p.map(v => isNumeric(v) ? (toNumber(v) * scale).toFixed(1) : v).join(' ');
+    return `${str} ${part}`;
+  }, '');
 
-    return `M${x} ${y - height} ${path} Z`;
+  return `M${x} ${y - height} ${path} Z`;
 }
 
 export function getMarkerSize(scale = 3): { width: number, height: number } {
-    const width = 8.6 * scale;
-    const height = 10.8 * scale;
-    return {width, height};
+  const width = 8.6 * scale;
+  const height = 10.8 * scale;
+  return {width, height};
 }
 
 export function createDeleteIconElement(x: number, y: number, parent: HTMLElement | SVGElement): SVGElement {
-    const svg = createSVG('svg', {viewBox: '0 0 448 512', width: 17, height: 17, class: 'icon-delete', x, y}, parent);
-    createSVG('path', {d: createTrashPath()}, svg);
-    return svg;
+  const svg = createSVG('svg', {viewBox: '0 0 448 512', width: 17, height: 17, class: 'icon-delete', x, y}, parent);
+  createSVG('path', {d: createTrashPath()}, svg);
+  return svg;
 }
 
 export function createCheckboxElement(x: number, y: number, size: number, checked: boolean, parent: HTMLElement | SVGElement): SVGElement {
-    const svg = createSVG('svg', {viewBox: '0 0 24 24', width: size, height: size, x, y}, parent);
-    if (checked) {
-        createSVG('path', {d: 'M19 0h-14c-2.762 0-5 2.239-5 5v14c0 2.761 2.238 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-8.959 17l-4.5-4.319 1.395-1.435 3.08 2.937 7.021-7.183 1.422 1.409-8.418 8.591z'}, svg);
-    } else {
-        createSVG('path', {d: 'M5 2c-1.654 0-3 1.346-3 3v14c0 1.654 1.346 3 3 3h14c1.654 0 3-1.346 3-3v-14c0-1.654-1.346-3-3-3h-14zm19 3v14c0 2.761-2.238 5-5 5h-14c-2.762 0-5-2.239-5-5v-14c0-2.761 2.238-5 5-5h14c2.762 0 5 2.239 5 5z'}, svg);
-    }
-    return svg;
+  const svg = createSVG('svg', {viewBox: '0 0 24 24', width: size, height: size, x, y}, parent);
+  if (checked) {
+    createSVG('path', {d: 'M19 0h-14c-2.762 0-5 2.239-5 5v14c0 2.761 2.238 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-8.959 17l-4.5-4.319 1.395-1.435 3.08 2.937 7.021-7.183 1.422 1.409-8.418 8.591z'}, svg);
+  } else {
+    createSVG('path', {d: 'M5 2c-1.654 0-3 1.346-3 3v14c0 1.654 1.346 3 3 3h14c1.654 0 3-1.346 3-3v-14c0-1.654-1.346-3-3-3h-14zm19 3v14c0 2.761-2.238 5-5 5h-14c-2.762 0-5-2.239-5-5v-14c0-2.761 2.238-5 5-5h14c2.762 0 5 2.239 5 5z'}, svg);
+  }
+  return svg;
 }
 
 function createTrashPath(): string {
-    return `M32 464
+  return `M32 464
     a48 48 0 0 0 48 48
     h288
     a48 48 0 0 0 48-48
@@ -242,7 +242,59 @@ function createTrashPath(): string {
 }
 
 export function getOffset(event: any): { x: number, y: number } {
-    const x = Math.max(event.offsetX || 0, event.layerX || 0);
-    const y = Math.max(event.offsetY || 0, event.layerY || 0);
-    return {x, y};
+  const x = Math.max(event.offsetX || 0, 0);
+  const y = Math.max(event.offsetY || 0, 0);
+  return {x, y};
 }
+
+export function createRoundedRectPath(x: number, y: number, width: number, height: number, tr: number, br: number, bl: number, tl: number): string {
+  const data = [];
+
+  // start point in top-middle of the rectangle
+  data.push('M' + (x + width / 2) + ',' + y);
+
+  // next we go to the right
+  data.push('H' + (x + width - tr));
+
+  if (tr > 0) {
+    // now we draw the arc in the top-right corner
+    data.push('A' + arcParameter(tr, tr, 0, 0, 1, (x + width), (y + tr)));
+  }
+
+  // next we go down
+  data.push('V' + (y + height - br));
+
+  if (br > 0) {
+    // now we draw the arc in the lower-right corner
+    data.push('A' + arcParameter(br, br, 0, 0, 1, (x + width - br), (y + height)));
+  }
+
+  // now we go to the left
+  data.push('H' + (x + bl));
+
+  if (bl > 0) {
+    // now we draw the arc in the lower-left corner
+    data.push('A' + arcParameter(bl, bl, 0, 0, 1, x, (y + height - bl)));
+  }
+
+  // next we go up
+  data.push('V' + (y + tl));
+
+  if (tl > 0) {
+    // now we draw the arc in the top-left corner
+    data.push('A' + arcParameter(tl, tl, 0, 0, 1, (x + tl), y));
+  }
+
+  // and we close the path
+  data.push('Z');
+
+  return data.join(' ');
+}
+
+const arcParameter = function(rx, ry, xAxisRotation, largeArcFlag, sweepFlag, x, y) {
+  return [rx, ',', ry, ' ',
+    xAxisRotation, ' ',
+    largeArcFlag, ',',
+    sweepFlag, ' ',
+    x, ',', y ].join('');
+};

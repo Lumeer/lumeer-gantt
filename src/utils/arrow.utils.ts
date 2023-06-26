@@ -26,44 +26,44 @@ const arrowEndPath = ` m -${arrowEndSize} -${arrowEndSize}
                        l -${arrowEndSize} ${arrowEndSize}`;
 
 export function createArrowPath(fromBar: BarSvg, toBar: BarSvg, gantt: GanttSvg): string {
-    const fromIsBelowTo = fromBar.getY >= toBar.getY;
-    const areOnSameLine = fromBar.getY === toBar.getY;
+  const fromIsBelowTo = fromBar.getY >= toBar.getY;
+  const areOnSameLine = fromBar.getY === toBar.getY;
 
-    const drawsFromEnd = fromBar.endEndpointCX < toBar.startEndpointCX;
+  const drawsFromEnd = fromBar.endEndpointCX < toBar.startEndpointCX;
 
-    const startX = drawsFromEnd ? fromBar.endEndpointCX : fromBar.startEndpointCX;
-    const startY = drawsFromEnd ? fromBar.endEndpointCY : fromBar.startEndpointCY;
+  const startX = drawsFromEnd ? fromBar.endEndpointCX : fromBar.startEndpointCX;
+  const startY = drawsFromEnd ? fromBar.endEndpointCY : fromBar.startEndpointCY;
 
-    const endX = toBar.startEndpointCX;
-    const endY = toBar.startEndpointCY;
+  const endX = toBar.startEndpointCX;
+  const endY = toBar.startEndpointCY;
 
-    const curve = gantt.options.arrowCurve;
-    const clockwise = fromIsBelowTo ? 1 : 0;
-    const curveY = fromIsBelowTo ? -curve : curve;
+  const curve = gantt.options.arrowCurve;
+  const clockwise = fromIsBelowTo ? 1 : 0;
+  const curveY = fromIsBelowTo ? -curve : curve;
 
-    const down = toBar.getY + toBar.getHeight / 2 - curveY;
-    if (drawsFromEnd) {
-        if (areOnSameLine) {
-            return `
+  const down = toBar.getY + toBar.getHeight / 2 - curveY;
+  if (drawsFromEnd) {
+    if (areOnSameLine) {
+      return `
                     M ${startX} ${startY}
                     L ${endX} ${endY}
                     ${arrowEndPath}`;
-        } else {
-            return `
+    } else {
+      return `
                     M ${startX} ${startY}
                     V ${down}
                     a ${curve} ${curve} 0 0 ${clockwise} ${curve} ${curveY}
                     L ${endX} ${endY}
                     ${arrowEndPath}`;
-        }
-    } else {
-        const up = gantt.options.barHeight / 2 + gantt.options.padding / 4 - curve;
-        const left = toBar.startEndpointCX - curve * 2;
+    }
+  } else {
+    const up = gantt.options.barHeight / 2 + gantt.options.padding / 4 - curve;
+    const left = toBar.startEndpointCX - curve * 2;
 
-        if (areOnSameLine) {
-            const down = toBar.getY + toBar.getHeight / 2 - curve;
+    if (areOnSameLine) {
+      const down = toBar.getY + toBar.getHeight / 2 - curve;
 
-            return `
+      return `
                 M ${startX} ${startY}
                 v -${up}
                 a ${curve} ${curve} 1 0 0 -${curve} -${curve}
@@ -73,10 +73,10 @@ export function createArrowPath(fromBar: BarSvg, toBar: BarSvg, gantt: GanttSvg)
                 a ${curve} ${curve} 0 0 0 ${curve} ${curve}
                 L ${endX} ${endY}
                 ${arrowEndPath}`;
-        } else {
-            const hValue = Math.min(toBar.startEndpointCX - curve * 2, fromBar.startEndpointCX - curve * 2);
+    } else {
+      const hValue = Math.min(toBar.startEndpointCX - curve * 2, fromBar.startEndpointCX - curve * 2);
 
-            return `
+      return `
                     M ${startX} ${startY}
                     H ${hValue}
                     a ${curve} ${curve} 0 0 ${clockwise} -${curve} ${curveY}
@@ -84,7 +84,7 @@ export function createArrowPath(fromBar: BarSvg, toBar: BarSvg, gantt: GanttSvg)
                     a ${curve} ${curve} 0 0 ${clockwise} ${curve} ${curveY}
                     L ${endX} ${endY}
                     ${arrowEndPath}`;
-        }
-
     }
+
+  }
 }

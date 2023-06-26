@@ -19,9 +19,12 @@
 
 export interface GanttOptions {
     headerHeight?: number,
+    headerFontSize?: number;
     columnWidth?: number,
     viewModes?: GanttMode[],
     viewMode?: GanttMode,
+    fontSize?: number;
+    swimlaneFontSize?: number;
     barHeight?: number,
     barCornerRadius?: number,
     arrowCurve?: number,
@@ -42,6 +45,7 @@ export interface GanttOptions {
     createTasks?: boolean;
     resizeSwimlanes?: boolean;
     resizeTaskLeft?: boolean;
+    resizeMilestones?: boolean;
     resizeTaskRight?: boolean;
     resizeProgress?: boolean;
     dragTaskSwimlanes?: boolean;
@@ -56,6 +60,7 @@ export interface GanttSwimlaneInfo {
 }
 
 export enum GanttMode {
+    Hour = 'Hour',
     QuarterDay = 'Quarter Day',
     HalfDay = 'Half Day',
     Day = 'Day',
@@ -68,6 +73,7 @@ export const defaultOptions: GanttOptions = {
     headerHeight: 50,
     columnWidth: 30,
     viewModes: [
+        GanttMode.Hour,
         GanttMode.QuarterDay,
         GanttMode.HalfDay,
         GanttMode.Day,
