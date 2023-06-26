@@ -694,6 +694,8 @@ export class GanttSvg {
       name: '',
       startDate, endDate, start, end,
       parentDependencies: [],
+      milestones: [],
+      milestoneDates: [],
       dependencies: [],
       allowedDependencies: [],
       parentTransitiveDependencies: [],

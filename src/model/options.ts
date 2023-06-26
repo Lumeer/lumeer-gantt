@@ -45,6 +45,7 @@ export interface GanttOptions {
     createTasks?: boolean;
     resizeSwimlanes?: boolean;
     resizeTaskLeft?: boolean;
+    resizeMilestones?: boolean;
     resizeTaskRight?: boolean;
     resizeProgress?: boolean;
     dragTaskSwimlanes?: boolean;

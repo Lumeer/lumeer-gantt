@@ -25,12 +25,8 @@ import {
   computeNearestTickPosition
 } from '../../../utils/gantt.utils';
 import {
-  animateSVG,
-  createMarkerPath,
-  createSVG,
-  getEndX,
-  getHeight, getMarkerSize, getWidth, getX,
-  getY, hideElements, setAttribute,
+  animateSVG, createMarkerPath, createRoundedRectPath, createSVG,
+  getMarkerSize, getWidth, getX, hideElements, setAttribute,
   setAttributes, showElements
 } from '../../../utils/svg.utils';
 import {arraySubtract, closestElement, isNotNullOrUndefined, isNullOrUndefined} from '../../../utils/common.utils';
@@ -38,6 +34,7 @@ import {BarsSvg} from './bars-svg';
 import {ArrowSvg} from './arrow-svg';
 import {GanttSvg} from '../../gantt-svg';
 import {formatDate} from '../../../utils/date.utils';
+import {MilestonesSvg} from './milestones-svg';
 
 const handleSize = 10;
 const endpointR = 5;
@@ -55,7 +52,7 @@ export class BarSvg {
   private barElement: SVGGraphicsElement;
   private handleProgressGroup: SVGGraphicsElement;
 
-  private progressElement: SVGElement;
+  private progressOuterElement: SVGElement;
   private progressInnerElement: SVGElement;
 
   private textElement: SVGElement;
@@ -74,6 +71,7 @@ export class BarSvg {
 
   private fromArrowsSvgs: ArrowSvg[] = [];
   private toArrowsSvgs: ArrowSvg[] = [];
+  private milestonesSvg: MilestonesSvg;
 
   private x1: number;
   private x1Drag: number;
@@ -118,6 +116,10 @@ export class BarSvg {
 
   public get x(): number {
     return this.x1;
+  }
+
+  public get getX2(): number {
+    return this.x2;
   }
 
   public get getY(): number {
@@ -240,6 +242,7 @@ export class BarSvg {
 
   private renderElements() {
     this.renderBar();
+    this.renderMilestones();
     this.renderProgress();
     this.renderText();
     this.renderEndpoints();
@@ -289,31 +292,41 @@ export class BarSvg {
     const x = this.x1;
     const y = this.y;
     const height = this.height;
+    const radius = this.gantt.options.barCornerRadius;
 
-    if (this.progressElement) {
-      setAttributes(this.progressElement, {x, y, height, width: totalProgressWidth});
+    const innerX = x + progressWidth;
+    const innerWidth = this.barWidth - (innerX - x);
+    const leftRadius = progressWidth === 0 ? radius : 0
+    const innerPath = createRoundedRectPath(innerX, y, innerWidth, height, radius, radius, leftRadius, leftRadius);
+
+    if (innerX >= this.x2) {
+      this.progressInnerElement?.remove();
+      this.progressInnerElement = null;
+    } else if (this.progressInnerElement) {
+      setAttribute(this.progressInnerElement,'d', innerPath);
     } else {
-      this.progressElement = createSVG('rect', {
+      const insertBefore = this.barGroupElement.getElementsByTagName('text')[0]
+      this.progressInnerElement = createSVG('path', {
+        d: innerPath,
+        class: 'bar-progress',
+        style: 'fill:white; opacity: 0.5',
+      }, this.barGroupElement, null, insertBefore);
+    }
+
+    if (totalProgressWidth <= progressWidth) {
+      this.progressOuterElement?.remove();
+      this.progressOuterElement = null;
+    } else if (this.progressOuterElement) {
+      setAttributes(this.progressOuterElement, {x, y, height, width: totalProgressWidth});
+    } else {
+      const insertBefore = this.barGroupElement.children.item(1)
+      this.progressOuterElement = createSVG('rect', {
         x, y, width: totalProgressWidth, height,
         rx: this.gantt.options.barCornerRadius,
         ry: this.gantt.options.barCornerRadius,
         class: 'bar-progress',
-        style: (this.task.progressColor ? 'fill:' + this.task.progressColor + '; ' : '') + 'opacity: 0.5'
-      }, this.barGroupElement);
-      animateSVG(this.progressElement, 'width', 0, totalProgressWidth);
-    }
-
-    if (this.progressInnerElement) {
-      setAttributes(this.progressInnerElement, {x, y, height, width: progressWidth});
-    } else {
-      this.progressInnerElement = createSVG('rect', {
-        x, y, width: progressWidth, height,
-        rx: this.gantt.options.barCornerRadius,
-        ry: this.gantt.options.barCornerRadius,
-        class: 'bar-progress',
-        style: this.task.progressColor ? 'fill:' + this.task.progressColor + '; ' : ''
-      }, this.barGroupElement);
-      animateSVG(this.progressInnerElement, 'width', 0, progressWidth);
+        style: (this.task.barColor ? 'fill:' + this.task.barColor + '; ' : '') + 'opacity: 0.5'
+      }, this.barGroupElement, null, insertBefore);
     }
   }
 
@@ -347,6 +360,13 @@ export class BarSvg {
   private renderResizeHandles() {
     this.renderBarResizeHandles();
     this.renderProgressResizeHandle();
+  }
+
+  private renderMilestones() {
+    if (!this.milestonesSvg) {
+      this.milestonesSvg = new MilestonesSvg(this.task, this.gantt, this.barGroupElement, this);
+    }
+    this.milestonesSvg.render();
   }
 
   private renderBarResizeHandles() {
@@ -422,7 +442,7 @@ export class BarSvg {
         }, this.handleProgressGroup);
       }
 
-      const x = getEndX(this.progressElement);
+      const x = this.getProgressPosition();
       const scale = 4;
       const markerPath = createMarkerPath(x, this.y, scale);
       if (this.handleProgressMarkerElement) {
@@ -455,18 +475,22 @@ export class BarSvg {
 
   private getProgressPolygonPoints(): number[] {
     const triangleDiagonal = Math.sqrt(Math.pow(handleSize, 2) - Math.pow(handleSize / 2, 2));
-    const y = getY(this.progressElement);
-    const endX = getEndX(this.progressElement);
-    const height = getHeight(this.progressElement);
+    const y = this.y;
+    const x = this.getProgressPosition();
+    const height = this.height;
 
     return [
-      endX - handleSize / 2,
+      x - handleSize / 2,
       y + height,
-      endX + handleSize / 2,
+      x + handleSize / 2,
       y + height,
-      endX,
+      x,
       y + height - triangleDiagonal
     ];
+  }
+
+  private getProgressPosition(): number {
+    return this.x + this.barWidth * this.progress / 100
   }
 
   private renderEndpoints() {

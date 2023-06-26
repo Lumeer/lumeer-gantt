@@ -262,7 +262,7 @@ interface Swimlanes {
   maxLevel: number;
 }
 
-type SwimlaneWithTasks = Swimlane & { children?: SwimlaneWithTasks[], tasks?: GanttTask[] };
+type SwimlaneWithTasks = Swimlane & { children?: SwimlaneWithTasks[]; tasks?: GanttTask[] };
 
 const defaultNumLines = 5;
 
@@ -293,7 +293,8 @@ function iterateGanttLines(line: SwimlaneWithTasks, ganttLines: GanttLine[], gan
   const id = generateId(line.title);
 
   const lineWithoutTasks = {...line, children: undefined, tasks: undefined};
-  const newSwimLanes = [...ganttSwimLanes, {...lineWithoutTasks, id, value: swimlaneValue(line)}];
+  const newSwimLane = {...lineWithoutTasks, id, value: swimlaneValue(line)} as GanttSwimlane;
+  const newSwimLanes = [...ganttSwimLanes, newSwimLane];
 
   (line.children || []).forEach(l => iterateGanttLines(l, ganttLines, newSwimLanes, maxLevel));
 
@@ -311,6 +312,7 @@ export function createGanttTasksMap(tasks: Task[], options: GanttOptions): { tas
   const tasksMap = (tasks || []).reduce<Record<string, GanttTask>>((map, task) => {
     const startDate = parseDate(task.start, options.dateFormat);
     const endDate = parseDate(task.end, options.dateFormat);
+    const milestoneDates = (task.milestones || []).map(milestone => parseDate(milestone.start, options.dateFormat))
 
     if (!startDate || !endDate) {
       return map;
@@ -331,6 +333,7 @@ export function createGanttTasksMap(tasks: Task[], options: GanttOptions): { tas
       taskId: task.id,
       startDate,
       endDate,
+      milestoneDates,
       parentDependencies: [],
       transitiveDependencies: [],
       parentTransitiveDependencies: [],
@@ -543,12 +546,12 @@ export function cleanGanttTask(task: GanttTask, overrideId?: any): Task {
     start: task.start,
     end: task.end,
     swimlanes: task.swimlanes,
+    milestones: task.milestones,
     draggable: task.draggable,
     startDrag: task.startDrag,
     endDrag: task.endDrag,
     textColor: task.textColor,
     barColor: task.barColor,
-    progressColor: task.progressColor,
     progressDrag: task.progressDrag,
     dependencies, allowedDependencies,
     metadata: task.metadata
@@ -556,7 +559,7 @@ export function cleanGanttTask(task: GanttTask, overrideId?: any): Task {
 }
 
 export function setupRange(tasks: GanttTask[], options: GanttOptions): { minDate: Date, maxDate: Date } {
-  let {minDate, maxDate} = tasks.reduce((value, task) => {
+  let {minDate, maxDate} = tasks.reduce<{minDate: Date; maxDate: Date}>((value, task) => {
     if (!value.minDate || value.minDate.getTime() > task.startDate.getTime()) {
       value.minDate = task.startDate;
     }

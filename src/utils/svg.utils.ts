@@ -19,7 +19,7 @@
 
 import {isNumeric, toNumber} from './common.utils';
 
-export function createSVG(tag: string, attributes: Record<string, any>, appendTo?: HTMLElement | SVGElement, innerHTML?: string): SVGGraphicsElement {
+export function createSVG(tag: string, attributes: Record<string, any>, appendTo?: Element, innerHTML?: string, insertBefore?: Element): SVGGraphicsElement {
   const svgElement: SVGGraphicsElement = document.createElementNS('http://www.w3.org/2000/svg', tag) as SVGGraphicsElement;
   if (innerHTML) {
     svgElement.innerHTML = innerHTML;
@@ -29,7 +29,11 @@ export function createSVG(tag: string, attributes: Record<string, any>, appendTo
     .forEach(([attribute, value]) => svgElement.setAttribute(attribute, value));
 
   if (appendTo) {
-    appendTo.appendChild(svgElement);
+    if (insertBefore) {
+      appendTo.insertBefore(svgElement, insertBefore)
+    } else {
+      appendTo.appendChild(svgElement);
+    }
   }
 
   return svgElement;
@@ -242,3 +246,55 @@ export function getOffset(event: any): { x: number, y: number } {
   const y = Math.max(event.offsetY || 0, 0);
   return {x, y};
 }
+
+export function createRoundedRectPath(x: number, y: number, width: number, height: number, tr: number, br: number, bl: number, tl: number): string {
+  const data = [];
+
+  // start point in top-middle of the rectangle
+  data.push('M' + (x + width / 2) + ',' + y);
+
+  // next we go to the right
+  data.push('H' + (x + width - tr));
+
+  if (tr > 0) {
+    // now we draw the arc in the top-right corner
+    data.push('A' + arcParameter(tr, tr, 0, 0, 1, (x + width), (y + tr)));
+  }
+
+  // next we go down
+  data.push('V' + (y + height - br));
+
+  if (br > 0) {
+    // now we draw the arc in the lower-right corner
+    data.push('A' + arcParameter(br, br, 0, 0, 1, (x + width - br), (y + height)));
+  }
+
+  // now we go to the left
+  data.push('H' + (x + bl));
+
+  if (bl > 0) {
+    // now we draw the arc in the lower-left corner
+    data.push('A' + arcParameter(bl, bl, 0, 0, 1, x, (y + height - bl)));
+  }
+
+  // next we go up
+  data.push('V' + (y + tl));
+
+  if (tl > 0) {
+    // now we draw the arc in the top-left corner
+    data.push('A' + arcParameter(tl, tl, 0, 0, 1, (x + tl), y));
+  }
+
+  // and we close the path
+  data.push('Z');
+
+  return data.join(' ');
+}
+
+const arcParameter = function(rx, ry, xAxisRotation, largeArcFlag, sweepFlag, x, y) {
+  return [rx, ',', ry, ' ',
+    xAxisRotation, ' ',
+    largeArcFlag, ',',
+    sweepFlag, ' ',
+    x, ',', y ].join('');
+};
