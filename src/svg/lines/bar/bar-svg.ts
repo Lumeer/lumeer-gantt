@@ -166,6 +166,10 @@ export class BarSvg {
     return isNotNullOrUndefined(this.progressDrag) && this.progress !== this.progressDrag;
   }
 
+  public milestonesChanged(): boolean {
+    return this.milestonesSvg?.milestonesChanged();
+  }
+
   public parentChanged(): boolean {
     return isNotNullOrUndefined(this.parentSvgDrag) && this.parentSvg !== this.parentSvgDrag;
   }
@@ -358,6 +362,7 @@ export class BarSvg {
   }
 
   private renderResizeHandles() {
+    this.milestonesSvg.renderHandles()
     this.renderBarResizeHandles();
     this.renderProgressResizeHandle();
   }
@@ -559,12 +564,12 @@ export class BarSvg {
   }
 
   public handleDragStart(element: any) {
-    if (element === this.handleProgressElement) {
-      showElements(this.handleProgressTextElement, this.handleProgressMarkerElement);
-    }
-
     if (element === this.handleLeftElement || element === this.handleRightElement) {
       this.sideHandlesOverflowing = getX(this.handleRightElement) <= getX(this.handleLeftElement) + getWidth(this.handleLeftElement);
+    } else if (element === this.handleProgressElement) {
+      showElements(this.handleProgressTextElement, this.handleProgressMarkerElement);
+    } else if (this.milestonesSvg.isDragged(element)) {
+      this.milestonesSvg.handleDragStart(element);
     }
 
     this.x1Drag = this.x1;
@@ -598,6 +603,8 @@ export class BarSvg {
 
     } else if (element === this.handleProgressElement) {
       this.resizeProgress(dx, x);
+    } else if (this.milestonesSvg.isDragged(element)) {
+      this.milestonesSvg.resizeMilestone(element, dx, x);
     } else if (this.task.draggable) {
       const barElement = closestElement(`.${barWrapperClass}`, element);
       if (barElement === this.barWrapperElement) {
@@ -811,6 +818,7 @@ export class BarSvg {
     this.draggingVertically = false;
     this.handleOverflowElement = null;
     this.sideHandlesOverflowing = false;
+    this.milestonesSvg.handleDragEnd();
     hideElements(this.handleProgressTextElement, this.handleProgressMarkerElement);
     this.updateTaskData();
   }
@@ -902,6 +910,7 @@ export class BarSvg {
       this.parentSvgDrag = null;
       this.task.swimlanes = this.parentSvg.swimlaneObjects;
     }
+    this.milestonesSvg.onEscapeKeyUp();
     if (positionUpdated) {
       this.updatePositions();
     }
