@@ -66,7 +66,7 @@ export enum GanttSwimlaneType {
 type TaskKey = keyof Task
 
 export const taskProperties: TaskKey[] = ['id', 'name', 'start', 'end', 'progress', 'swimlanes',
-    'dependencies', 'allowedDependencies', 'barColor', 'textColor', 'startDrag', 'endDrag',
+    'dependencies', 'allowedDependencies', 'barColor', 'textColor', 'startDrag', 'endDrag', 'milestones',
     'progressDrag', 'minProgress', 'maxProgress'];
 
 export interface GanttTask extends Task {
