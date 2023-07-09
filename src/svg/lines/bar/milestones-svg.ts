@@ -205,8 +205,8 @@ export class MilestonesSvg {
       return;
     }
 
-    const previousEndX = this.endXs[this.draggingIndex - 1] ?? this.barSvg.x;
-    const nextEndX = this.endXs[this.draggingIndex + 1] ?? this.barSvg.endX;
+    const previousEndX = this.endXs[this.draggingIndex - 1] || this.barSvg.x;
+    const nextEndX = this.endXs[this.draggingIndex + 1] || this.barSvg.endX;
     const nearestTick = computeNearestTickPosition(this.gantt.settings, this.endXDrag + x);
 
     if (nearestTick.x > nextEndX || nearestTick.x < previousEndX) {

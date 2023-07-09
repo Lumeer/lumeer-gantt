@@ -18,7 +18,7 @@
  */
 
 import {defaultOptions, GanttMode, GanttOptions, GanttSwimlaneInfo} from '../model/options';
-import {addToDate, DateScale, diffDates, formatDate, getDaysInMonth, parseDate, startOf, startOfToday} from './date.utils';
+import {addToDate, DateScale, diffDates, formatDate, getDaysInMonth, isDateValid, parseDate, startOf, startOfToday} from './date.utils';
 import {GanttSwimlaneType, GanttTask, Swimlane, Task, taskProperties} from '../model/task';
 import {GanttLine, GanttSettings, GanttSwimlane, GanttWrapper} from '../model/gantt';
 import {arrayContainsSameItems, completeArrayWithNulls, isArray, isNotNullOrUndefined, isNullOrUndefined, mergeFlatObjects, uniqueValues} from './common.utils';
@@ -144,6 +144,9 @@ export function formatGanttDate(date: Date, options: GanttOptions): string {
 }
 
 export function computeDistanceFromStart(options: GanttOptions, settings: GanttSettings, destinationDate: Date): number {
+  if (!isDateValid(destinationDate)) {
+    return 0
+  }
   if (options.viewMode === GanttMode.Month) {
     let x = 0;
     for (const date of settings.dates) {
