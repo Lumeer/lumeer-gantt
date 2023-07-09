@@ -259,7 +259,7 @@ export class LinesSvg {
         continue;
       }
 
-      if (bar.parentChanged() || bar.progressChanged() || bar.datesChanged()) {
+      if (bar.parentChanged() || bar.progressChanged() || bar.datesChanged() || bar.milestonesChanged()) {
         this.gantt.onTaskChanged(cleanGanttTask(bar.task));
         emittedTaskIds.push(bar.task.taskId);
       }

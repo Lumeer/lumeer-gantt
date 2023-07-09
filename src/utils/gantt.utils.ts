@@ -131,6 +131,18 @@ export function getDateInfo(date: Date, previousDate: Date | null, index: number
   }
 }
 
+export function formatGanttDate(date: Date, options: GanttOptions): string {
+  const baseFormat = 'D MMM YYYY';
+  switch (options.viewMode) {
+    case GanttMode.Hour:
+    case GanttMode.HalfDay:
+      return formatDate(date, `${baseFormat} HH:mm`)
+    default:
+      return formatDate(date, baseFormat);
+  }
+
+}
+
 export function computeDistanceFromStart(options: GanttOptions, settings: GanttSettings, destinationDate: Date): number {
   if (options.viewMode === GanttMode.Month) {
     let x = 0;
@@ -527,10 +539,10 @@ function taskChanged(gt1: GanttTask, t2: Task): boolean {
     }
 
     if (isArray(t1Value) || isArray(t2Value)) {
-      return !arrayContainsSameItems((t1Value || []).map(v => v || ''), (t2Value || []).map(v => v || ''));
+      return !arrayContainsSameItems((t1Value || []).map(v => JSON.stringify(v || '')), (t2Value || []).map(v => JSON.stringify(v || '')));
     }
 
-    return (t1Value || '') !== (t2Value || '');
+    return JSON.stringify(t1Value || '') !== JSON.stringify(t2Value || '');
   })
 }
 
