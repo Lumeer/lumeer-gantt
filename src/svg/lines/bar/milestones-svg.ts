@@ -31,7 +31,7 @@ export class MilestonesSvg {
   }
 
   public get milestoneDates(): Date[] {
-    return (this.endXs || []).map(date => computeDateByPosition(this.gantt.options, this.gantt.settings, date));
+    return (this.endXs || []).map(date => date && computeDateByPosition(this.gantt.options, this.gantt.settings, date));
   }
 
   private computePosition(index: number): {x: number; width: number} {
@@ -232,7 +232,7 @@ export class MilestonesSvg {
 
   private updateMilestones() {
     this.task.milestoneDates = this.milestoneDates;
-    this.task.milestones = (this.task.milestones || []).map((milestone, index) => ({...milestone, start: formatDate(this.task.milestoneDates[index], this.gantt.options.dateFormat)}))
+    this.task.milestones = (this.task.milestones || []).map((milestone, index) => ({...milestone, end: formatDate(this.task.milestoneDates[index], this.gantt.options.dateFormat)}))
     this.renderBars();
     this.renderHandles();
   }

@@ -53,7 +53,7 @@ export interface Swimlane {
 }
 
 export interface Milestone {
-    start: string;
+    end: string;
     color: string;
     draggable: boolean;
 }

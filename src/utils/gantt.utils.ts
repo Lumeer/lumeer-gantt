@@ -327,7 +327,7 @@ export function createGanttTasksMap(tasks: Task[], options: GanttOptions): { tas
   const tasksMap = (tasks || []).reduce<Record<string, GanttTask>>((map, task) => {
     const startDate = parseDate(task.start, options.dateFormat);
     const endDate = parseDate(task.end, options.dateFormat);
-    const milestoneDates = (task.milestones || []).map(milestone => parseDate(milestone.start, options.dateFormat))
+    const milestoneDates = (task.milestones || []).map(milestone => parseDate(milestone.end, options.dateFormat))
 
     if (!startDate || !endDate) {
       return map;
