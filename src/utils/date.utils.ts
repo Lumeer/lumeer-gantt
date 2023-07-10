@@ -100,7 +100,7 @@ export function getDaysInMonth(date: Date): number {
 }
 
 export function formatDate(date: Date, format: string): string {
-  return moment.utc(date).format(format)
+  return isDateValid(date) ? moment.utc(date).format(format) : null
 }
 
 export function diffDates(d1: Date, d2: Date, scale: DateScale): number {
