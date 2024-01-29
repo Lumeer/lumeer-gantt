@@ -447,9 +447,8 @@ export class BarSvg {
         }, this.handleProgressGroup);
       }
 
-      const x = this.getProgressPosition();
-      const scale = 4;
-      const markerPath = createMarkerPath(x, this.y, scale);
+      const {x,y, textY, scale, inverted} = this.getMarkerPosition();
+      const markerPath = createMarkerPath(x, y, scale, inverted);
       if (this.handleProgressMarkerElement) {
         setAttribute(this.handleProgressMarkerElement, 'd', markerPath)
       } else {
@@ -461,20 +460,30 @@ export class BarSvg {
       }
 
       const textProgress = this.progress > 999 ? String('999+') : String(this.progress);
-      const {height} = getMarkerSize(scale);
-      const y = this.y - height / 2 - scale;
       if (this.handleProgressTextElement) {
-        setAttributes(this.handleProgressTextElement, {x, y});
+        setAttributes(this.handleProgressTextElement, {x, y: textY});
         this.handleProgressTextElement.innerHTML = textProgress;
       } else {
         this.handleProgressTextElement = createSVG('text', {
-          x, y,
+          x, y: textY,
           class: 'bar-label',
           display: 'none',
           'font-size': `${this.gantt.options.fontSize}px`
         }, this.handleProgressGroup, textProgress);
       }
 
+    }
+  }
+
+  private getMarkerPosition(): {x: number; y: number; textY: number; scale: number; inverted?: boolean} {
+    const scale = 4;
+    const {height} = getMarkerSize(scale);
+    const x = this.getProgressPosition();
+    const textY = this.y - height / 2 - scale;
+    if (textY > 0) {
+      return {x, y: this.y, textY, scale}
+    } else {
+      return {x, y: this.y + height * 2 + this.height, textY: this.y + height / 2 + scale + this.height, scale, inverted: true}
     }
   }
 
@@ -790,6 +799,7 @@ export class BarSvg {
   }
 
   private emitBarDragging(dx1: number, dx2: number, keepYPosition?: boolean) {
+    this.milestonesSvg.onBarDragging(dx1, dx2);
     this.gantt.linesSvg.onBarDragging(this, dx1, dx2);
     (this.parentSvg || this.barsSvgs).onBarDragging(this, keepYPosition);
     this.updateArrows();
