@@ -2,9 +2,9 @@ import {GanttTask} from '../../../model/task';
 import {GanttSvg} from '../../gantt-svg';
 import {BarSvg} from './bar-svg';
 import {computeDateByPosition, computeDistanceFromStart, computeNearestTickPosition, formatGanttDate} from '../../../utils/gantt.utils';
-import {isNotNullOrUndefined} from '../../../utils/common.utils';
+import {isNotNullOrUndefined, isNullOrUndefined} from '../../../utils/common.utils';
 import {createRoundedRectPath, createSVG, setAttribute, setAttributes} from '../../../utils/svg.utils';
-import {formatDate} from '../../../utils/date.utils';
+import {formatDate, isDateValid} from '../../../utils/date.utils';
 
 const handleSize = 10;
 
@@ -18,6 +18,7 @@ export class MilestonesSvg {
 
   private draggingIndex: number;
   private endXDrag: number;
+  private endXsCopy: number[];
   private endXs: number[];
   private indexes: number[];
 
@@ -34,7 +35,7 @@ export class MilestonesSvg {
     return (this.endXs || []).map(date => date && computeDateByPosition(this.gantt.options, this.gantt.settings, date));
   }
 
-  private computePosition(index: number): {x: number; width: number} {
+  private computePosition(index: number): { x: number; width: number } {
     const minX = this.barSvg.x;
     const maxX = this.barSvg.getX2;
     const endX = this.endXs[index];
@@ -189,6 +190,7 @@ export class MilestonesSvg {
     const draggingIndexCopy = this.draggingIndex
     this.draggingIndex = null;
     this.endXDrag = null;
+    this.endXsCopy = null;
     this.handleTextElement?.remove();
     this.handleTextElement = null;
     this.handleTooltipElement?.remove();
@@ -228,6 +230,11 @@ export class MilestonesSvg {
       this.endXDrag = null;
       this.updateMilestones();
     }
+    if (isNotNullOrUndefined(this.endXsCopy)) {
+      this.endXs = [...this.endXsCopy];
+      this.endXsCopy = null;
+      this.updateMilestones();
+    }
   }
 
   private updateMilestones() {
@@ -237,16 +244,37 @@ export class MilestonesSvg {
     this.renderHandles();
   }
 
+  public onBarDragging(dx1: number, dx2: number) {
+    if (dx1 !== dx2 && dx1 !== 0) {
+      return; // we want to only handle whole bar dragging
+    }
+
+    const draggableIndexes = this.indexes.filter(index => this.isMilestoneDraggable(index));
+    if (!draggableIndexes.length) {
+      return;
+    }
+
+    if (isNullOrUndefined(this.endXsCopy)) {
+      this.endXsCopy = [...this.endXs];
+    }
+
+    draggableIndexes.forEach(index => {
+      this.endXs[index] += dx1;
+    })
+
+    this.updateMilestones();
+  }
+
   private draggedIndex(element: any): number {
     return this.handleElements.findIndex(handle => handle === element);
   }
 
   private isSomeMilestoneDraggable(): boolean {
-    return this.indexes.some( index => this.isMilestoneDraggable(index));
+    return this.indexes.some(index => this.isMilestoneDraggable(index));
   }
 
   private isMilestoneDraggable(index: number): boolean {
-    return this.task.milestones?.[index]?.draggable && this.gantt.options.resizeMilestones && isNotNullOrUndefined(this.task.milestoneDates[index]);
+    return this.task.milestones?.[index]?.draggable && this.gantt.options.resizeMilestones && isDateValid(this.task.milestoneDates[index]);
   }
 
 }

@@ -158,18 +158,19 @@ function cubic_bezier(name: string) {
   }[name];
 }
 
-export function createMarkerPath(x: number, y: number, scale = 3): string {
+export function createMarkerPath(x: number, y: number, scale = 3, inverted: boolean = false): string {
   const {height} = getMarkerSize(scale);
 
+  const multiplier = inverted ? -1 : 1;
   const points = [
-    ['c', 1.1, 0, 2.2, 0.5, 3, 1.3],
-    ['c', 0.8, 0.9, 1.3, 1.9, 1.3, 3.1],
-    ['s', -0.5, 2.5, -1.3, 3.3],
-    ['l', -3, 3.1],
-    ['l', -3, -3.1],
-    ['c', -0.8, -0.8, -1.3, -2, -1.3, -3.3],
-    ['c', 0, -1.2, 0.4, -2.2, 1.3, -3.1],
-    ['c', 0.8, -0.8, 1.9, -1.3, 3, -1.3],
+    ['c', 1.1, 0, 2.2, 0.5 * multiplier, 3, 1.3 * multiplier],
+    ['c', 0.8, 0.9 * multiplier, 1.3, 1.9 * multiplier, 1.3, 3.1 * multiplier],
+    ['s', -0.5, 2.5 * multiplier, -1.3, 3.3 * multiplier],
+    ['l', -3, 3.1 * multiplier],
+    ['l', -3, -3.1 * multiplier],
+    ['c', -0.8, -0.8 * multiplier, -1.3, -2 * multiplier, -1.3, -3.3 * multiplier],
+    ['c', 0, -1.2 * multiplier, 0.4, -2.2 * multiplier, 1.3, -3.1 * multiplier],
+    ['c', 0.8, -0.8 * multiplier, 1.9, -1.3 * multiplier, 3, -1.3 * multiplier],
   ];
 
   const path = points.reduce((str, p) => {
